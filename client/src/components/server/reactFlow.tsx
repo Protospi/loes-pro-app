@@ -15,7 +15,7 @@ import {
   ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { User, BotMessageSquare, Calendar, FileText, HeartPulse, Database, Bookmark } from 'lucide-react';
+import { User, BotMessageSquare, Calendar, FileText, HeartPulse, Database, Bookmark, Mic, Type, File } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 
 // Custom Node Component
@@ -24,12 +24,14 @@ function CustomNode({ data }: { data: any }) {
   const isAgent = data.type === 'agent';
   const isUser = data.type === 'user';
   const isTool = data.type === 'tool';
+  const isInput = data.type === 'input';
   const { theme } = useTheme();
   
   // Use darker colors for light theme, lighter colors for dark theme
-  const userColor = theme === 'light' ? 'text-blue-700' : 'text-blue-400';
-  const agentColor = theme === 'light' ? 'text-purple-700' : 'text-purple-400';
-  const toolColor = theme === 'light' ? 'text-emerald-700' : 'text-emerald-400';
+  const userColor = theme === 'light' ? 'text-blue-500' : 'text-blue-400';
+  const agentColor = theme === 'light' ? 'text-purple-500' : 'text-purple-400';
+  const toolColor = theme === 'light' ? 'text-emerald-500' : 'text-emerald-400';
+  const inputColor = theme === 'light' ? 'text-gray-900' : 'text-gray-100';
 
   return (
     <div 
@@ -40,10 +42,11 @@ function CustomNode({ data }: { data: any }) {
         ${isUser ? 'glass-chip border-2 border-blue-500/40' : ''}
         ${isAgent ? 'glass-chip border-2 border-purple-500/40' : ''}
         ${isTool ? 'glass-chip border-2 border-emerald-500/30' : ''}
+        ${isInput ? 'glass-chip border-2 border-gray-500/30' : ''}
       `}
     >
-      {/* Source handle for user and agent */}
-      {(isUser || isAgent) && (
+      {/* Source handle for user, input nodes, and agent */}
+      {(isUser || isAgent || isInput) && (
         <Handle
           type="source"
           position={Position.Right}
@@ -51,8 +54,8 @@ function CustomNode({ data }: { data: any }) {
         />
       )}
       
-      {/* Target handle for agent and tools */}
-      {(isAgent || isTool) && (
+      {/* Target handle for agent, input nodes, and tools */}
+      {(isAgent || isTool || isInput) && (
         <Handle
           type="target"
           position={Position.Left}
@@ -74,6 +77,7 @@ function CustomNode({ data }: { data: any }) {
             ${isUser ? userColor : ''}
             ${isAgent ? agentColor : ''}
             ${isTool ? toolColor : ''}
+            ${isInput ? inputColor : ''}
           `}
         />
       </div>
@@ -114,12 +118,16 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
   const createNodes = useCallback(() => {
     const isMobile = window.innerWidth < 768;
     
-    // Adjust spacing based on screen size
+    // Adjust spacing based on screen size with equal distances between columns
     const userX = isMobile ? 50 : 100;
-    const agentX = isMobile ? 220 : 400;
-    const toolX = isMobile ? 400 : 700;
+    const columnSpacing = isMobile ? 170 : 250;
+    const inputX = userX + columnSpacing;
+    const agentX = inputX + columnSpacing;
+    const toolX = agentX + columnSpacing;
     const toolSpacing = 85;
     const centerY = 150;
+
+    const inputStartY = centerY - toolSpacing;
 
     const nodes: Node[] = [
       // User Node
@@ -131,6 +139,43 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
           label: '', 
           icon: User, 
           type: 'user'
+        },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      },
+      // Input Nodes
+      {
+        id: 'audio-input',
+        type: 'custom',
+        position: { x: inputX, y: inputStartY },
+        data: { 
+          label: '', 
+          icon: Mic,
+          type: 'input'
+        },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      },
+      {
+        id: 'text-input',
+        type: 'custom',
+        position: { x: inputX, y: centerY },
+        data: { 
+          label: '', 
+          icon: Type,
+          type: 'input'
+        },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      },
+      {
+        id: 'document-input',
+        type: 'custom',
+        position: { x: inputX, y: inputStartY + toolSpacing * 2 },
+        data: { 
+          label: '', 
+          icon: File,
+          type: 'input'
         },
         sourcePosition: Position.Right,
         targetPosition: Position.Left,
@@ -177,19 +222,62 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
 
   // Create edges
   const initialEdges: Edge[] = useMemo(() => {
+    // Define the base edge style
+    const baseEdgeStyle = {
+      animated: true,
+      type: 'default' as const,
+      style: {
+        strokeWidth: 4,
+        strokeOpacity: 1,
+      },
+    };
+
+    const userEdgeStyle = {
+      ...baseEdgeStyle,
+      style: {
+        ...baseEdgeStyle.style,
+        stroke: '#3b82f6', // Blue for user connections
+      },
+    };
+
     const edges: Edge[] = [
-      // User to Agent
+      // User to Input nodes
       {
-        id: 'user-agent',
+        id: 'user-audio',
         source: 'user',
+        target: 'audio-input',
+        ...userEdgeStyle,
+      },
+      {
+        id: 'user-text',
+        source: 'user',
+        target: 'text-input',
+        ...userEdgeStyle,
+      },
+      {
+        id: 'user-document',
+        source: 'user',
+        target: 'document-input',
+        ...userEdgeStyle,
+      },
+      // Input nodes to Agent
+      {
+        id: 'audio-agent',
+        source: 'audio-input',
         target: 'agent',
-        animated: true,
-        style: { 
-          stroke: '#3b82f6',
-          strokeWidth: 4,
-          strokeOpacity: 1,
-        },
-        type: 'default',
+        ...userEdgeStyle,
+      },
+      {
+        id: 'text-agent',
+        source: 'text-input',
+        target: 'agent',
+        ...userEdgeStyle,
+      },
+      {
+        id: 'document-agent',
+        source: 'document-input',
+        target: 'agent',
+        ...userEdgeStyle,
       },
     ];
 
