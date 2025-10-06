@@ -38,7 +38,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     <div className="mb-6 flex justify-start" data-testid={`message-assistant-${message.id}`}>
       <div className="flex space-x-3 max-w-3xl">
         <div className="w-8 h-8 rounded-full glass-chip flex items-center justify-center flex-shrink-0">
-          <BotMessageSquare className="w-4 h-4 text-blue-500" />
+          <BotMessageSquare className="w-4 h-4 text-purple-500" />
         </div>
         <div className="glass-chip rounded-2xl rounded-tl-sm p-4 shadow-lg">
           <div className="text-foreground leading-relaxed prose prose-invert">

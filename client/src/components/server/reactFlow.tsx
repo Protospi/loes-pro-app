@@ -15,7 +15,7 @@ import {
   ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { User, BotMessageSquare, Calendar, FileText, HeartPulse, Database, Bookmark, Mic, Type, File } from 'lucide-react';
+import { User, BotMessageSquare, Calendar, FileText, HeartPulse, Database, Bookmark, Mic, Type, File, Brain, CalendarClock } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 
 // Custom Node Component
@@ -25,13 +25,16 @@ function CustomNode({ data }: { data: any }) {
   const isUser = data.type === 'user';
   const isTool = data.type === 'tool';
   const isInput = data.type === 'input';
+  const isBotNode = data.id === 'agent'; // The main bot/chatbot node
+  const isThinkingNode = data.id === 'thinking'; // The brain node above bot
+  const isClockNode = data.id === 'clock'; // The clock node below bot
   const { theme } = useTheme();
   
   // Use darker colors for light theme, lighter colors for dark theme
   const userColor = theme === 'light' ? 'text-blue-500' : 'text-blue-400';
   const agentColor = theme === 'light' ? 'text-purple-500' : 'text-purple-400';
   const toolColor = theme === 'light' ? 'text-emerald-500' : 'text-emerald-400';
-  const inputColor = theme === 'light' ? 'text-gray-900' : 'text-gray-100';
+  const inputColor = theme === 'light' ? 'text-gray-900' : 'text-amber-500';
 
   return (
     <div 
@@ -45,20 +48,62 @@ function CustomNode({ data }: { data: any }) {
         ${isInput ? 'glass-chip border-2 border-gray-500/30' : ''}
       `}
     >
-      {/* Source handle for user, input nodes, and agent */}
-      {(isUser || isAgent || isInput) && (
+      {/* Source handle for user, input nodes, and agent (but not thinking or clock) */}
+      {(isUser || (isAgent && !isThinkingNode && !isClockNode) || isInput) && (
         <Handle
           type="source"
           position={Position.Right}
+          id="right"
           style={{ background: '#3b82f6', border: '2px solid #ffffff' }}
         />
       )}
       
-      {/* Target handle for agent, input nodes, and tools */}
-      {(isAgent || isTool || isInput) && (
+      {/* Target handle for agent, input nodes, and tools (but not thinking or clock) */}
+      {((isAgent && !isThinkingNode && !isClockNode) || isTool || isInput) && (
         <Handle
           type="target"
           position={Position.Left}
+          id="left"
+          style={{ background: '#a855f7', border: '2px solid #ffffff' }}
+        />
+      )}
+      
+      {/* Top handle for bot node - to connect with brain above */}
+      {isBotNode && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          id="top"
+          style={{ background: '#a855f7', border: '2px solid #ffffff' }}
+        />
+      )}
+      
+      {/* Bottom handle for bot node - to connect with clock below */}
+      {isBotNode && (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          id="bottom"
+          style={{ background: '#a855f7', border: '2px solid #ffffff' }}
+        />
+      )}
+      
+      {/* Bottom handle for thinking node - to connect with bot below */}
+      {isThinkingNode && (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          id="bottom"
+          style={{ background: '#a855f7', border: '2px solid #ffffff' }}
+        />
+      )}
+      
+      {/* Top handle for clock node - to connect with bot above */}
+      {isClockNode && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          id="top"
           style={{ background: '#a855f7', border: '2px solid #ffffff' }}
         />
       )}
@@ -180,14 +225,43 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
         sourcePosition: Position.Right,
         targetPosition: Position.Left,
       },
+      // Thinking Node (above agent)
+      {
+        id: 'thinking',
+        type: 'custom',
+        position: { x: agentX, y: centerY - toolSpacing * 1.5 },
+        data: { 
+          id: 'thinking',
+          label: '', 
+          icon: Brain, 
+          type: 'agent'
+        },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      },
       // Agent Node
       {
         id: 'agent',
         type: 'custom',
         position: { x: agentX, y: centerY },
         data: { 
+          id: 'agent',
           label: '', 
           icon: BotMessageSquare, 
+          type: 'agent'
+        },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      },
+      // Clock Node (below agent)
+      {
+        id: 'clock',
+        type: 'custom',
+        position: { x: agentX, y: centerY + toolSpacing * 1.5 },
+        data: { 
+          id: 'clock',
+          label: '', 
+          icon: CalendarClock, 
           type: 'agent'
         },
         sourcePosition: Position.Right,
@@ -240,7 +314,35 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
       },
     };
 
+    const agentEdgeStyle = {
+      ...baseEdgeStyle,
+      style: {
+        ...baseEdgeStyle.style,
+        stroke: '#a855f7', // Purple for agent connections
+      },
+    };
+
     const edges: Edge[] = [
+      // Thinking (brain) to agent (bot) - vertical connection from bottom of brain to top of bot
+      {
+        id: 'thinking-agent',
+        source: 'thinking',
+        target: 'agent',
+        sourceHandle: 'bottom', // Use bottom handle from thinking
+        targetHandle: 'top', // Connect to top handle of bot
+        ...agentEdgeStyle,
+        type: 'straight',
+      },
+      // Agent (bot) to clock - vertical connection from bottom of bot to top of clock
+      {
+        id: 'agent-clock',
+        source: 'agent',
+        target: 'clock',
+        sourceHandle: 'bottom', // Use bottom handle of bot
+        targetHandle: 'top', // Connect to top handle of clock
+        ...agentEdgeStyle,
+        type: 'straight',
+      },
       // User to Input nodes
       {
         id: 'user-audio',
