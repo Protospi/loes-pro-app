@@ -15,7 +15,7 @@ import {
   ReactFlowProvider,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { User, BotMessageSquare, Calendar, FileText, HeartPulse, Database, Bookmark, Mic, Type, File, Brain, CalendarClock } from 'lucide-react';
+import { User, BotMessageSquare, Calendar, FileText, HeartPulse, Database, Save, Mic, Type, File, Brain, CalendarClock } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 
 // Custom Node Component
@@ -153,7 +153,7 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
     { name: '', icon: Calendar },
     { name: '', icon: Database },
     { name: '', icon:  HeartPulse},
-    { name: '', icon: Bookmark },
+    { name: '', icon: Save },
   ];
 
   const toolsToDisplay = tools && tools.length > 0 ? tools : defaultTools;
