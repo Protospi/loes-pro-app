@@ -64,7 +64,7 @@ export default function ServerView() {
             </h2>
           </div>
           <div className="flex-1 min-h-0 glass-chip rounded-xl overflow-hidden">
-            <div className="h-full overflow-y-auto scroll-smooth">
+            <div className="h-full overflow-y-auto scroll-smooth conversation-logs-scroll">
               <ConversationLogs />
             </div>
           </div>
