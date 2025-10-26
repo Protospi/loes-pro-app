@@ -1,59 +1,70 @@
 {
   "chat": {
-    "title": "Assistant Professionnel",
-    "subtitle": "Comment puis-je vous aider avec le travail de Pedro?",
+    "title": "Assistente Profissional",
+    "subtitle": "Como posso ajudar você com o trabalho do Pedro?",
     "sampleQuestions": [
-      "Parlez-moi de l'expérience professionnelle de Pedro.",
-      "Montrez-moi les projets récents de Pedro.",
-      "Quelles certifications Pedro possède-t-il?",
-      "Ajustez les compétences avec le fichier ou le texte de la description du travail.",
-      "Je veux programmer une réunion avec Pedro."
+      "Fale-me sobre a experiência profissional do Pedro.",
+      "Mostre-me os projetos recentes do Pedro.",
+      "Quais certificações o Pedro possui?",
+      "Associe as habilidades com a descrição do trabalho ou texto.",
+      "Eu quero agendar uma reunião com o Pedro."
     ],
     "suggestionChips": [
       {
-        "text": "Travail",
-        "query": "Parlez-moi de l'expérience professionnelle de Pedro."
+        "text": "Trabalho",
+        "query": "Fale-me sobre a experiência profissional do Pedro."
       },
       {
-        "text": "Projets",
-        "query": "En savoir plus sur les projets récents de Pedro."
+        "text": "Projetos",
+        "query": "Saiba mais sobre os projetos recentes do Pedro."
       },
       {
-        "text": "Certifications",
-        "query": "Quelles certifications Pedro possède-t-il?"
+        "text": "Certificações",
+        "query": "Quais certificações o Pedro possui?"
       },
       {
-        "text": "Compétences",
-        "query": "Cette compétence est-elle liée à la description du travail?"
+        "text": "Habilidades",
+        "query": "Essa habilidade está relacionada à descrição do trabalho?"
       },
       {
-        "text": "Réunion",
-        "query": "Souhaitez-vous programmer une réunion avec Pedro?"
+        "text": "Reunião",
+        "query": "Você gostaria de agendar uma reunião com o Pedro?"
       }
     ]
   },
   "language": {
-    "select": "Sélectionner la langue",
-    "detected": "Langue détectée : {{language}}"
+    "select": "Selecionar idioma",
+    "detected": "Idioma detectado: {{language}}"
   },
   "error": {
-    "api": "Désolé, il y a eu une erreur lors de la connexion au service. Veuillez réessayer plus tard."
+    "api": "Desculpe, houve um erro ao conectar ao serviço. Por favor, tente novamente mais tarde."
   },
   "input": {
-    "placeholder": "Écrivez votre message ici..."
+    "placeholder": "Digite sua mensagem aqui..."
   },
   "tooltips": {
-    "themeToggle": "Changer de thème",
-    "newConversation": "Nouvelle conversation",
-    "sendMessage": "Envoyer le message"
+    "themeToggle": "Mudar tema",
+    "newConversation": "Nova conversa",
+    "sendMessage": "Enviar mensagem"
   },
   "server": {
-    "title": "Vue du Serveur",
+    "title": "Visão do Servidor",
     "flowCanvas": {
-      "title": "Flux de l'Agent"
+      "title": "Fluxo do Agente"
     },
     "logs": {
-      "title": "Journaux de Conversation"
-    }
+      "title": "Registros de Conversa",
+      "loading": "Carregando registros de conversa..."
+    },
+    "playConversation": "Reproduzir Conversa",
+    "stopPlayback": "Parar Reprodução",
+    "noConversation": "Nenhuma Conversa Encontrada",
+    "noConversationDesc": "Não há conversas gravadas para reproduzir.",
+    "playbackStarted": "Reprodução Iniciada",
+    "playbackStartedDesc": "Reproduzindo eventos da conversa",
+    "playbackComplete": "Reprodução Completa",
+    "playbackCompleteDesc": "A reprodução da conversa foi finalizada",
+    "error": "Erro",
+    "errorDesc": "Falha ao carregar o fluxo da conversa"
   }
 }

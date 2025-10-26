@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
   User, 
@@ -20,6 +20,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+
+export interface ConversationLogsRef {
+  setActiveLogs: (indices: number[]) => void;
+  clearActiveLogs: () => void;
+}
 
 // Types for conversation log entries
 interface FunctionCall {
@@ -65,6 +70,8 @@ interface LogEntry {
 
 interface ConversationLogsProps {
   logs?: LogEntry[];
+  activeLogIndex?: number;
+  onLogsLoaded?: (count: number) => void;
 }
 
 // Mock data for demonstration
@@ -178,7 +185,7 @@ function JsonDisplay({ data }: { data: any }) {
   );
 }
 
-function UserMessage({ userContent, timestamp }: { userContent: UserContent; timestamp: string }) {
+function UserMessage({ userContent, timestamp, isActive }: { userContent: UserContent; timestamp: string; isActive?: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -202,7 +209,7 @@ function UserMessage({ userContent, timestamp }: { userContent: UserContent; tim
   };
 
   return (
-    <div className="glass-chip rounded-xl p-4">
+    <div className={`glass-chip rounded-xl p-4 transition-all duration-300 ${isActive ? 'ring-2 ring-yellow-400 shadow-lg shadow-yellow-400/50 scale-105' : ''}`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-start gap-3 w-full text-left"
@@ -281,11 +288,11 @@ function UserMessage({ userContent, timestamp }: { userContent: UserContent; tim
   );
 }
 
-function ThinkingSection({ steps, timestamp }: { steps: string[]; timestamp: string }) {
+function ThinkingSection({ steps, timestamp, isActive }: { steps: string[]; timestamp: string; isActive?: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="glass-chip rounded-xl p-4">
+    <div className={`glass-chip rounded-xl p-4 transition-all duration-300 ${isActive ? 'ring-2 ring-yellow-400 shadow-lg shadow-yellow-400/50 scale-105' : ''}`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-start gap-3 w-full text-left"
@@ -320,7 +327,7 @@ function ThinkingSection({ steps, timestamp }: { steps: string[]; timestamp: str
   );
 }
 
-function FunctionCallSection({ functionCall, timestamp }: { functionCall: FunctionCall; timestamp: string }) {
+function FunctionCallSection({ functionCall, timestamp, isActive }: { functionCall: FunctionCall; timestamp: string; isActive?: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -328,7 +335,7 @@ function FunctionCallSection({ functionCall, timestamp }: { functionCall: Functi
   });
 
   return (
-    <div className="glass-chip rounded-xl p-4 border-l-4 border-amber-500/50">
+    <div className={`glass-chip rounded-xl p-4 border-l-4 border-amber-500/50 transition-all duration-300 ${isActive ? 'ring-2 ring-yellow-400 shadow-lg shadow-yellow-400/50 scale-105' : ''}`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-start gap-3 w-full text-left"
@@ -362,7 +369,7 @@ function FunctionCallSection({ functionCall, timestamp }: { functionCall: Functi
   );
 }
 
-function FunctionResponseSection({ functionResponse, timestamp }: { functionResponse: FunctionResponse; timestamp: string }) {
+function FunctionResponseSection({ functionResponse, timestamp, isActive }: { functionResponse: FunctionResponse; timestamp: string; isActive?: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -370,7 +377,7 @@ function FunctionResponseSection({ functionResponse, timestamp }: { functionResp
   });
 
   return (
-    <div className={`glass-chip rounded-xl p-4 border-l-4 ${functionResponse.success ? 'border-emerald-500/50' : 'border-red-500/50'}`}>
+    <div className={`glass-chip rounded-xl p-4 border-l-4 ${functionResponse.success ? 'border-emerald-500/50' : 'border-red-500/50'} transition-all duration-300 ${isActive ? 'ring-2 ring-yellow-400 shadow-lg shadow-yellow-400/50 scale-105' : ''}`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-start gap-3 w-full text-left"
@@ -410,7 +417,7 @@ function FunctionResponseSection({ functionResponse, timestamp }: { functionResp
   );
 }
 
-function AssistantMessage({ assistantContent, timestamp }: { assistantContent: AssistantContent; timestamp: string }) {
+function AssistantMessage({ assistantContent, timestamp, isActive }: { assistantContent: AssistantContent; timestamp: string; isActive?: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -426,13 +433,13 @@ function AssistantMessage({ assistantContent, timestamp }: { assistantContent: A
   };
 
   return (
-    <div className="glass-chip rounded-xl p-4">
+    <div className={`glass-chip rounded-xl p-4 transition-all duration-300 ${isActive ? 'ring-2 ring-yellow-400 shadow-lg shadow-yellow-400/50 scale-105' : ''}`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-start gap-3 w-full text-left"
       >
-        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-          <BotMessageSquare className="w-4 h-4 text-blue-400" />
+        <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+          <BotMessageSquare className="w-4 h-4 text-purple-400" />
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -468,7 +475,7 @@ function AssistantMessage({ assistantContent, timestamp }: { assistantContent: A
           {assistantContent.text && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <FileText className="w-4 h-4 text-blue-400" />
+                <FileText className="w-4 h-4 text-purple-400" />
                 <span className="text-xs font-semibold text-muted-foreground">Response</span>
               </div>
               <p className="text-sm text-foreground leading-relaxed pl-6">{assistantContent.text}</p>
@@ -478,7 +485,7 @@ function AssistantMessage({ assistantContent, timestamp }: { assistantContent: A
           {assistantContent.audio && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Volume2 className="w-4 h-4 text-blue-400" />
+                <Volume2 className="w-4 h-4 text-purple-400" />
                 <span className="text-xs font-semibold text-muted-foreground">Audio Response</span>
               </div>
               <div className="pl-6">
@@ -495,8 +502,78 @@ function AssistantMessage({ assistantContent, timestamp }: { assistantContent: A
   );
 }
 
-export default function ConversationLogs({ logs = mockLogs }: ConversationLogsProps) {
+const ConversationLogs = forwardRef<ConversationLogsRef, ConversationLogsProps>(({ logs: providedLogs, activeLogIndex = -1, onLogsLoaded }, ref) => {
   const { t } = useTranslation();
+  const [logs, setLogs] = useState<LogEntry[]>(providedLogs || []);
+  const [isLoading, setIsLoading] = useState(!providedLogs);
+  const logRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndices, setActiveIndices] = useState<Set<number>>(new Set());
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    setActiveLogs: (indices: number[]) => {
+      setActiveIndices(new Set(indices));
+    },
+    clearActiveLogs: () => {
+      setActiveIndices(new Set());
+    }
+  }));
+
+  // Fetch logs from API if not provided
+  useEffect(() => {
+    if (!providedLogs) {
+      const fetchLogs = async () => {
+        try {
+          setIsLoading(true);
+          const response = await fetch('/api/conversation-logs');
+          if (response.ok) {
+            const data = await response.json();
+            setLogs(data.logs || []);
+            onLogsLoaded?.(data.logs?.length || 0);
+          }
+        } catch (error) {
+          console.error('Error fetching logs:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchLogs();
+    } else {
+      setLogs(providedLogs);
+      onLogsLoaded?.(providedLogs.length);
+    }
+  }, [providedLogs, onLogsLoaded]);
+
+  // Auto-scroll to active log
+  useEffect(() => {
+    if (activeLogIndex >= 0 && activeLogIndex < logs.length) {
+      const logId = logs[activeLogIndex]?.id;
+      const logElement = logRefs.current[logId];
+      
+      if (logElement && containerRef.current) {
+        // Scroll with smooth behavior and center alignment
+        logElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    }
+  }, [activeLogIndex, logs]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
+            {t('server.logs.loading', 'Loading conversation logs...')}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!logs || logs.length === 0) {
     return (
@@ -512,74 +589,95 @@ export default function ConversationLogs({ logs = mockLogs }: ConversationLogsPr
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 py-6">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-4 py-6">
       <div className="space-y-4">
-        {logs.map((log) => {
+        {logs.map((log, index) => {
+          const isActive = index === activeLogIndex || activeIndices.has(index);
+          let content = null;
+          
           switch (log.type) {
             case 'user_message':
-              return log.userContent ? (
+              content = log.userContent ? (
                 <UserMessage 
-                  key={log.id} 
                   userContent={log.userContent} 
-                  timestamp={log.timestamp} 
+                  timestamp={log.timestamp}
+                  isActive={isActive}
                 />
               ) : log.content ? (
                 // Fallback for legacy content structure
                 <UserMessage 
-                  key={log.id} 
                   userContent={{ text: log.content }}
-                  timestamp={log.timestamp} 
+                  timestamp={log.timestamp}
+                  isActive={isActive}
                 />
               ) : null;
+              break;
             
             case 'thinking':
-              return log.thinkingSteps ? (
+              content = log.thinkingSteps ? (
                 <ThinkingSection 
-                  key={log.id} 
                   steps={log.thinkingSteps} 
-                  timestamp={log.timestamp} 
+                  timestamp={log.timestamp}
+                  isActive={isActive}
                 />
               ) : null;
+              break;
             
             case 'function_call':
-              return log.functionCall ? (
+              content = log.functionCall ? (
                 <FunctionCallSection 
-                  key={log.id} 
                   functionCall={log.functionCall} 
-                  timestamp={log.timestamp} 
+                  timestamp={log.timestamp}
+                  isActive={isActive}
                 />
               ) : null;
+              break;
             
             case 'function_response':
-              return log.functionResponse ? (
+              content = log.functionResponse ? (
                 <FunctionResponseSection 
-                  key={log.id} 
                   functionResponse={log.functionResponse} 
-                  timestamp={log.timestamp} 
+                  timestamp={log.timestamp}
+                  isActive={isActive}
                 />
               ) : null;
+              break;
             
             case 'assistant_message':
-              return log.assistantContent ? (
+              content = log.assistantContent ? (
                 <AssistantMessage 
-                  key={log.id} 
                   assistantContent={log.assistantContent} 
-                  timestamp={log.timestamp} 
+                  timestamp={log.timestamp}
+                  isActive={isActive}
                 />
               ) : log.content ? (
                 // Fallback for legacy content structure
                 <AssistantMessage 
-                  key={log.id} 
                   assistantContent={{ text: log.content }}
-                  timestamp={log.timestamp} 
+                  timestamp={log.timestamp}
+                  isActive={isActive}
                 />
               ) : null;
+              break;
             
             default:
-              return null;
+              break;
           }
+          
+          return content ? (
+            <div 
+              key={log.id}
+              ref={(el) => { logRefs.current[log.id] = el; }}
+            >
+              {content}
+            </div>
+          ) : null;
         })}
       </div>
     </div>
   );
-}
+});
+
+ConversationLogs.displayName = 'ConversationLogs';
+
+export default ConversationLogs;

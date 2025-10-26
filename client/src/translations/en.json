@@ -72,8 +72,19 @@
     },
     "logs": {
       "title": "Conversation Logs",
-      "empty": "No conversation logs yet"
-    }
+      "empty": "No conversation logs yet",
+      "loading": "Loading conversation logs..."
+    },
+    "playConversation": "Play Conversation",
+    "stopPlayback": "Stop Playback",
+    "noConversation": "No Conversation Found",
+    "noConversationDesc": "There are no recorded conversations to play back.",
+    "playbackStarted": "Playback Started",
+    "playbackStartedDesc": "Playing back conversation events",
+    "playbackComplete": "Playback Complete",
+    "playbackCompleteDesc": "Conversation replay has finished",
+    "error": "Error",
+    "errorDesc": "Failed to load conversation flow"
   },
   "analytics": {
     "title": "Analytics View",

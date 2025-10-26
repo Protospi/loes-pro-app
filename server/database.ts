@@ -29,6 +29,13 @@ export interface Function {
     response?: Record<string, any>;
 }
 
+export interface Reasoning {
+    _id?: ObjectId;
+    createdAt: Date;
+    userId: ObjectId;
+    text: string;
+}
+
 const uri = process.env.MONGODB_URI;
 if (!uri) {
     throw new Error("MONGODB_URI is not set");
@@ -48,9 +55,10 @@ const db = client.db("glass-chat");
 const Users = db.collection<User>("users");
 const Messages = db.collection<Message>("messages");
 const Functions = db.collection<Function>("functions");
+const Reasonings = db.collection<Reasoning>("reasonings");
 
 // Export collections for direct access
-export { Users, Messages, Functions, client };
+export { Users, Messages, Functions, Reasonings, client };
 
 // Connect to MongoDB
 export async function connectToDatabase() {
@@ -150,6 +158,37 @@ export async function updateFunction(functionId: string, updateData: Partial<Fun
 
 export async function deleteFunction(functionId: string) {
     const result = await Functions.deleteOne({ _id: new ObjectId(functionId) });
+    return result;
+}
+
+// Reasoning CRUD Operations
+export async function createReasoning(reasoningData: Omit<Reasoning, '_id' | 'createdAt'>) {
+    const reasoning: Reasoning = {
+        ...reasoningData,
+        createdAt: new Date(),
+    };
+    const result = await Reasonings.insertOne(reasoning);
+    return result;
+}
+
+export async function getReasoning(reasoningId: string) {
+    return await Reasonings.findOne({ _id: new ObjectId(reasoningId) });
+}
+
+export async function getUserReasonings(userId: string) {
+    return await Reasonings.find({ userId: new ObjectId(userId) }).toArray();
+}
+
+export async function updateReasoning(reasoningId: string, updateData: Partial<Reasoning>) {
+    const result = await Reasonings.updateOne(
+        { _id: new ObjectId(reasoningId) },
+        { $set: updateData }
+    );
+    return result;
+}
+
+export async function deleteReasoning(reasoningId: string) {
+    const result = await Reasonings.deleteOne({ _id: new ObjectId(reasoningId) });
     return result;
 }
 

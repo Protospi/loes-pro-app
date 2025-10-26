@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect, useRef } from 'react';
+import { useCallback, useMemo, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import type { ComponentType } from 'react';
 import {
   ReactFlow,
@@ -18,6 +18,15 @@ import '@xyflow/react/dist/style.css';
 import { User, BotMessageSquare, Calendar, FileText, HeartPulse, Database, Save, Mic, Type, File, Brain, CalendarClock } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 
+export interface ConversationFlowItem {
+  type: 'message' | 'function' | 'reasoning';
+  createdAt: Date;
+  author?: string;
+  text?: string;
+  args?: any;
+  response?: any;
+}
+
 // Custom Node Component
 function CustomNode({ data }: { data: any }) {
   const Icon = data.icon;
@@ -28,6 +37,7 @@ function CustomNode({ data }: { data: any }) {
   const isBotNode = data.id === 'agent'; // The main bot/chatbot node
   const isThinkingNode = data.id === 'thinking'; // The brain node above bot
   const isClockNode = data.id === 'clock'; // The clock node below bot
+  const isActive = data.isActive || false; // Active state for animation
   const { theme } = useTheme();
   
   // Use darker colors for light theme, lighter colors for dark theme
@@ -48,7 +58,29 @@ function CustomNode({ data }: { data: any }) {
         ${isInput ? 'glass-chip border-2 border-gray-500/30' : ''}
       `}
     >
-      {/* Source handle for user, input nodes, and agent (but not thinking or clock) */}
+      {/* Left-side handles */}
+      {/* Target handle on left for receiving forward messages (not for user node) */}
+      {((isAgent && !isThinkingNode && !isClockNode) || isTool || isInput) && (
+        <Handle
+          type="target"
+          position={Position.Left}
+          id="left"
+          style={{ background: '#a855f7', border: '2px solid #ffffff' }}
+        />
+      )}
+      
+      {/* Source handle on left for sending backward messages (agent and input nodes) - same position as target */}
+      {(isInput || (isAgent && !isThinkingNode && !isClockNode)) && (
+        <Handle
+          type="source"
+          position={Position.Left}
+          id="left-source"
+          style={{ background: '#a855f7', border: '2px solid #ffffff' }}
+        />
+      )}
+      
+      {/* Right-side handles */}
+      {/* Source handle on right for sending forward messages */}
       {(isUser || (isAgent && !isThinkingNode && !isClockNode) || isInput) && (
         <Handle
           type="source"
@@ -58,13 +90,13 @@ function CustomNode({ data }: { data: any }) {
         />
       )}
       
-      {/* Target handle for agent, input nodes, and tools (but not thinking or clock) */}
-      {((isAgent && !isThinkingNode && !isClockNode) || isTool || isInput) && (
+      {/* Target handle on right for receiving backward messages (input nodes and user) - same position as source */}
+      {(isInput || isUser) && (
         <Handle
           type="target"
-          position={Position.Left}
-          id="left"
-          style={{ background: '#a855f7', border: '2px solid #ffffff' }}
+          position={Position.Right}
+          id="right-target"
+          style={{ background: '#3b82f6', border: '2px solid #ffffff' }}
         />
       )}
       
@@ -127,7 +159,12 @@ function CustomNode({ data }: { data: any }) {
         />
       </div>
       
-      {isAgent && (
+      {/* Active pulse animation */}
+      {isActive && (
+        <div className="absolute inset-0 rounded-xl border-2 border-yellow-400 animate-pulse shadow-lg shadow-yellow-400/50" />
+      )}
+      {/* Default agent pulse */}
+      {isAgent && !isActive && (
         <div className="absolute inset-0 rounded-xl border-2 border-purple-500/20 animate-pulse" />
       )}
     </div>
@@ -144,10 +181,16 @@ interface ReactFlowCanvasProps {
     description?: string;
     icon?: ComponentType;
   }>;
+  onPlaybackComplete?: () => void;
+}
+
+export interface ReactFlowCanvasRef {
+  playConversationFlow: (flow: ConversationFlowItem[]) => void;
+  stopPlayback: () => void;
 }
 
 // Inner component that uses useReactFlow for fitView control
-function FlowCanvas({ tools }: ReactFlowCanvasProps) {
+const FlowCanvas = forwardRef<ReactFlowCanvasRef, ReactFlowCanvasProps>(({ tools, onPlaybackComplete }, ref) => {
   // Default tools from tools.json if not provided
   const defaultTools = [
     { name: '', icon: Calendar },
@@ -158,6 +201,9 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
 
   const toolsToDisplay = tools && tools.length > 0 ? tools : defaultTools;
   const reactFlowInstance = useReactFlow();
+  const [activeNodes, setActiveNodes] = useState<Set<string>>(new Set());
+  const [activeEdges, setActiveEdges] = useState<Set<string>>(new Set());
+  const playbackTimeoutRef = useRef<NodeJS.Timeout[]>([]);
 
   // Create nodes with responsive positioning
   const createNodes = useCallback(() => {
@@ -348,18 +394,24 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
         id: 'user-audio',
         source: 'user',
         target: 'audio-input',
+        sourceHandle: 'right',
+        targetHandle: 'left',
         ...userEdgeStyle,
       },
       {
         id: 'user-text',
         source: 'user',
         target: 'text-input',
+        sourceHandle: 'right', // User's right handle
+        targetHandle: 'left',  // Text-input's left handle
         ...userEdgeStyle,
       },
       {
         id: 'user-document',
         source: 'user',
         target: 'document-input',
+        sourceHandle: 'right',
+        targetHandle: 'left',
         ...userEdgeStyle,
       },
       // Input nodes to Agent
@@ -367,19 +419,60 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
         id: 'audio-agent',
         source: 'audio-input',
         target: 'agent',
+        sourceHandle: 'right',
+        targetHandle: 'left',
         ...userEdgeStyle,
       },
       {
         id: 'text-agent',
         source: 'text-input',
         target: 'agent',
+        sourceHandle: 'right', // Text-input's right handle
+        targetHandle: 'left',  // Agent's left handle
         ...userEdgeStyle,
       },
       {
         id: 'document-agent',
         source: 'document-input',
         target: 'agent',
+        sourceHandle: 'right',
+        targetHandle: 'left',
         ...userEdgeStyle,
+      },
+      
+      // Reverse edges for assistant responses (completely hidden by default)
+      // These edges flow BACKWARD: agent -> text-input -> user
+      {
+        id: 'agent-text-response',
+        source: 'agent',
+        target: 'text-input',
+        sourceHandle: 'left-source',  // Agent sends from left-source (going backward toward text-input)
+        targetHandle: 'right-target', // Text-input receives on right side
+        animated: false,
+        hidden: true, // Completely hidden
+        style: {
+          strokeWidth: 0,
+          strokeOpacity: 0,
+          stroke: '#a855f7',
+          display: 'none',
+        },
+        type: 'default',
+      },
+      {
+        id: 'text-user-response',
+        source: 'text-input',
+        target: 'user',
+        sourceHandle: 'left-source',  // Text-input sends from left (going left toward user)
+        targetHandle: 'right-target', // User receives on right side
+        animated: false,
+        hidden: true, // Completely hidden
+        style: {
+          strokeWidth: 0,
+          strokeOpacity: 0,
+          stroke: '#a855f7',
+          display: 'none',
+        },
+        type: 'default',
       },
     ];
 
@@ -389,6 +482,8 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
         id: `agent-tool-${index}`,
         source: 'agent',
         target: `tool-${index}`,
+        sourceHandle: 'right', // Explicitly use right handle for tool connections
+        targetHandle: 'left',
         animated: true,
         style: { 
           stroke: '#a855f7',
@@ -403,11 +498,320 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
   }, [toolsToDisplay]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const fitViewTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle window resize to reposition nodes and re-center
+  // Expose playback methods via ref
+  useImperativeHandle(ref, () => ({
+    playConversationFlow: (flow: ConversationFlowItem[]) => {
+      console.log('🎬 Starting conversation flow playback with', flow.length, 'items');
+      
+      // Clear any existing playback
+      playbackTimeoutRef.current.forEach(clearTimeout);
+      playbackTimeoutRef.current = [];
+      setActiveNodes(new Set());
+      setActiveEdges(new Set());
+      
+      // Animate each step with 2 second interval
+      flow.forEach((item, index) => {
+        const timeout = setTimeout(() => {
+          console.log(`🎯 Step ${index + 1}:`, item.type, item);
+          
+          // Determine which nodes and edges to activate based on item type
+          let nodesToActivate: string[] = [];
+          let edgesToActivate: string[] = [];
+          
+          if (item.type === 'message') {
+            if (item.author === 'user') {
+              // User message: user -> text-input -> agent
+              nodesToActivate = ['user', 'text-input', 'agent'];
+              edgesToActivate = ['user-text', 'text-agent'];
+            } else if (item.author === 'assistant') {
+              // Assistant message: First highlight agent, then animate backward
+              // Stage 1: Just highlight the agent node (no edges yet)
+              nodesToActivate = ['agent'];
+              edgesToActivate = [];
+              
+              // Stage 2: After 500ms, start the backward animation to text-input and user
+              const backwardAnimTimeout = setTimeout(() => {
+                setNodes(prevNodes => 
+                  prevNodes.map(node => ({
+                    ...node,
+                    data: {
+                      ...node.data,
+                      isActive: ['agent', 'text-input', 'user'].includes(node.id)
+                    }
+                  }))
+                );
+                
+                // Show and animate the backward edges
+                setEdges(prevEdges =>
+                  prevEdges.map(edge => {
+                    const isResponseEdge = edge.id === 'agent-text-response' || edge.id === 'text-user-response';
+                    const isForwardTextEdge = edge.id === 'user-text' || edge.id === 'text-agent';
+                    
+                    if (isResponseEdge) {
+                      // Show and animate backward edges
+                      return {
+                        ...edge,
+                        animated: true,
+                        hidden: false,
+                        style: {
+                          stroke: '#a855f7',
+                          strokeWidth: 6,
+                          strokeOpacity: 1,
+                          display: undefined,
+                        }
+                      };
+                    } else if (isForwardTextEdge) {
+                      // Hide forward edges during backward animation
+                      return {
+                        ...edge,
+                        animated: false,
+                        hidden: true,
+                        style: {
+                          strokeWidth: 0,
+                          strokeOpacity: 0,
+                          display: 'none',
+                        }
+                      };
+                    }
+                    return edge;
+                  })
+                );
+              }, 500);
+              
+              playbackTimeoutRef.current.push(backwardAnimTimeout);
+            }
+          } else if (item.type === 'reasoning') {
+            // Reasoning: thinking node
+            nodesToActivate = ['thinking', 'agent'];
+            edgesToActivate = ['thinking-agent'];
+          } else if (item.type === 'function') {
+            // Function call: agent -> tool (determine which tool based on function name)
+            const functionName = item.args?.name || '';
+            nodesToActivate = ['agent'];
+            edgesToActivate = [];
+            
+            // Map function to tool node
+            const toolMapping: Record<string, number> = {
+              'schedule_meeting': 0,
+              'find_available_slots': 0,
+              'create_event': 0,
+              'save_to_storage': 1,
+              'get_from_storage': 1,
+              'query_database': 1,
+              'check_vitals': 2,
+              'monitor_health': 2,
+              'save_document': 3,
+              'load_document': 3,
+            };
+            
+            const toolIndex = toolMapping[functionName] ?? 0;
+            nodesToActivate.push(`tool-${toolIndex}`);
+            edgesToActivate.push(`agent-tool-${toolIndex}`);
+          }
+          
+          // Update active nodes
+          setNodes(prevNodes => 
+            prevNodes.map(node => ({
+              ...node,
+              data: {
+                ...node.data,
+                isActive: nodesToActivate.includes(node.id)
+              }
+            }))
+          );
+          
+          // Update active edges with animation direction
+          setEdges(prevEdges =>
+            prevEdges.map(edge => {
+              const isActive = edgesToActivate.includes(edge.id);
+              const isResponseEdge = edge.id === 'agent-text-response' || edge.id === 'text-user-response';
+              const isForwardTextEdge = edge.id === 'user-text' || edge.id === 'text-agent';
+              const responseEdgesActive = edgesToActivate.includes('agent-text-response') || edgesToActivate.includes('text-user-response');
+              
+              if (isResponseEdge) {
+                // Response edges: show and animate when active, hide when not
+                // Use purple color for assistant responses
+                return {
+                  ...edge,
+                  animated: isActive, // Animate when active
+                  hidden: !isActive,   // Show only when active
+                  style: {
+                    stroke: '#a855f7', // Purple for assistant
+                    strokeWidth: isActive ? 6 : 0,
+                    strokeOpacity: isActive ? 1 : 0,
+                    display: isActive ? undefined : 'none',
+                  }
+                };
+              } else if (isForwardTextEdge && responseEdgesActive) {
+                // Completely hide forward text edges when response edges are active
+                // This prevents visual overlap and confusion
+                return {
+                  ...edge,
+                  animated: false,
+                  hidden: true,
+                  style: {
+                    strokeWidth: 0,
+                    strokeOpacity: 0,
+                    display: 'none',
+                  }
+                };
+              } else {
+                // Regular edges: always visible, animate when active
+                return {
+                  ...edge,
+                  animated: isActive,
+                  style: {
+                    ...edge.style,
+                    strokeWidth: isActive ? 6 : 4,
+                    strokeOpacity: 1,
+                  }
+                };
+              }
+            })
+          );
+          
+          // Clear active state after 1.5 seconds (leaving 0.5s before next step)
+          const clearTimeout_id = setTimeout(() => {
+            setNodes(prevNodes => 
+              prevNodes.map(node => ({
+                ...node,
+                data: {
+                  ...node.data,
+                  isActive: false
+                }
+              }))
+            );
+            
+            // Hide response edges and restore forward edges after animation
+            setEdges(prevEdges =>
+              prevEdges.map(edge => {
+                const isResponseEdge = edge.id === 'agent-text-response' || edge.id === 'text-user-response';
+                const isForwardTextEdge = edge.id === 'user-text' || edge.id === 'text-agent';
+                
+                if (isResponseEdge) {
+                  // Hide response edges
+                  return {
+                    ...edge,
+                    animated: false,
+                    hidden: true,
+                    style: {
+                      ...edge.style,
+                      strokeWidth: 0,
+                      strokeOpacity: 0,
+                      display: 'none',
+                    }
+                  };
+                } else if (isForwardTextEdge) {
+                  // Restore forward text edges to normal state
+                  return {
+                    ...edge,
+                    animated: true,
+                    hidden: false,
+                    style: {
+                      ...edge.style,
+                      strokeWidth: 4,
+                      strokeOpacity: 1,
+                      display: undefined,
+                    }
+                  };
+                }
+                return edge;
+              })
+            );
+          }, 1500);
+          
+          playbackTimeoutRef.current.push(clearTimeout_id);
+          
+          // If this is the last item, restore original state and call onPlaybackComplete
+          if (index === flow.length - 1) {
+            const completeTimeout = setTimeout(() => {
+              console.log('✅ Playback complete - restoring original state');
+              
+              // Restore all edges to original animated state
+              setEdges(initialEdges);
+              
+              // Clear active nodes
+              setNodes(prevNodes => 
+                prevNodes.map(node => ({
+                  ...node,
+                  data: {
+                    ...node.data,
+                    isActive: false
+                  }
+                }))
+              );
+              
+              onPlaybackComplete?.();
+            }, 2000);
+            playbackTimeoutRef.current.push(completeTimeout);
+          }
+        }, index * 2000); // 2 second interval between steps
+        
+        playbackTimeoutRef.current.push(timeout);
+      });
+    },
+    stopPlayback: () => {
+      console.log('⏹️ Stopping playback');
+      playbackTimeoutRef.current.forEach(clearTimeout);
+      playbackTimeoutRef.current = [];
+      setActiveNodes(new Set());
+      setActiveEdges(new Set());
+      
+      // Reset all nodes
+      setNodes(prevNodes => 
+        prevNodes.map(node => ({
+          ...node,
+          data: {
+            ...node.data,
+            isActive: false
+          }
+        }))
+      );
+      
+      // Restore all edges to original animated state
+      setEdges(initialEdges);
+    }
+  }));
+
+  // Initial fitView only once when mounted
   useEffect(() => {
+    // Clear any pending timeout
+    if (fitViewTimeoutRef.current) {
+      clearTimeout(fitViewTimeoutRef.current);
+    }
+    
+    // Single fitView call after mount
+    fitViewTimeoutRef.current = setTimeout(() => {
+      const isMobile = window.innerWidth < 768;
+      const padding = isMobile ? 0.3 : 0.2;
+      reactFlowInstance.fitView({ 
+        padding,
+        duration: 800,
+        maxZoom: 1.2,
+      });
+    }, 150);
+
+    return () => {
+      if (fitViewTimeoutRef.current) {
+        clearTimeout(fitViewTimeoutRef.current);
+      }
+    };
+  }, [reactFlowInstance]);
+
+  // Handle window resize to reposition nodes
+  useEffect(() => {
+    let resizeTimeout: NodeJS.Timeout;
+    
     const handleResize = () => {
+      // Clear any pending timeouts
+      if (fitViewTimeoutRef.current) {
+        clearTimeout(fitViewTimeoutRef.current);
+      }
+      clearTimeout(resizeTimeout);
+      
       const isMobile = window.innerWidth < 768;
       const padding = isMobile ? 0.3 : 0.2;
       
@@ -415,23 +819,19 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
       const newNodes = createNodes();
       setNodes(newNodes);
       
-      // Use setTimeout to ensure ReactFlow has rendered with new positions
-      setTimeout(() => {
+      // Debounced fitView after resize
+      fitViewTimeoutRef.current = setTimeout(() => {
         reactFlowInstance.fitView({ 
           padding,
-          duration: 200,
+          duration: 400,
+          maxZoom: 1.2,
         });
-      }, 100);
+      }, 200);
     };
 
-    // Initial fit
-    handleResize();
-
-    // Add resize listener with debounce
-    let resizeTimeout: NodeJS.Timeout;
     const debouncedResize = () => {
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(handleResize, 150);
+      resizeTimeout = setTimeout(handleResize, 250);
     };
 
     window.addEventListener('resize', debouncedResize);
@@ -439,8 +839,19 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
     return () => {
       window.removeEventListener('resize', debouncedResize);
       clearTimeout(resizeTimeout);
+      if (fitViewTimeoutRef.current) {
+        clearTimeout(fitViewTimeoutRef.current);
+      }
     };
-  }, [reactFlowInstance, createNodes, setNodes]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reactFlowInstance]);
+
+  // Cleanup playback on unmount
+  useEffect(() => {
+    return () => {
+      playbackTimeoutRef.current.forEach(clearTimeout);
+    };
+  }, []);
 
   return (
     <ReactFlow
@@ -449,11 +860,10 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       nodeTypes={nodeTypes}
-      fitView
-      fitViewOptions={{ padding: 0.2, maxZoom: 1.2 }}
       zoomOnScroll={false}
       zoomOnPinch={false}
       zoomOnDoubleClick={false}
+      panOnDrag={true}
       minZoom={0.5}
       maxZoom={1.5}
       proOptions={{ hideAttribution: true }}
@@ -475,15 +885,19 @@ function FlowCanvas({ tools }: ReactFlowCanvasProps) {
       />
     </ReactFlow>
   );
-}
+});
 
 // Main component wrapped with ReactFlowProvider
-export default function ReactFlowCanvas({ tools }: ReactFlowCanvasProps) {
+const ReactFlowCanvas = forwardRef<ReactFlowCanvasRef, ReactFlowCanvasProps>(({ tools, onPlaybackComplete }, ref) => {
   return (
     <div className="w-full h-full relative rounded-xl glass-chip" style={{ overflow: 'visible' }}>
       <ReactFlowProvider>
-        <FlowCanvas tools={tools} />
+        <FlowCanvas tools={tools} onPlaybackComplete={onPlaybackComplete} ref={ref} />
       </ReactFlowProvider>
     </div>
   );
-}
+});
+
+ReactFlowCanvas.displayName = 'ReactFlowCanvas';
+
+export default ReactFlowCanvas;

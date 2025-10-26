@@ -182,9 +182,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`  ${i + 1}. [${msg.role}]: ${msg.content.substring(0, 50)}...`);
       });
       
+      // Get userId for reasoning storage
+      const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
+      const userId = await getOrCreateUserByIP(userIP);
+      
       // Generate AI response using the engine
       console.log('🚀 Calling engine with transcribed text:', transcribedText);
-      const engineResult = await aiEngine.run(transcribedText.text, engineInput);
+      const engineResult = await aiEngine.run(transcribedText.text, engineInput, undefined, userId);
       
       // Extract the AI response from engine result
       // The engine returns the conversation array, find the last assistant message
@@ -205,9 +209,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isUser: false,
       });
       
-      // Mirror to MongoDB (don't block the response)
-      const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
-      getOrCreateUserByIP(userIP).then(userId => {
+      // Mirror to MongoDB (don't block the response, reusing userId from above)
+      Promise.resolve(userId).then(userId => {
         // Persist user's transcribed message
         db.createMessage({
           userId,
@@ -406,6 +409,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`  ${i + 1}. ${msg.isUser ? 'User' : 'Assistant'}: ${msg.content.substring(0, 50)}...`);
       });
       
+      // Get userId for reasoning storage
+      const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
+      const userId = await getOrCreateUserByIP(userIP);
+      
       // Generate AI response using the engine
       // If fileId is provided, we need to modify the engine input to include file information
       let engineResult;
@@ -414,9 +421,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // For now, we'll add file information to the user message
         // The engine will need to be updated to handle file content in the future
         const fileMessage = `[File attached: ${fileId}] ${content}`;
-        engineResult = await aiEngine.run(fileMessage, engineInput);
+        engineResult = await aiEngine.run(fileMessage, engineInput, fileId, userId);
       } else {
-        engineResult = await aiEngine.run(content, engineInput);
+        engineResult = await aiEngine.run(content, engineInput, undefined, userId);
       }
       
       // Extract the AI response from engine result
@@ -439,9 +446,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       console.log('🤖 AI response saved:', responseText.substring(0, 100) + '...');
       
-      // Mirror AI response to MongoDB (don't block the response)
-      const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
-      getOrCreateUserByIP(userIP).then(userId => {
+      // Mirror AI response to MongoDB (don't block the response, reusing userId from above)
+      Promise.resolve(userId).then(userId => {
         db.createMessage({
           userId,
           text: responseText,
@@ -836,6 +842,186 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get conversation flow for current user
+  app.get("/api/conversation-flow", async (req, res) => {
+    try {
+      const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
+      const userId = await getOrCreateUserByIP(userIP);
+      
+      // Fetch all data for this user
+      const messages = await db.getUserMessages(userId.toString());
+      const functions = await db.getUserFunctions(userId.toString());
+      const reasonings = await db.getUserReasonings(userId.toString());
+      
+      // Combine and sort by createdAt
+      const conversationFlow = [
+        ...messages.map(m => ({ ...m, type: 'message', createdAt: m.createdAt })),
+        ...functions.map(f => ({ ...f, type: 'function', createdAt: f.createdAt })),
+        ...reasonings.map(r => ({ ...r, type: 'reasoning', createdAt: r.createdAt }))
+      ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      
+      res.json({ conversationFlow, userId: userId.toString() });
+    } catch (error) {
+      console.error("Get conversation flow error:", error);
+      res.status(500).json({ error: "Failed to get conversation flow" });
+    }
+  });
+
+  // Get formatted conversation logs for display
+  app.get("/api/conversation-logs", async (req, res) => {
+    try {
+      const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
+      const userId = await getOrCreateUserByIP(userIP);
+      
+      // Fetch all data for this user
+      const messages = await db.getUserMessages(userId.toString());
+      const functions = await db.getUserFunctions(userId.toString());
+      const reasonings = await db.getUserReasonings(userId.toString());
+      
+      // Format logs for the ConversationLogs component
+      const logs: Array<{
+        id: string;
+        timestamp: string;
+        type: string;
+        userContent?: any;
+        assistantContent?: any;
+        thinkingSteps?: string[];
+        functionCall?: any;
+        functionResponse?: any;
+      }> = [];
+      
+      // Combine all events and sort by createdAt
+      const allEvents = [
+        ...messages.map(m => ({ ...m, eventType: 'message', createdAt: m.createdAt })),
+        ...functions.map(f => ({ ...f, eventType: 'function', createdAt: f.createdAt })),
+        ...reasonings.map(r => ({ ...r, eventType: 'reasoning', createdAt: r.createdAt }))
+      ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      
+      // Transform to log format
+      allEvents.forEach((event, index) => {
+        if (event.eventType === 'message') {
+          const msg: any = event;
+          if (msg.author === 'user') {
+            logs.push({
+              id: `msg-${msg._id}`,
+              timestamp: msg.createdAt.toISOString(),
+              type: 'user_message',
+              userContent: {
+                text: msg.text
+              }
+            });
+          } else if (msg.author === 'assistant') {
+            logs.push({
+              id: `msg-${msg._id}`,
+              timestamp: msg.createdAt.toISOString(),
+              type: 'assistant_message',
+              assistantContent: {
+                text: msg.text
+              }
+            });
+          }
+        } else if (event.eventType === 'reasoning') {
+          const reasoning: any = event;
+          // Parse reasoning text into steps if it's formatted as a list
+          const steps = reasoning.text.split('\n').filter((line: string) => line.trim().length > 0);
+          logs.push({
+            id: `reasoning-${reasoning._id}`,
+            timestamp: reasoning.createdAt.toISOString(),
+            type: 'thinking',
+            thinkingSteps: steps
+          });
+        } else if (event.eventType === 'function') {
+          const func: any = event;
+          // Function call
+          logs.push({
+            id: `func-call-${func._id}`,
+            timestamp: func.createdAt.toISOString(),
+            type: 'function_call',
+            functionCall: {
+              name: func.args?.name || 'unknown',
+              arguments: func.args?.arguments || func.args || {}
+            }
+          });
+          
+          // Function response (if available)
+          if (func.response) {
+            logs.push({
+              id: `func-response-${func._id}`,
+              timestamp: new Date(new Date(func.createdAt).getTime() + 100).toISOString(), // Slightly after call
+              type: 'function_response',
+              functionResponse: {
+                name: func.args?.name || 'unknown',
+                success: !func.response.error,
+                output: func.response.output,
+                error: func.response.error
+              }
+            });
+          }
+        }
+      });
+      
+      res.json({ logs, userId: userId.toString() });
+    } catch (error) {
+      console.error("Get conversation logs error:", error);
+      res.status(500).json({ error: "Failed to get conversation logs" });
+    }
+  });
+
+  // Reasoning Routes
+  app.post("/api/analytics/reasonings", async (req, res) => {
+    try {
+      const { userId, text } = req.body;
+      const result = await db.createReasoning({ userId: new ObjectId(userId), text });
+      res.json(result);
+    } catch (error) {
+      console.error("Create reasoning error:", error);
+      res.status(500).json({ error: "Failed to create reasoning" });
+    }
+  });
+
+  app.get("/api/analytics/reasonings/:id", async (req, res) => {
+    try {
+      const reasoning = await db.getReasoning(req.params.id);
+      if (!reasoning) {
+        return res.status(404).json({ error: "Reasoning not found" });
+      }
+      res.json(reasoning);
+    } catch (error) {
+      console.error("Get reasoning error:", error);
+      res.status(500).json({ error: "Failed to get reasoning" });
+    }
+  });
+
+  app.get("/api/analytics/reasonings/user/:userId", async (req, res) => {
+    try {
+      const reasonings = await db.getUserReasonings(req.params.userId);
+      res.json(reasonings);
+    } catch (error) {
+      console.error("Get user reasonings error:", error);
+      res.status(500).json({ error: "Failed to get user reasonings" });
+    }
+  });
+
+  app.put("/api/analytics/reasonings/:id", async (req, res) => {
+    try {
+      const result = await db.updateReasoning(req.params.id, req.body);
+      res.json(result);
+    } catch (error) {
+      console.error("Update reasoning error:", error);
+      res.status(500).json({ error: "Failed to update reasoning" });
+    }
+  });
+
+  app.delete("/api/analytics/reasonings/:id", async (req, res) => {
+    try {
+      const result = await db.deleteReasoning(req.params.id);
+      res.json(result);
+    } catch (error) {
+      console.error("Delete reasoning error:", error);
+      res.status(500).json({ error: "Failed to delete reasoning" });
+    }
+  });
+
   // Test Routes for Creating Sample Documents
   app.post("/api/analytics/test/create-samples", async (req, res) => {
     try {
@@ -860,10 +1046,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         response: { status: "success", result: "test completed" }
       });
 
+      // Create a test reasoning
+      const reasoningResult = await db.createReasoning({
+        userId: userResult.insertedId,
+        text: "**Testing reasoning summary**\n\nThis is a test reasoning summary to verify the reasoning collection is working correctly. The AI assistant analyzed the user's request and determined that a simple response would be most appropriate."
+      });
+
       res.json({
         user: userResult,
         message: messageResult,
-        function: functionResult
+        function: functionResult,
+        reasoning: reasoningResult
       });
     } catch (error) {
       console.error("Create test samples error:", error);
