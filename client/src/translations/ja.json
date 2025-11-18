@@ -39,5 +39,10 @@
   "language": {
     "select": "言語を選択",
     "detected": "検出された言語：{{language}}"
+  },
+  "input": {
+    "placeholder": "メッセージを入力...",
+    "recording": "録音中... 離して送信",
+    "transcribing": "文字起こし中..."
   }
 } 

@@ -1,3 +1,4 @@
+
 import { useState, useRef, useImperativeHandle, forwardRef, useEffect, useCallback } from "react";
 import { ArrowUp, Mic, Square, Download, Upload, FileInput, FileCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -157,14 +158,12 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
       }
 
       const data = await response.json();
+      console.log('✅ Transcription complete:', data.transcribedText);
       
-      // Since the server already saved both messages, we need to trigger
-      // a refresh of the chat interface without going through the normal flow
-      // We'll use a custom event or callback to notify the parent component
-      if (window.dispatchEvent) {
-        window.dispatchEvent(new CustomEvent('audioTranscriptionComplete', {
-          detail: { transcribedText: data.transcribedText }
-        }));
+      // Send the transcribed text as a normal message
+      // This will trigger the typing indicator and normal message flow
+      if (data.transcribedText && data.transcribedText.trim()) {
+        onSendMessage(data.transcribedText.trim());
       }
       
     } catch (error) {
@@ -175,16 +174,53 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
     }
   };
 
-  const handleMicPress = () => {
+  const handleMicPress = (e: React.PointerEvent) => {
+    console.log('🎤 Mic Press - isRecording:', isRecording, 'isTranscribing:', isTranscribing);
+    e.preventDefault(); // Prevent default behaviors
+    e.stopPropagation(); // Stop event bubbling
+    
     if (!isRecording && !isTranscribing) {
+      // Capture the pointer to track it even if it moves outside the button
+      const target = e.currentTarget as HTMLElement;
+      if (target && target.setPointerCapture) {
+        try {
+          target.setPointerCapture(e.pointerId);
+          console.log('✅ Pointer captured:', e.pointerId);
+        } catch (err) {
+          console.log('❌ Pointer capture not available:', err);
+        }
+      }
+      
+      console.log('🎙️ Starting recording...');
       startRecording();
     }
   };
 
-  const handleMicRelease = () => {
+  const handleMicRelease = (e: React.PointerEvent) => {
+    console.log('🛑 Mic Release - isRecording:', isRecording);
+    e.preventDefault(); // Prevent default behaviors
+    e.stopPropagation(); // Stop event bubbling
+    
+    // Release pointer capture
+    const target = e.currentTarget as HTMLElement;
+    if (target && target.releasePointerCapture) {
+      try {
+        target.releasePointerCapture(e.pointerId);
+        console.log('✅ Pointer released:', e.pointerId);
+      } catch (err) {
+        // Pointer might not be captured, ignore
+      }
+    }
+    
     if (isRecording) {
+      console.log('⏹️ Stopping recording...');
       stopRecording();
     }
+  };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    // Prevent context menu on long press (especially on mobile)
+    e.preventDefault();
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,7 +274,8 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.code === 'Escape' && isRecording) {
-        handleMicRelease();
+        e.preventDefault();
+        stopRecording();
       }
     };
 
@@ -341,32 +378,38 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
               
               {/* Center - Microphone button */}
               <div className="flex items-center space-x-2">
-                <Button
+                <button
                   type="button"
-                  onMouseDown={handleMicPress}
-                  onMouseUp={handleMicRelease}
-                  onMouseLeave={handleMicRelease}
-                  onTouchStart={handleMicPress}
-                  onTouchEnd={handleMicRelease}
+                  onPointerDown={handleMicPress}
+                  onPointerUp={handleMicRelease}
+                  onPointerLeave={handleMicRelease}
+                  onPointerCancel={handleMicRelease}
+                  onContextMenu={handleContextMenu}
                   disabled={isLoading || isTranscribing}
-                  className={`transition-all duration-200 group bg-transparent border-0 p-2 rounded-full ${
-                    isRecording ? 'bg-red-500/20 hover:bg-red-500/30' : 'hover:bg-red-500/20'
+                  className={`transition-all duration-200 group bg-transparent border-0 p-2 rounded-full touch-none select-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                    isRecording ? 'bg-red-500/20 hover:bg-red-500/30' : isTranscribing ? 'bg-blue-500/20' : 'hover:bg-red-500/20'
                   }`}
                   title="Hold to record audio"
                   data-testid="button-mic"
+                  style={{ WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}
                 >
                   {isTranscribing ? (
-                    <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" style={{width: '20px', height: '20px'}} />
+                    <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin pointer-events-none" style={{width: '20px', height: '20px'}} />
                   ) : isRecording ? (
-                    <Square className="w-6 h-6 text-red-400 group-hover:text-red-300 transition-colors" style={{width: '20px', height: '20px'}} />
+                    <Square className="w-6 h-6 text-red-400 group-hover:text-red-300 transition-colors pointer-events-none" style={{width: '20px', height: '20px'}} />
                   ) : (
-                    <Mic className="w-6 h-6 text-gray-700 dark:text-muted-foreground group-hover:text-red-400 group-hover:scale-110 transition" style={{width: '18px', height: '18px'}} />
+                    <Mic className="w-6 h-6 text-gray-700 dark:text-muted-foreground group-hover:text-red-400 group-hover:scale-110 transition pointer-events-none" style={{width: '18px', height: '18px'}} />
                   )}
-                </Button>
-                {/* Recording hint */}
+                </button>
+                {/* Status messages */}
                 {isRecording && (
                   <span className="text-xs text-red-400 ml-2 animate-pulse">
-                    Recording... Release to send
+                    {t('input.recording')}
+                  </span>
+                )}
+                {isTranscribing && !isRecording && (
+                  <span className="text-xs text-blue-400 ml-2">
+                    {t('input.transcribing')}
                   </span>
                 )}
               </div>

@@ -39,5 +39,10 @@
   "language": {
     "select": "Sélectionner la Langue",
     "detected": "Langue détectée : {{language}}"
+  },
+  "input": {
+    "placeholder": "Tapez votre message...",
+    "recording": "Enregistrement... Relâchez pour envoyer",
+    "transcribing": "Transcription..."
   }
 } 

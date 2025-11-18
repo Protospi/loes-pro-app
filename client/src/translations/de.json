@@ -39,5 +39,10 @@
   "language": {
     "select": "Sprache auswählen",
     "detected": "Erkannte Sprache: {{language}}"
+  },
+  "input": {
+    "placeholder": "Geben Sie Ihre Nachricht ein...",
+    "recording": "Aufnahme... Loslassen zum Senden",
+    "transcribing": "Transkribieren..."
   }
 } 

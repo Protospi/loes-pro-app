@@ -61,6 +61,11 @@
     "analytics": "Analytics", 
     "theme": "Theme"
   },
+  "input": {
+    "placeholder": "Type your message...",
+    "recording": "Recording... Release to send",
+    "transcribing": "Transcribing..."
+  },
   "server": {
     "title": "Server View",
     "emptyState": {

@@ -49,5 +49,10 @@
   },
   "error": {
     "api": "Lo siento, hubo un error al conectar con el servicio. Por favor, inténtalo de nuevo más tarde."
+  },
+  "input": {
+    "placeholder": "Escribe tu mensaje...",
+    "recording": "Grabando... Suelta para enviar",
+    "transcribing": "Transcribiendo..."
   }
 } 

@@ -148,124 +148,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Clean up the temporary file
       fs.unlinkSync(req.file.path);
       
-      // Save the transcribed message as user input FIRST
-      console.log('💾 About to save transcribed message:', transcribedText);
-      const userMessage = await storage.createMessage({
-        content: transcribedText.text,
-        isUser: true,
-      });
-      console.log('✅ User message saved with ID:', userMessage.id);
+      console.log('✅ Audio transcription completed:', transcribedText.text);
       
-      // Verify the message was saved by fetching it back
-      const verifyMessages = await storage.getMessages();
-      const savedUserMessage = verifyMessages.find(msg => msg.id === userMessage.id);
-      console.log('🔍 Verification - User message found in storage:', !!savedUserMessage);
-      
-      // Get conversation history for context AFTER saving the user message
-      const messages = await storage.getMessages();
-      console.log('📚 Total messages in history (audio):', messages.length);
-      console.log('🎤 Processing transcribed message:', transcribedText);
-      
-      // Convert conversation history to engine format (now includes the user's transcribed message)
-      const engineInput = convertHistoryToEngineFormat(messages);
-      console.log('🔄 Engine input length (audio):', engineInput.length);
-      
-      // Debug: Show recent conversation history
-      console.log('📜 Recent conversation history (audio):');
-      messages.slice(-5).forEach((msg, i) => {
-        console.log(`  ${i + 1}. ${msg.isUser ? 'User' : 'Assistant'}: ${msg.content.substring(0, 50)}...`);
-      });
-      
-      // Debug: Show what we're passing to the engine
-      console.log('🔧 Engine input preview:');
-      engineInput.slice(-3).forEach((msg, i) => {
-        console.log(`  ${i + 1}. [${msg.role}]: ${msg.content.substring(0, 50)}...`);
-      });
-      
-      // Get userId for reasoning storage
-      const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
-      const userId = await getOrCreateUserByIP(userIP);
-      
-      // Generate AI response using the engine
-      console.log('🚀 Calling engine with transcribed text:', transcribedText);
-      const engineResult = await aiEngine.run(transcribedText.text, engineInput, undefined, userId);
-      
-      // Extract the AI response from engine result
-      // The engine returns the conversation array, find the last assistant message
-      const lastAssistantMessage = engineResult
-        .filter((msg: any) => msg.role === "assistant")
-        .pop();
-      
-      // Debug the message structure
-      console.log('🔍 Debug - Last assistant message (audio):', JSON.stringify(lastAssistantMessage, null, 2));
-      
-      // Extract the actual text content
-      const aiResponse = lastAssistantMessage?.content || "I apologize, but I couldn't generate a response at the moment.";
-      
-      // Save the AI response as a message
-      console.log('🤖 AI response to save (audio):', aiResponse.substring(0, 100) + '...');
-      const responseMessage = await storage.createMessage({
-        content: aiResponse,
-        isUser: false,
-      });
-      
-      // Mirror to MongoDB (don't block the response, reusing userId from above)
-      Promise.resolve(userId).then(userId => {
-        // Persist user's transcribed message
-        db.createMessage({
-          userId,
-          text: transcribedText.text,
-          author: 'user'
-        }).then(() => {
-          console.log('💾 Transcribed user message persisted to MongoDB');
-        }).catch(err => {
-          console.error('Error persisting transcribed message to MongoDB:', err);
-        });
-        
-        // Persist AI response
-        db.createMessage({
-          userId,
-          text: aiResponse,
-          author: 'assistant'
-        }).then(() => {
-          console.log('💾 AI response (audio) persisted to MongoDB');
-        }).catch(err => {
-          console.error('Error persisting AI response (audio) to MongoDB:', err);
-        });
-        
-        // Extract and persist function calls
-        const functionCalls = engineResult.filter((msg: any) => msg.type === 'function_call');
-        const functionOutputs = engineResult.filter((msg: any) => msg.type === 'function_call_output');
-        
-        if (functionCalls.length > 0) {
-          console.log('🔧 Persisting', functionCalls.length, 'function calls to MongoDB (audio)');
-          functionCalls.forEach((funcCall: any) => {
-            const output = functionOutputs.find((fo: any) => fo.call_id === funcCall.call_id);
-            db.createFunction({
-              userId,
-              args: {
-                name: funcCall.name,
-                call_id: funcCall.call_id,
-                arguments: JSON.parse(funcCall.arguments)
-              },
-              response: {
-                output: output?.output || null
-              }
-            }).then(() => {
-              console.log(`💾 Function call ${funcCall.name} persisted to MongoDB (audio)`);
-            }).catch(err => {
-              console.error(`Error persisting function call ${funcCall.name} (audio):`, err);
-            });
-          });
-        }
-      }).catch(err => {
-        console.error('Error getting user for persistence (audio):', err);
-      });
-      
+      // Return only the transcribed text
+      // The client will handle creating the messages and getting the AI response
+      // This ensures the typing indicator shows properly
       res.json({
-        transcribedText: transcribedText.text,
-        userMessage,
-        aiResponse: responseMessage
+        transcribedText: transcribedText.text
       });
     } catch (error) {
       // Clean up the temporary file in case of error

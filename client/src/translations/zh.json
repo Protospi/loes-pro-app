@@ -39,5 +39,10 @@
   "language": {
     "select": "选择语言",
     "detected": "检测到的语言：{{language}}"
+  },
+  "input": {
+    "placeholder": "输入您的消息...",
+    "recording": "录音中... 松开发送",
+    "transcribing": "转录中..."
   }
 } 
