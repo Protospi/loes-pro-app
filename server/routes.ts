@@ -949,6 +949,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Analytics Aggregation Endpoint
+  app.get("/api/analytics/summary", async (req, res) => {
+    try {
+      const { startDate, endDate, granularity = 'day' } = req.query;
+      
+      if (!startDate || !endDate) {
+        return res.status(400).json({ error: "startDate and endDate are required" });
+      }
+
+      const start = new Date(startDate as string);
+      const end = new Date(endDate as string);
+      
+      // Set end date to end of day
+      end.setHours(23, 59, 59, 999);
+
+      const summary = await db.getAnalyticsSummary(start, end);
+      const timeSeries = await db.getTimeSeriesData(
+        start, 
+        end, 
+        granularity as 'hour' | 'day' | 'month'
+      );
+
+      res.json({
+        ...summary,
+        timeSeries
+      });
+    } catch (error) {
+      console.error("Analytics summary error:", error);
+      res.status(500).json({ error: "Failed to fetch analytics summary" });
+    }
+  });
+
   // Test Routes for Creating Sample Documents
   app.post("/api/analytics/test/create-samples", async (req, res) => {
     try {

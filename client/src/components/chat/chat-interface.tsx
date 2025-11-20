@@ -22,6 +22,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Message } from "@shared/schema";
 import { createNewSession } from "@/lib/sessionManager";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 function TypingIndicator() {
   return (
@@ -115,6 +116,7 @@ export function ChatInterface() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   const handleInsertText = (text: string) => {
     if (chatInputRef.current) {
@@ -246,7 +248,9 @@ export function ChatInterface() {
           <span className="material-symbols-outlined" style={{ paddingRight: '4px' }}>
             accessibility_new
           </span>
-          {t('chat.title')}
+          {!isMobile && (
+            <span>{t('chat.title')}</span>
+          )}
         </h1>
 
         {/* Settings Dropdown - Right */}

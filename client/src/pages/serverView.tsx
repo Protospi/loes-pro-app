@@ -6,6 +6,7 @@ import ReactFlowCanvas, { ReactFlowCanvasRef, ConversationFlowItem } from "@/com
 import ConversationLogs, { ConversationLogsRef } from "@/components/server/conversationLogs";
 import { useRef, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { createNewSession } from "@/lib/sessionManager";
 import { apiRequest } from "@/lib/queryClient";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 export default function ServerView() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const queryClient = useQueryClient();
   const reactFlowRef = useRef<ReactFlowCanvasRef>(null);
   const conversationLogsRef = useRef<ConversationLogsRef>(null);
@@ -160,7 +162,9 @@ export default function ServerView() {
         {/* Title - Center */}
         <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
           <Server className="h-5 w-5 text-blue-500" />
-          {t('server.title', 'Server View')}
+          {!isMobile && (
+            <span>{t('server.title', 'Server View')}</span>
+          )}
         </h1>
 
         {/* Settings Dropdown - Right */}
