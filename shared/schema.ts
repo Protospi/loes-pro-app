@@ -15,6 +15,8 @@ export const messages = pgTable("messages", {
   isUser: boolean("is_user").notNull().default(false),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
   userId: varchar("user_id").references(() => users.id),
+  fileId: varchar("file_id"),
+  fileName: text("file_name"),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({

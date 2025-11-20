@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 
 interface ChatInputProps {
-  onSendMessage: (message: string, fileId?: string) => void;
+  onSendMessage: (message: string, fileId?: string, fileName?: string) => void;
   isLoading?: boolean;
 }
 
@@ -22,6 +22,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileId, setFileId] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -62,11 +63,12 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
     e.preventDefault();
     const trimmedMessage = message.trim();
     if (trimmedMessage && !isLoading) {
-      onSendMessage(trimmedMessage, fileId || undefined);
+      onSendMessage(trimmedMessage, fileId || undefined, fileName || undefined);
       setMessage("");
       // Clear file after sending
       setSelectedFile(null);
       setFileId(null);
+      setFileName(null);
     }
   };
 
@@ -238,6 +240,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
   const removeFile = () => {
     setSelectedFile(null);
     setFileId(null);
+    setFileName(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -260,11 +263,13 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
 
       const data = await response.json();
       setFileId(data.fileId);
+      setFileName(file.name); // Store the filename
       console.log('File uploaded successfully:', data);
     } catch (error) {
       console.error('Error uploading file:', error);
       alert('Failed to upload file. Please try again.');
       setSelectedFile(null);
+      setFileName(null);
     } finally {
       setIsUploading(false);
     }
@@ -308,7 +313,7 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
             type="file"
             onChange={handleFileSelect}
             className="hidden"
-            accept=".pdf,.txt,.doc,.docx,.md,.json,.csv,.xlsx,.xls"
+            accept=".pdf,.txt,.doc,.docx,.md,.json,.csv,.xlsx,.xls,image/*"
           />
           
           {/* Main input area */}

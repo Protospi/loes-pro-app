@@ -20,6 +20,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { apiRequest } from '@/lib/queryClient';
 
 export interface ConversationLogsRef {
   setActiveLogs: (indices: number[]) => void;
@@ -526,14 +527,14 @@ const ConversationLogs = forwardRef<ConversationLogsRef, ConversationLogsProps>(
       const fetchLogs = async () => {
         try {
           setIsLoading(true);
-          const response = await fetch('/api/conversation-logs');
-          if (response.ok) {
-            const data = await response.json();
-            setLogs(data.logs || []);
-            onLogsLoaded?.(data.logs?.length || 0);
-          }
+          console.log('🔄 Fetching conversation logs for current session...');
+          const response = await apiRequest('GET', '/api/conversation-logs');
+          const data = await response.json();
+          console.log('📊 Received conversation logs:', data.logs?.length || 0, 'entries');
+          setLogs(data.logs || []);
+          onLogsLoaded?.(data.logs?.length || 0);
         } catch (error) {
-          console.error('Error fetching logs:', error);
+          console.error('❌ Error fetching logs:', error);
         } finally {
           setIsLoading(false);
         }

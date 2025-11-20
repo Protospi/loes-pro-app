@@ -49,7 +49,7 @@ export class MemStorage implements IStorage {
     return messages;
   }
 
-  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+  async createMessage(insertMessage: InsertMessage & { fileId?: string | null, fileName?: string | null }): Promise<Message> {
     const id = randomUUID();
     const message: Message = {
       ...insertMessage,
@@ -57,12 +57,16 @@ export class MemStorage implements IStorage {
       timestamp: new Date(),
       isUser: insertMessage.isUser ?? false,
       userId: insertMessage.userId ?? null,
+      fileId: insertMessage.fileId ?? null,
+      fileName: insertMessage.fileName ?? null,
     };
     this.messages.set(id, message);
     console.log('💾 Storage - Created message:', {
       id,
       isUser: message.isUser,
       content: message.content.substring(0, 50) + '...',
+      fileId: message.fileId,
+      fileName: message.fileName,
       totalMessages: this.messages.size
     });
     return message;

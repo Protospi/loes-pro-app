@@ -61,21 +61,17 @@ export class engine  {
             if (loopCounter === 1) {
                 // Define input messages
                 if (input.length === 0) {
-                    // Create user message with file if fileId is provided
-                    const extractedFileId = this.extractFileIdFromContent(userInput);
-                    const actualFileId = fileId || extractedFileId;
-                    const cleanUserInput = extractedFileId ? userInput.replace(/\[File attached: [^\]]+\]\s*/, '') : userInput;
-
-                    const userMessage = actualFileId ? {
+                    // New conversation - create user message with file if fileId is provided
+                    const userMessage = fileId ? {
                         role: "user",
                         content: [
                             {
                                 type: "input_file",
-                                file_id: actualFileId,
+                                file_id: fileId,
                             },
                             {
                                 type: "input_text",
-                                text: cleanUserInput,
+                                text: userInput,
                             },
                         ],
                     } : { role: "user", content: userInput };
@@ -85,15 +81,47 @@ export class engine  {
                         userMessage
                     ]
                     console.log('🆕 New conversation - system prompt added')
+                    if (fileId) {
+                        console.log('📎 File included in message - OpenAI File ID:', fileId);
+                    }
                 } else {
-                    // Always ensure system prompt is first and current (only on first iteration)
-                    // The conversation history already includes the user's message, so just add system prompt
-                    input = [
-                        { role: "system", content: finalPrompt },
-                        ...input.filter(msg => msg.role !== "system")
-                    ];
+                    // Continuing conversation
+                    if (fileId) {
+                        // If there's a file, add the new user message with file format
+                        // (routes.ts should have excluded the current message from history)
+                        const userMessageWithFile = {
+                            role: "user",
+                            content: [
+                                {
+                                    type: "input_file",
+                                    file_id: fileId,
+                                },
+                                {
+                                    type: "input_text",
+                                    text: userInput,
+                                },
+                            ],
+                        };
+
+                        input = [
+                            { role: "system", content: finalPrompt },
+                            ...input.filter(msg => msg.role !== "system"),
+                            userMessageWithFile
+                        ];
+                        
+                        console.log('🔄 Continuing conversation with file attachment');
+                        console.log('📎 File included in new message - OpenAI File ID:', fileId);
+                    } else {
+                        // No file - use history as-is (includes the current user message)
+                        input = [
+                            { role: "system", content: finalPrompt },
+                            ...input.filter(msg => msg.role !== "system")
+                        ];
+                        
+                        console.log('🔄 Continuing conversation without file');
+                    }
                     
-                    console.log('🔄 Continuing conversation with', input.length, 'messages');
+                    console.log('📝 Total messages:', input.length);
                     console.log('📝 Last 3 messages:');
                     input.slice(-3).forEach((msg: any, idx: number) => {
                         const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content).substring(0, 100);
@@ -129,7 +157,7 @@ export class engine  {
                 tools,
                 input: input,
                 reasoning: {
-                    effort: "medium",
+                    effort: "minimal",
                     summary: "auto",
                 }
               });
@@ -332,12 +360,6 @@ export class engine  {
 
         // Return result
         return result
-    }
-
-    // Define private function to extract file ID from message content
-    private extractFileIdFromContent(content: string): string | null {
-        const match = content.match(/\[File attached: ([^\]]+)\]/);
-        return match ? match[1] : null;
     }
 
     // Define private get portfolio info function

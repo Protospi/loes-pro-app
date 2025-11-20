@@ -16,26 +16,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize engine instance
   const aiEngine = new engine();
 
-  // Helper function to get or create user by IP
-  async function getOrCreateUserByIP(ip: string): Promise<ObjectId> {
+  // Helper function to get or create user by session ID
+  async function getOrCreateUserBySession(sessionId: string, ip: string): Promise<ObjectId> {
     try {
-      // Try to find existing user by IP
+      // Try to find existing user by session ID
       const { Users } = await import('./database.js');
-      const existingUser = await Users.findOne({ ip });
+      const existingUser = await Users.findOne({ sessionId });
       
       if (existingUser) {
-        console.log('👤 Found existing user:', existingUser._id);
+        console.log('👤 Found existing user for session:', sessionId, '- User ID:', existingUser._id);
         return existingUser._id;
       }
       
       // Create new user if not found
-      console.log('👤 Creating new user for IP:', ip);
-      const result = await db.createUser({ ip });
+      console.log('👤 Creating new user for session:', sessionId, 'IP:', ip);
+      const result = await db.createUser({ sessionId, ip });
       return result.insertedId;
     } catch (error) {
       console.error('Error getting/creating user:', error);
       throw error;
     }
+  }
+
+  // Helper function to extract session ID from request
+  function getSessionId(req: any): string {
+    const sessionId = req.headers['x-session-id'];
+    if (!sessionId) {
+      throw new Error('Session ID not provided in request headers');
+    }
+    return sessionId;
   }
 
   // Helper function to convert conversation history to engine format
@@ -100,7 +109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       fileSize: 50 * 1024 * 1024, // 50MB limit for documents
     },
     fileFilter: (req, file, cb) => {
-      // Accept common document formats
+      // Accept common document formats and images
       const allowedTypes = [
         'application/pdf',
         'text/plain',
@@ -110,13 +119,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'application/json',
         'text/csv',
         'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'image/svg+xml'
       ];
       
       if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
       } else {
-        cb(new Error('Only document files are allowed (PDF, TXT, DOC, DOCX, MD, JSON, CSV, XLS, XLSX)'));
+        cb(new Error('Only document files and images are allowed (PDF, TXT, DOC, DOCX, MD, JSON, CSV, XLS, XLSX, JPG, PNG, GIF, WEBP, SVG)'));
       }
     }
   });
@@ -243,12 +258,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new message
   app.post("/api/messages", async (req, res) => {
     try {
-      const messageData = insertMessageSchema.parse(req.body);
-      const message = await storage.createMessage(messageData);
+      // Extract all fields including fileId and fileName
+      const { content, isUser, userId, fileId, fileName } = req.body;
+      const messageData = insertMessageSchema.parse({ content, isUser, userId });
+      
+      // Create message with file information
+      const message = await storage.createMessage({
+        ...messageData,
+        fileId,
+        fileName,
+      });
       
       // Mirror to MongoDB (don't block the response)
+      const sessionId = getSessionId(req);
       const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
-      getOrCreateUserByIP(userIP).then(userId => {
+      getOrCreateUserBySession(sessionId, userIP).then(userId => {
         db.createMessage({
           userId,
           text: messageData.content,
@@ -275,9 +299,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Generate AI response for chat completion
   app.post("/api/chat/completion", async (req, res) => {
     try {
-      const { content, fileId } = z.object({ 
+      const { content, fileId, fileName } = z.object({ 
         content: z.string(),
-        fileId: z.string().optional()
+        fileId: z.string().optional(),
+        fileName: z.string().optional()
       }).parse(req.body);
       
       // Small delay to ensure user message is saved (race condition fix)
@@ -288,29 +313,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('📚 Total messages in history:', messages.length);
       console.log('💬 Processing user message:', content);
       
+      // If there's a file, exclude the current user message from history
+      // The engine will add it with proper file format
+      let conversationHistory = messages;
+      if (fileId && messages.length > 0) {
+        // Remove the last message (current user message) so engine can add it with file
+        conversationHistory = messages.slice(0, -1);
+        console.log('📎 File detected - excluding current user message from history to add with file format');
+      }
+      
       // Convert conversation history to engine format
-      const engineInput = convertHistoryToEngineFormat(messages);
+      const engineInput = convertHistoryToEngineFormat(conversationHistory);
       console.log('🔄 Engine input length:', engineInput.length);
       
       // Debug: Show recent conversation history
-      console.log('📜 Recent conversation history:');
-      messages.slice(-5).forEach((msg, i) => {
-        console.log(`  ${i + 1}. ${msg.isUser ? 'User' : 'Assistant'}: ${msg.content.substring(0, 50)}...`);
+      console.log('📜 Recent conversation history (sent to engine):');
+      conversationHistory.slice(-5).forEach((msg, i) => {
+        const fileInfo = msg.fileId ? ` [📎 ${msg.fileName || 'file'}]` : '';
+        console.log(`  ${i + 1}. ${msg.isUser ? 'User' : 'Assistant'}: ${msg.content.substring(0, 50)}...${fileInfo}`);
       });
+      if (fileId && messages.length > 0) {
+        console.log(`  → Current message with file will be added by engine with proper format`);
+      }
       
       // Get userId for reasoning storage
+      const sessionId = getSessionId(req);
       const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
-      const userId = await getOrCreateUserByIP(userIP);
+      const userId = await getOrCreateUserBySession(sessionId, userIP);
       
       // Generate AI response using the engine
-      // If fileId is provided, we need to modify the engine input to include file information
+      // Pass the fileId directly to the engine - it will handle the file formatting
       let engineResult;
       if (fileId) {
-        console.log('📎 File attached with ID:', fileId);
-        // For now, we'll add file information to the user message
-        // The engine will need to be updated to handle file content in the future
-        const fileMessage = `[File attached: ${fileId}] ${content}`;
-        engineResult = await aiEngine.run(fileMessage, engineInput, fileId, userId);
+        console.log('📎 File attached:', fileName || fileId, '- OpenAI File ID:', fileId);
+        engineResult = await aiEngine.run(content, engineInput, fileId, userId);
       } else {
         engineResult = await aiEngine.run(content, engineInput, undefined, userId);
       }
@@ -734,8 +770,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get conversation flow for current user
   app.get("/api/conversation-flow", async (req, res) => {
     try {
+      const sessionId = getSessionId(req);
       const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
-      const userId = await getOrCreateUserByIP(userIP);
+      const userId = await getOrCreateUserBySession(sessionId, userIP);
       
       // Fetch all data for this user
       const messages = await db.getUserMessages(userId.toString());
@@ -759,8 +796,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get formatted conversation logs for display
   app.get("/api/conversation-logs", async (req, res) => {
     try {
+      const sessionId = getSessionId(req);
       const userIP = req.ip || req.socket.remoteAddress || '127.0.0.1';
-      const userId = await getOrCreateUserByIP(userIP);
+      const userId = await getOrCreateUserBySession(sessionId, userIP);
       
       // Fetch all data for this user
       const messages = await db.getUserMessages(userId.toString());

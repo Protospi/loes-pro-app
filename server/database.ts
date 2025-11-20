@@ -9,6 +9,7 @@ export interface User {
     name?: string;
     email?: string;
     ip: string;
+    sessionId?: string;
     requests?: any[];
     csat?: number;
 }

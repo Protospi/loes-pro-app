@@ -20,6 +20,8 @@ import { SettingsDropdown } from "./settings-dropdown";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { Message } from "@shared/schema";
+import { createNewSession } from "@/lib/sessionManager";
+import { useToast } from "@/hooks/use-toast";
 
 function TypingIndicator() {
   return (
@@ -111,6 +113,8 @@ export function ChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<ChatInputRef>(null);
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleInsertText = (text: string) => {
     if (chatInputRef.current) {
@@ -124,30 +128,33 @@ export function ChatInterface() {
   });
 
   const sendMessageMutation = useMutation({
-    mutationFn: async ({ content, fileId }: { content: string; fileId?: string }) => {
+    mutationFn: async ({ content, fileId, fileName }: { content: string; fileId?: string; fileName?: string }) => {
       const response = await apiRequest("POST", "/api/messages", {
         content,
         isUser: true,
+        fileId,
+        fileName,
       });
       return response.json();
     },
-    onSuccess: (_, { content, fileId }) => {
+    onSuccess: (_, { content, fileId, fileName }) => {
       queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
 
       // Generate AI response using Pedro's persona
       setIsTyping(true);
       setTimeout(() => {
-        sendAssistantResponseMutation.mutate({ content, fileId });
+        sendAssistantResponseMutation.mutate({ content, fileId, fileName });
       }, 1000);
     },
   });
 
   const sendAssistantResponseMutation = useMutation({
-    mutationFn: async ({ content, fileId }: { content: string; fileId?: string }) => {
+    mutationFn: async ({ content, fileId, fileName }: { content: string; fileId?: string; fileName?: string }) => {
       // Call the OpenAI chat completion endpoint
       const response = await apiRequest("POST", "/api/chat/completion", {
         content,
         fileId,
+        fileName,
       });
       return response.json();
     },
@@ -160,8 +167,8 @@ export function ChatInterface() {
     },
   });
 
-  const handleSendMessage = (content: string, fileId?: string) => {
-    sendMessageMutation.mutate({ content, fileId });
+  const handleSendMessage = (content: string, fileId?: string, fileName?: string) => {
+    sendMessageMutation.mutate({ content, fileId, fileName });
     // Focus the input after sending message
     if (chatInputRef.current) {
       chatInputRef.current.focus();
@@ -170,12 +177,28 @@ export function ChatInterface() {
 
   const handleNewConversation = async () => {
     try {
+      // Create a new session ID
+      const newSessionId = createNewSession();
+      console.log('🆕 Starting new conversation with session:', newSessionId);
+      
       // Clear messages from backend
       await apiRequest("DELETE", "/api/messages");
+      
       // Update the frontend cache
       queryClient.setQueryData(["/api/messages"], []);
+      
+      // Show success toast
+      toast({
+        title: t('chat.newConversation', 'New Conversation'),
+        description: t('chat.newConversationDesc', 'Started a fresh conversation'),
+      });
     } catch (error) {
-      console.error("Failed to clear messages:", error);
+      console.error("Failed to start new conversation:", error);
+      toast({
+        title: t('chat.error', 'Error'),
+        description: t('chat.errorStartingConversation', 'Failed to start new conversation'),
+        variant: "destructive",
+      });
     }
   };
 
@@ -200,8 +223,6 @@ export function ChatInterface() {
       window.removeEventListener('audioTranscriptionComplete', handleAudioTranscription);
     };
   }, [queryClient]);
-
-  const { t } = useTranslation();
 
   return (
     <div className="h-screen flex flex-col bg-gradient-dark relative">

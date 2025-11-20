@@ -6,20 +6,60 @@ import ReactFlowCanvas, { ReactFlowCanvasRef, ConversationFlowItem } from "@/com
 import ConversationLogs, { ConversationLogsRef } from "@/components/server/conversationLogs";
 import { useRef, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { createNewSession } from "@/lib/sessionManager";
+import { apiRequest } from "@/lib/queryClient";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ServerView() {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const reactFlowRef = useRef<ReactFlowCanvasRef>(null);
   const conversationLogsRef = useRef<ConversationLogsRef>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeLogIndex, setActiveLogIndex] = useState(-1);
+  const [refreshKey, setRefreshKey] = useState(0);
   const playbackTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   const handleNewConversation = async () => {
-    // TODO: Implement new conversation functionality for server view
-    console.log("New conversation clicked in server view");
+    try {
+      // Stop any ongoing playback
+      if (isPlaying) {
+        reactFlowRef.current?.stopPlayback();
+        conversationLogsRef.current?.clearActiveLogs();
+        playbackTimeoutsRef.current.forEach(clearTimeout);
+        playbackTimeoutsRef.current = [];
+        setActiveLogIndex(-1);
+        setIsPlaying(false);
+      }
+
+      // Create a new session ID
+      const newSessionId = createNewSession();
+      console.log('🆕 Starting new conversation with session:', newSessionId);
+      
+      // Clear messages from backend
+      await apiRequest("DELETE", "/api/messages");
+      
+      // Invalidate queries to refresh both chat and server view data
+      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
+      
+      // Force refresh the ConversationLogs component by updating the key
+      setRefreshKey(prev => prev + 1);
+      
+      // Show success toast
+      toast({
+        title: t('server.newConversation', 'New Conversation'),
+        description: t('server.newConversationDesc', 'Started a fresh conversation'),
+      });
+    } catch (error) {
+      console.error("Failed to start new conversation:", error);
+      toast({
+        title: t('server.error', 'Error'),
+        description: t('server.errorStartingConversation', 'Failed to start new conversation'),
+        variant: "destructive",
+      });
+    }
   };
 
   const handlePlayConversation = async () => {
@@ -38,14 +78,11 @@ export default function ServerView() {
       setIsLoading(true);
       
       // Fetch conversation flow from API
-      const response = await fetch('/api/conversation-flow');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch conversation flow');
-      }
-      
+      console.log('🔄 Fetching conversation flow for current session...');
+      const response = await apiRequest('GET', '/api/conversation-flow');
       const data = await response.json();
       const { conversationFlow } = data;
+      console.log('📊 Received conversation flow:', conversationFlow?.length || 0, 'events');
       
       if (!conversationFlow || conversationFlow.length === 0) {
         toast({
@@ -174,7 +211,7 @@ export default function ServerView() {
           </div>
           <div className="flex-1 min-h-0 glass-chip rounded-xl overflow-hidden">
             <div className="h-full overflow-y-auto scroll-smooth conversation-logs-scroll">
-              <ConversationLogs ref={conversationLogsRef} activeLogIndex={activeLogIndex} />
+              <ConversationLogs key={refreshKey} ref={conversationLogsRef} activeLogIndex={activeLogIndex} />
             </div>
           </div>
         </section>
