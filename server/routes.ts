@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertMessageSchema } from "@shared/schema";
 import { z } from "zod";
-import { generateAIResponse, detectLanguage, detectLanguageAndTranslate, transcribeAudio, uploadFileToOpenAI } from "./openai";
+import { generateAIResponse, detectLanguage, detectLanguageAndTranslate, transcribeAudio, uploadFileToOpenAI, generateSpeech } from "./openai";
 import { engine } from "./resources/engine";
 import { GoogleCalendarService } from "./google-calendar";
 import multer from "multer";
@@ -179,6 +179,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.error("Audio transcription error:", error);
       res.status(500).json({ error: "Failed to transcribe audio" });
+    }
+  });
+
+  // Text-to-speech endpoint
+  app.post("/api/text-to-speech", async (req, res) => {
+    try {
+      const { text } = req.body;
+      
+      if (!text) {
+        return res.status(400).json({ error: "Text is required" });
+      }
+
+      console.log('🔊 Generating speech for text length:', text.length);
+      
+      // Generate speech using OpenAI
+      const audioBuffer = await generateSpeech(text);
+      
+      // Set headers for audio streaming
+      res.set({
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': audioBuffer.length,
+        'Cache-Control': 'no-cache',
+      });
+      
+      console.log('✅ Speech generated successfully');
+      
+      // Send the audio buffer
+      res.send(audioBuffer);
+    } catch (error) {
+      console.error("Text-to-speech error:", error);
+      res.status(500).json({ error: "Failed to generate speech" });
     }
   });
 

@@ -354,6 +354,36 @@ export async function uploadFileToOpenAI(filePath: string): Promise<string> {
   }
 }
 
+// Text-to-speech function
+export async function generateSpeech(text: string): Promise<Buffer> {
+  const instructions = `
+  Voice: Warm, upbeat, and reassuring, with a steady and confident cadence that keeps the conversation calm and productive.
+
+  Tone: Positive and solution-oriented, always focusing on the next steps rather than dwelling on the problem.
+
+  Dialect: Neutral and professional, avoiding overly casual speech but maintaining a friendly and approachable style.
+
+  Pronunciation: Clear and precise, with a natural rhythm that emphasizes key words to instill confidence and keep the customer engaged.
+
+  Features: Uses empathetic phrasing, gentle reassurance, and proactive language to shift the focus from frustration to resolution.
+  `
+  try {
+    const mp3 = await openai.audio.speech.create({
+      model: "gpt-4o-mini-tts",
+      voice: "nova",
+      input: text,
+      instructions: instructions,
+    });
+
+    const buffer = Buffer.from(await mp3.arrayBuffer());
+    console.log('Speech generated successfully, buffer size:', buffer.length);
+    return buffer;
+  } catch (error) {
+    console.error('OpenAI text-to-speech error:', error);
+    throw new Error('Failed to generate speech');
+  }
+}
+
 // Keep the original function for backward compatibility
 export async function detectLanguage(userInput: string) {
   try {
