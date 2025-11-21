@@ -76,7 +76,14 @@ export function TimeSeriesChart({
 
     // Scales
     const x = d3.scaleTime()
-      .domain(d3.extent(data, d => d.date) as [Date, Date])
+      .domain(
+        timeGranularity === 'hour' 
+          ? [
+              new Date('2024-01-01T00:00:00.000Z'), 
+              new Date('2024-01-01T23:00:00.000Z')
+            ]
+          : d3.extent(data, d => d.date) as [Date, Date]
+      )
       .range([0, width]);
 
     const maxValue = d3.max(data, d => Math.max(
@@ -130,9 +137,14 @@ export function TimeSeriesChart({
     
     // Format based on granularity
     if (timeGranularity === 'hour') {
+      // Generate tick values for all 24 hours
+      const hourTicks = Array.from({ length: 24 }, (_, i) => 
+        new Date(`2024-01-01T${i.toString().padStart(2, '0')}:00:00.000Z`)
+      );
+      xAxis.tickValues(hourTicks);
       xAxis.tickFormat((d) => {
         const date = d as Date;
-        return date.getHours().toString();
+        return date.getUTCHours().toString();
       });
     } else if (timeGranularity === 'month') {
       xAxis.tickFormat((d) => {
@@ -180,7 +192,7 @@ export function TimeSeriesChart({
     // Helper function to format date for tooltip
     const formatDateForTooltip = (date: Date) => {
       if (timeGranularity === 'hour') {
-        return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - ${date.getHours()}:00`;
+        return `Hour ${date.getUTCHours()}:00`;
       } else if (timeGranularity === 'month') {
         return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
       } else {
@@ -276,7 +288,7 @@ export function TimeSeriesChart({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="glass-chip hover:bg-blue-500/20">
-              {t('analytics.selectMetrics', 'Select Metrics')} ({getVisibleCount()})
+              {t('analytics.selected', 'Selected')} ({getVisibleCount()})
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

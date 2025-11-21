@@ -12,6 +12,7 @@ export interface User {
     sessionId?: string;
     requests?: any[];
     csat?: number;
+    feedback?: string;
 }
 
 export interface Message {
@@ -72,6 +73,8 @@ export async function createUser(userData: Omit<User, '_id' | 'createdAt'>) {
     const user: User = {
         ...userData,
         createdAt: new Date(),
+        csat: userData.csat ?? 5,
+        feedback: userData.feedback ?? '',
     };
     const result = await Users.insertOne(user);
     return result;
@@ -232,10 +235,13 @@ export async function getAnalyticsSummary(startDate: Date, endDate: Date) {
         );
         const totalConversations = conversationUserIds.size;
 
-        // Calculate average CSAT
+        // Calculate average CSAT and convert to percentage (1-5 scale to 0-100%)
         const avgCSAT = allUsersForCSAT.length > 0
             ? allUsersForCSAT.reduce((sum, u) => sum + (u.csat || 0), 0) / allUsersForCSAT.length
-            : 75;
+            : 5; // Default to 5 (perfect score) if no data
+        
+        // Convert 1-5 scale to percentage: (average / 5) * 100
+        const csatPercentage = Math.round((avgCSAT / 5) * 100);
 
         return {
             users: userCount,
@@ -243,7 +249,7 @@ export async function getAnalyticsSummary(startDate: Date, endDate: Date) {
             functions: functionCount,
             reasonings: reasoningCount,
             conversations: totalConversations,
-            csat: Math.round(avgCSAT)
+            csat: csatPercentage
         };
     } catch (error) {
         console.error('Error in getAnalyticsSummary:', error);
@@ -274,10 +280,10 @@ export async function getTimeSeriesData(
 
         // Helper function to format date based on granularity
         const formatDate = (date: Date): string => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hour = String(date.getHours()).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const hour = String(date.getUTCHours()).padStart(2, '0');
 
             switch (granularity) {
                 case 'hour':
@@ -319,6 +325,48 @@ export async function getTimeSeriesData(
             return timeSeriesMap.get(key)!;
         };
 
+        // Fill in all time periods FIRST to ensure correct order (Maps maintain insertion order)
+        const fillAllPeriods = () => {
+            if (granularity === 'hour') {
+                // For hour granularity, create all hours 0-23 in order
+                // Using a normalized base date since we're aggregating by hour only
+                for (let hour = 0; hour < 24; hour++) {
+                    const key = `2024-01-01T${String(hour).padStart(2, '0')}:00:00.000Z`;
+                    getOrCreateEntry(key);
+                }
+            } else if (granularity === 'day') {
+                // For day granularity, fill all days in the range
+                const currentDate = new Date(startDate);
+                currentDate.setUTCHours(0, 0, 0, 0);
+                const endDateNormalized = new Date(endDate);
+                endDateNormalized.setUTCHours(0, 0, 0, 0);
+                
+                while (currentDate <= endDateNormalized) {
+                    const key = formatDate(currentDate);
+                    getOrCreateEntry(key);
+                    currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+                }
+            } else if (granularity === 'month') {
+                // For month granularity, fill all months in the range
+                const currentDate = new Date(startDate);
+                currentDate.setUTCDate(1);
+                currentDate.setUTCHours(0, 0, 0, 0);
+                const endDateNormalized = new Date(endDate);
+                endDateNormalized.setUTCDate(1);
+                endDateNormalized.setUTCHours(0, 0, 0, 0);
+                
+                while (currentDate <= endDateNormalized) {
+                    const key = formatDate(currentDate);
+                    getOrCreateEntry(key);
+                    currentDate.setUTCMonth(currentDate.getUTCMonth() + 1);
+                }
+            }
+        };
+
+        // Create all time periods first (in correct order 0-23 for hours)
+        fillAllPeriods();
+
+        // Now process the actual data and populate the existing entries
         // Process messages
         messages.forEach(message => {
             const key = formatDate(message.createdAt);
@@ -347,67 +395,37 @@ export async function getTimeSeriesData(
         users.forEach(user => {
             const key = formatDate(user.createdAt);
             const entry = getOrCreateEntry(key);
-            // Add CSAT if available
-            if (user.csat && user.csat >= 0 && user.csat <= 100) {
+            // Add CSAT if available (1-5 scale)
+            if (user.csat && user.csat >= 1 && user.csat <= 5) {
                 entry.csatSum += user.csat;
                 entry.csatCount++;
             }
         });
 
-        // Fill in missing time periods with zeros
-        const fillMissingPeriods = () => {
-            if (granularity === 'hour') {
-                // For hour granularity, show all hours 0-23
-                // Using a normalized base date since we're aggregating by hour only
-                for (let hour = 0; hour < 24; hour++) {
-                    const date = new Date('2024-01-01T00:00:00.000Z');
-                    date.setHours(hour, 0, 0, 0);
-                    const key = formatDate(date);
-                    getOrCreateEntry(key);
-                }
-            } else if (granularity === 'day') {
-                // For day granularity, fill all days in the range
-                const currentDate = new Date(startDate);
-                currentDate.setHours(0, 0, 0, 0);
-                const endDateNormalized = new Date(endDate);
-                endDateNormalized.setHours(0, 0, 0, 0);
-                
-                while (currentDate <= endDateNormalized) {
-                    const key = formatDate(currentDate);
-                    getOrCreateEntry(key);
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-            } else if (granularity === 'month') {
-                // For month granularity, fill all months in the range
-                const currentDate = new Date(startDate);
-                currentDate.setDate(1);
-                currentDate.setHours(0, 0, 0, 0);
-                const endDateNormalized = new Date(endDate);
-                endDateNormalized.setDate(1);
-                endDateNormalized.setHours(0, 0, 0, 0);
-                
-                while (currentDate <= endDateNormalized) {
-                    const key = formatDate(currentDate);
-                    getOrCreateEntry(key);
-                    currentDate.setMonth(currentDate.getMonth() + 1);
-                }
-            }
-        };
-
-        // Fill in any missing periods with zero values
-        fillMissingPeriods();
-
         // Convert to array format with counts
         const result = Array.from(timeSeriesMap.entries())
-            .map(([key, value]) => ({
-                date: value.date,
-                users: value.users.size,
-                messages: value.messages,
-                functions: value.functions,
-                reasonings: value.reasonings,
-                csat: value.csatCount > 0 ? Math.round(value.csatSum / value.csatCount) : 0
-            }))
-            .sort((a, b) => a.date.getTime() - b.date.getTime());
+            .map(([key, value]) => {
+                // Calculate average CSAT and convert to percentage (1-5 scale to 0-100%)
+                const avgCSAT = value.csatCount > 0 ? value.csatSum / value.csatCount : 0;
+                const csatPercentage = avgCSAT > 0 ? Math.round((avgCSAT / 5) * 100) : 0;
+                
+                return {
+                    date: value.date,
+                    users: value.users.size,
+                    messages: value.messages,
+                    functions: value.functions,
+                    reasonings: value.reasonings,
+                    csat: csatPercentage
+                };
+            })
+            .sort((a, b) => {
+                // For hour granularity, sort by hour (0-23)
+                // For other granularities, sort by timestamp
+                if (granularity === 'hour') {
+                    return a.date.getUTCHours() - b.date.getUTCHours();
+                }
+                return a.date.getTime() - b.date.getTime();
+            });
 
         return result;
     } catch (error) {

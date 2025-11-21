@@ -148,6 +148,30 @@
         ],
         "additionalProperties": false
       }
+    },
+    {
+      "type": "function",
+      "name": "record_csat",
+      "description": "Registra o CSAT do usuário.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "csat": {
+            "type": "number",
+            "description": "CSAT do usuário"
+          },
+          "feedback": {
+            "type": "string",
+            "description": "Feedback do usuário"
+          }
+        },
+        "required": [
+          "csat",
+          "feedback"
+        ],
+        "additionalProperties": false
+      }
     }
   ]
   

@@ -290,6 +290,17 @@ export class engine  {
                         })
                         // console.log('✅ Cancel meeting result:', toolResult)
                         break
+
+                    // Handle the record_csat tool
+                    case 'record_csat':
+                        console.log('📊 Recording CSAT:', args.csat, 'Feedback:', args.feedback)
+                        toolResult = await this.recordCSAT({
+                            userId: userId!,
+                            csat: args.csat,
+                            feedback: args.feedback
+                        })
+                        console.log('✅ CSAT recorded:', toolResult)
+                        break
         
         
                     // Handle the default case
@@ -370,6 +381,29 @@ export class engine  {
 
         // Return result
         return result
+    }
+
+    // Define private record CSAT function
+    private async recordCSAT(params: { userId: ObjectId, csat: number, feedback: string }) {
+        try {
+            const { updateUser } = await import('../database.js');
+            
+            // Validate CSAT score (1-5 scale)
+            if (params.csat < 1 || params.csat > 5) {
+                return 'ERROR: CSAT score must be between 1 and 5';
+            }
+
+            // Update user with CSAT and feedback
+            await updateUser(params.userId.toString(), {
+                csat: params.csat,
+                feedback: params.feedback
+            });
+
+            return `CSAT score of ${params.csat} and feedback successfully recorded. Thank you for your valuable input!`;
+        } catch (error) {
+            console.error('❌ Error recording CSAT:', error);
+            return `ERROR: Failed to record CSAT - ${error}`;
+        }
     }
 
   
