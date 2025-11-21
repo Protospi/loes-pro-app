@@ -1,4 +1,4 @@
-import { Settings, Server, BarChart3, Sun, Moon, MessageCircle, AccessibilityIcon } from "lucide-react";
+import { Settings, Server, BarChart3, Sun, Moon, MessageCircle, AccessibilityIcon, Globe } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +25,10 @@ export function SettingsDropdown() {
 
   const handleAnalyticsClick = () => {
     setLocation("/analytics");
+  };
+
+  const handleTranslationClick = () => {
+    setLocation("/");
   };
 
   return (
@@ -71,6 +75,14 @@ export function SettingsDropdown() {
             title={t('settings.analytics')}
           >
             <BarChart3 className="h-4 w-4" />
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem 
+            onClick={handleTranslationClick}
+            className="flex items-center justify-center w-10 h-10 text-slate-600 dark:text-muted-foreground hover:text-blue-400 hover:bg-blue-500/20 transition-colors cursor-pointer rounded-none"
+            title={t('settings.translation')}
+          >
+            <Globe className="h-4 w-4" />
           </DropdownMenuItem>
           
           <DropdownMenuItem 
