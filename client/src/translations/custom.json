@@ -1,13 +1,13 @@
 {
   "chat": {
     "title": "Assistente Profissional",
-    "subtitle": "Como posso ajudá-lo com o trabalho do Pedro?",
+    "subtitle": "Como posso ajudar você com o trabalho do Pedro?",
     "sampleQuestions": [
       "Conte-me sobre a experiência profissional do Pedro.",
       "Mostre-me os projetos recentes do Pedro.",
       "Quais certificações o Pedro possui?",
-      "Combine as habilidades com a descrição do trabalho ou texto.",
-      "Quero agendar uma reunião com Pedro."
+      "Associe as habilidades com a descrição do trabalho ou texto.",
+      "Quero agendar uma reunião com o Pedro."
     ],
     "suggestionChips": [
       {
@@ -45,12 +45,12 @@
     "transcribing": "Transcrevendo..."
   },
   "tooltips": {
-    "themeToggle": "Mudar tema",
+    "themeToggle": "Alterar tema",
     "newConversation": "Nova conversa",
     "sendMessage": "Enviar mensagem"
   },
   "server": {
-    "title": "Visão do Servidor",
+    "title": "Visualização do Servidor",
     "flowCanvas": {
       "title": "Fluxo do Agente"
     },
@@ -59,26 +59,26 @@
       "loading": "Carregando registros de conversa..."
     },
     "playConversation": "Reproduzir Conversa",
-    "stopPlayback": "Parar Reproduzir",
+    "stopPlayback": "Parar Reprodução",
     "noConversation": "Nenhuma Conversa Encontrada",
     "noConversationDesc": "Não há conversas gravadas para reproduzir.",
     "playbackStarted": "Reprodução Iniciada",
     "playbackStartedDesc": "Reproduzindo eventos da conversa",
     "playbackComplete": "Reprodução Completa",
-    "playbackCompleteDesc": "A reprodução da conversa foi concluída",
+    "playbackCompleteDesc": "A reprodução da conversa foi finalizada",
     "error": "Erro",
-    "errorDesc": "Falhou ao carregar o fluxo da conversa"
+    "errorDesc": "Falha ao carregar o fluxo da conversa"
   },
   "analytics": {
-    "title": "Visão Analítica",
+    "title": "Visualização Analítica",
     "selectDateRange": "Selecionar Período",
     "selectDates": "Selecionar datas",
     "selectNewRange": "✨ Clique em uma data para iniciar uma nova seleção",
     "error": "Falha ao carregar dados analíticos",
     "noData": "Nenhum dado disponível para o período selecionado",
     "emptyState": {
-      "title": "Visão Analítica",
-      "description": "Esta área será preenchida em breve com informações analíticas."
+      "title": "Visualização Analítica",
+      "description": "Esta área em breve será preenchida com informações analíticas."
     }
   }
 }

@@ -1,12 +1,13 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'wouter'
 import { useLanguage } from '../../lib/LanguageContext'
 import { useDynamicTranslations } from '../../lib/DynamicTranslations'
 import ForceGraph from './force-graph'
+import { Mic } from 'lucide-react'
 
 // These arrays are used for the typing animation effect only
 // The actual displayed text will come from translations
@@ -21,13 +22,13 @@ const messages = [
 ]
 
 const placeholders = [
-  "Type your language",
-  "Escribe tu idioma",
-  "Digite seu idioma",
-  "输入你的语言",
-  "Geben Sie Ihre Sprache ein",
-  "Tapez votre langue", 
-  "言語を入力してください",
+  "Type or speak your language",
+  "Escribe o habla tu idioma",
+  "Digite ou fale seu idioma",
+  "输入或说出您的语言",
+  "Tippen oder sprechen Sie Ihre Sprache",
+  "Tapez ou parlez votre langue", 
+  "言語を入力または話してください",
 ]
 
 export default function IntroAnimation() {
@@ -44,6 +45,11 @@ export default function IntroAnimation() {
   const [isDeletingMessage, setIsDeletingMessage] = useState(false)
   const [isPulsing, setIsPulsing] = useState(true)
   const [userInput, setUserInput] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+  const [isTranscribing, setIsTranscribing] = useState(false)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
+  const recordingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     let typingTimer: NodeJS.Timeout
@@ -92,6 +98,18 @@ export default function IntroAnimation() {
     }
   }, [showElements]);
 
+  // Cleanup effect for recording
+  useEffect(() => {
+    return () => {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop()
+      }
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current)
+      }
+    }
+  }, [])
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       detectLanguage()
@@ -103,7 +121,10 @@ export default function IntroAnimation() {
   }
   
   const detectLanguage = async () => {
-    if (!userInput.trim()) return
+    if (!userInput.trim()) {
+      alert(t('intro.noLanguageInput', 'Please provide a language input by typing or speaking before starting the portfolio.'))
+      return
+    }
     
     // Store the user input for the loading page to process
     localStorage.setItem('pendingLanguageInput', userInput)
@@ -115,6 +136,91 @@ export default function IntroAnimation() {
     setTimeout(() => {
       setLocation('/loading')
     }, 500)
+  }
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      audioChunksRef.current = []
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data)
+        }
+      }
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        stream.getTracks().forEach(track => track.stop())
+        await sendAudioToServer(audioBlob)
+      }
+
+      mediaRecorder.start()
+      setIsRecording(true)
+
+      // Set 10 second timeout
+      recordingTimeoutRef.current = setTimeout(() => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+          stopRecording()
+          alert(t('intro.recordingTooLong', 'Recording too long! Please try again and say your language in less than 10 seconds.'))
+        }
+      }, 10000)
+    } catch (error) {
+      console.error('Error starting recording:', error)
+      alert(t('intro.recordingError', 'Failed to record audio. Please try again.'))
+    }
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current)
+        recordingTimeoutRef.current = null
+      }
+    }
+  }
+
+  const sendAudioToServer = async (audioBlob: Blob) => {
+    setIsTranscribing(true)
+    try {
+      const formData = new FormData()
+      formData.append('audio', audioBlob, 'recording.webm')
+
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to transcribe audio')
+      }
+
+      const data = await response.json()
+      
+      // Set the transcribed text in the input field
+      if (data.transcribedText && data.transcribedText.trim()) {
+        setUserInput(data.transcribedText.trim())
+      }
+    } catch (error) {
+      console.error('Error transcribing audio:', error)
+      alert(t('intro.recordingError', 'Failed to record audio. Please try again.'))
+    } finally {
+      setIsTranscribing(false)
+    }
+  }
+
+  const handleMicPress = (e: React.PointerEvent) => {
+    e.preventDefault()
+    startRecording()
+  }
+
+  const handleMicRelease = (e: React.PointerEvent) => {
+    e.preventDefault()
+    stopRecording()
   }
 
   return (
@@ -142,11 +248,11 @@ export default function IntroAnimation() {
 
         {showElements && (
           <>
-            {/* Input Field with synchronized placeholder */}
+            {/* Input Field with microphone button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-28"
+              className="mb-28 flex items-center gap-2 justify-center"
             >
               <input
                 type="text"
@@ -154,8 +260,32 @@ export default function IntroAnimation() {
                 onKeyDown={handleKeyDown}
                 onChange={handleInputChange}
                 value={userInput}
-                className="w-64 px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none bg-black text-white placeholder-white::placeholder"
+                disabled={isRecording || isTranscribing}
+                className="w-64 px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-gray-500 focus:outline-none bg-black text-white placeholder-white::placeholder disabled:opacity-50"
               />
+              <button
+                onPointerDown={handleMicPress}
+                onPointerUp={handleMicRelease}
+                onPointerLeave={handleMicRelease}
+                disabled={isTranscribing}
+                className={`flex items-center justify-center rounded-lg border-2 transition-all duration-200 overflow-hidden relative ${
+                  isRecording 
+                    ? 'bg-red-500 border-red-600 animate-pulse' 
+                    : isTranscribing
+                    ? 'bg-gray-400 border-gray-500'
+                    : 'bg-black border-gray-300 hover:border-gray-500 active:bg-gray-800'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                style={{ height: '42px', width: '42px' }}
+              >
+                <motion.div
+                  animate={{
+                    color: isRecording || isTranscribing ? '#ffffff' : (isPulsing ? '#f87171' : '#ffffff'),
+                  }}
+                  transition={{ duration: 1, ease: "easeInOut" }}
+                >
+                  <Mic size={20} />
+                </motion.div>
+              </button>
             </motion.div>
 
             {/* Start Button - Enhanced photorealistic button with pulsing effect */}

@@ -1,9 +1,13 @@
 {
-  "welcome": "## Welcome to Pedro's Website Agent!\n### Hey there, I’m Indy 🤖\n\nI’m an AI digital assistant here to help you explore all things about Pedro’s professional life. Feel free to ask me about:\n- Curriculum & Skills 📚💡\n- Working Experience 🏢💼\n- Certificates & Credentials 📜🏅\n- Booking Appointments 🗓️✅\n\n---\n\nDisclaimer:\nWhile I strive to provide accurate responses, my answers may not be 100% correct. I’m continuously learning and improving to serve you better.\n\nEnjoy your visit, and let me know how I can help!",
+  "welcome": "## Welcome to Pedro's Website Agent!\n### Hey there, I'm Indy 🤖\n\nI'm an AI digital assistant here to help you explore all things about Pedro's professional life. Feel free to ask me about:\n- Curriculum & Skills 📚💡\n- Working Experience 🏢💼\n- Certificates & Credentials 📜🏅\n- Booking Appointments 🗓️✅\n\n---\n\nDisclaimer:\nWhile I strive to provide accurate responses, my answers may not be 100% correct. I'm continuously learning and improving to serve you better.\n\nEnjoy your visit, and let me know how I can help!",
   "intro": {
     "greeting": "Hello, I'm a developer",
     "description": "I specialize in creating beautiful web experiences",
-    "cta": "Explore my work"
+    "cta": "Explore my work",
+    "placeholder": "Type or speak your language",
+    "recordingTooLong": "Recording too long! Please try again and say your language in less than 10 seconds.",
+    "noLanguageInput": "Please provide a language input by typing or speaking before starting the portfolio.",
+    "recordingError": "Failed to record audio. Please try again."
   },
   "navigation": {
     "home": "Home",

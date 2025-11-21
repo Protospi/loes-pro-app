@@ -3,7 +3,11 @@
   "intro": {
     "greeting": "Hola, soy desarrollador",
     "description": "Me especializo en crear hermosas experiencias web",
-    "cta": "Explora mi trabajo"
+    "cta": "Explora mi trabajo",
+    "placeholder": "Escribe o habla tu idioma",
+    "recordingTooLong": "¡Grabación demasiado larga! Por favor, inténtalo de nuevo y di tu idioma en menos de 10 segundos.",
+    "noLanguageInput": "Por favor, proporciona un idioma escribiendo o hablando antes de iniciar el portafolio.",
+    "recordingError": "Error al grabar audio. Por favor, inténtalo de nuevo."
   },
   "navigation": {
     "home": "Inicio",

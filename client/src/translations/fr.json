@@ -3,7 +3,11 @@
   "intro": {
     "greeting": "Bonjour, je suis développeur",
     "description": "Je suis spécialisé dans la création de belles expériences web",
-    "cta": "Découvrez mon travail"
+    "cta": "Découvrez mon travail",
+    "placeholder": "Tapez ou parlez votre langue",
+    "recordingTooLong": "Enregistrement trop long ! Veuillez réessayer et dire votre langue en moins de 10 secondes.",
+    "noLanguageInput": "Veuillez fournir une langue en tapant ou en parlant avant de démarrer le portfolio.",
+    "recordingError": "Échec de l'enregistrement audio. Veuillez réessayer."
   },
   "navigation": {
     "home": "Accueil",

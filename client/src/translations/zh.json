@@ -3,7 +3,11 @@
   "intro": {
     "greeting": "你好，我是一名开发者",
     "description": "我专注于创建美丽的网页体验",
-    "cta": "探索我的作品"
+    "cta": "探索我的作品",
+    "placeholder": "输入或说出您的语言",
+    "recordingTooLong": "录音时间过长！请重试并在10秒内说出您的语言。",
+    "noLanguageInput": "请在启动作品集之前通过输入或语音提供语言。",
+    "recordingError": "录音失败。请重试。"
   },
   "navigation": {
     "home": "首页",

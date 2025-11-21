@@ -3,7 +3,11 @@
   "intro": {
     "greeting": "Hallo, ich bin ein Entwickler",
     "description": "Ich bin spezialisiert auf die Erstellung schöner Web-Erlebnisse",
-    "cta": "Erkunden Sie meine Arbeit"
+    "cta": "Erkunden Sie meine Arbeit",
+    "placeholder": "Tippen oder sprechen Sie Ihre Sprache",
+    "recordingTooLong": "Aufnahme zu lang! Bitte versuchen Sie es erneut und sagen Sie Ihre Sprache in weniger als 10 Sekunden.",
+    "noLanguageInput": "Bitte geben Sie eine Sprache ein, indem Sie tippen oder sprechen, bevor Sie das Portfolio starten.",
+    "recordingError": "Audioaufnahme fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "navigation": {
     "home": "Startseite",
