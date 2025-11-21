@@ -36,10 +36,15 @@ export default function AnalyticsView() {
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   
+  // Active date range used for queries
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
     from: startOfMonth,
     to: today,
   });
+  
+  // Track the first selected date when starting a new range selection
+  const [firstSelectedDate, setFirstSelectedDate] = useState<Date | null>(null);
+  
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [timeGranularity, setTimeGranularity] = useState<'hour' | 'day' | 'month'>('day');
 
@@ -79,7 +84,16 @@ export default function AnalyticsView() {
       <header className="relative grid grid-cols-3 items-center p-4 z-10">
         {/* Date Range Picker - Left */}
         <div className="flex justify-start">
-          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+          <Popover 
+            open={isCalendarOpen} 
+            onOpenChange={(open) => {
+              setIsCalendarOpen(open);
+              // Reset selection state if calendar is closed
+              if (!open) {
+                setFirstSelectedDate(null);
+              }
+            }}
+          >
             <PopoverTrigger asChild>
               <Button
                 variant="ghost"
@@ -108,13 +122,29 @@ export default function AnalyticsView() {
           >
             <Calendar
               mode="range"
-              selected={dateRange}
-              onSelect={(range) => {
-                if (range) {
+              selected={firstSelectedDate ? { from: firstSelectedDate, to: undefined } : dateRange}
+              onSelect={(_, selectedDay) => {
+                if (!selectedDay) return;
+                
+                if (!firstSelectedDate) {
+                  // First click: Start new selection from this specific date
+                  // We use selectedDay directly to avoid any range merging logic from the library
+                  setFirstSelectedDate(selectedDay);
                   setDateRange({
-                    from: range.from,
-                    to: range.to,
+                    from: selectedDay,
+                    to: undefined,
                   });
+                } else {
+                  // Second click: Complete the range
+                  const from = firstSelectedDate < selectedDay ? firstSelectedDate : selectedDay;
+                  const to = firstSelectedDate < selectedDay ? selectedDay : firstSelectedDate;
+                  
+                  setDateRange({
+                    from,
+                    to,
+                  });
+                  setFirstSelectedDate(null);
+                  setIsCalendarOpen(false);
                 }
               }}
               numberOfMonths={1}
@@ -135,12 +165,12 @@ export default function AnalyticsView() {
                 head_row: "flex",
                 head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
                 row: "flex w-full mt-2",
-                cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-range-start)]:rounded-l-md [&:has([aria-selected])]:bg-blue-500/10 focus-within:relative focus-within:z-20",
-                day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-blue-500/20 rounded-md transition-all",
-                day_range_end: "!bg-blue-500 !text-white hover:!bg-blue-600 font-semibold",
-                day_range_start: "!bg-blue-500 !text-white hover:!bg-blue-600 font-semibold",
-                day_selected: "bg-blue-500 text-white hover:bg-blue-600 focus:bg-blue-600",
-                day_today: "bg-blue-500/20 text-blue-400 font-semibold border border-blue-500/30",
+                cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-range-start)]:rounded-l-md [&:has([aria-selected])]:bg-blue-500/10 focus-within:relative focus-within:z-20 transition-all duration-200",
+                day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-blue-500/20 rounded-md transition-all duration-200",
+                day_range_end: "!bg-blue-500 !text-white hover:!bg-blue-600 font-semibold shadow-lg",
+                day_range_start: "!bg-blue-500 !text-white hover:!bg-blue-600 font-semibold shadow-lg",
+                day_selected: "bg-blue-500 text-white hover:bg-blue-600 focus:bg-blue-600 shadow-md",
+                day_today: "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-blue-400",
                 day_outside: "day-outside text-muted-foreground/50 aria-selected:bg-blue-500/5 aria-selected:text-muted-foreground/50",
                 day_disabled: "text-muted-foreground/30 opacity-50",
                 day_range_middle: "aria-selected:bg-blue-500/20 aria-selected:text-foreground rounded-none",

@@ -44,5 +44,17 @@
     "placeholder": "メッセージを入力...",
     "recording": "録音中... 離して送信",
     "transcribing": "文字起こし中..."
+  },
+  "analytics": {
+    "title": "分析ビュー",
+    "selectDateRange": "日付範囲を選択",
+    "selectDates": "日付を選択",
+    "selectNewRange": "✨ 日付をクリックして新しい選択を開始",
+    "error": "分析データの読み込みに失敗しました",
+    "noData": "選択した日付範囲のデータがありません",
+    "emptyState": {
+      "title": "分析ビュー",
+      "description": "このエリアは間もなく分析情報で埋められます。"
+    }
   }
 } 

@@ -54,5 +54,17 @@
     "placeholder": "Digite sua mensagem...",
     "recording": "Gravando... Solte para enviar",
     "transcribing": "Transcrevendo..."
+  },
+  "analytics": {
+    "title": "Visualização de Análises",
+    "selectDateRange": "Selecionar Intervalo de Datas",
+    "selectDates": "Selecionar datas",
+    "selectNewRange": "✨ Clique em uma data para iniciar nova seleção",
+    "error": "Falha ao carregar dados de análise",
+    "noData": "Nenhum dado disponível para o intervalo de datas selecionado",
+    "emptyState": {
+      "title": "Visualização de Análises",
+      "description": "Esta área será preenchida com informações de análise em breve."
+    }
   }
 } 

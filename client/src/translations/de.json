@@ -44,5 +44,17 @@
     "placeholder": "Geben Sie Ihre Nachricht ein...",
     "recording": "Aufnahme... Loslassen zum Senden",
     "transcribing": "Transkribieren..."
+  },
+  "analytics": {
+    "title": "Analyseansicht",
+    "selectDateRange": "Datumsbereich auswählen",
+    "selectDates": "Daten auswählen",
+    "selectNewRange": "✨ Klicken Sie auf ein Datum, um eine neue Auswahl zu starten",
+    "error": "Fehler beim Laden der Analysedaten",
+    "noData": "Keine Daten für den ausgewählten Datumsbereich verfügbar",
+    "emptyState": {
+      "title": "Analyseansicht",
+      "description": "Dieser Bereich wird bald mit Analyseinformationen gefüllt."
+    }
   }
 } 

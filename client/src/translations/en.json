@@ -93,6 +93,11 @@
   },
   "analytics": {
     "title": "Analytics View",
+    "selectDateRange": "Select Date Range",
+    "selectDates": "Select dates",
+    "selectNewRange": "✨ Click a date to start new selection",
+    "error": "Failed to load analytics data",
+    "noData": "No data available for the selected date range",
     "emptyState": {
       "title": "Analytics View",
       "description": "This area will be populated with analytics information soon."

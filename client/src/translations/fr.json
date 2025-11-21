@@ -44,5 +44,17 @@
     "placeholder": "Tapez votre message...",
     "recording": "Enregistrement... Relâchez pour envoyer",
     "transcribing": "Transcription..."
+  },
+  "analytics": {
+    "title": "Vue Analytique",
+    "selectDateRange": "Sélectionner la Plage de Dates",
+    "selectDates": "Sélectionner les dates",
+    "selectNewRange": "✨ Cliquez sur une date pour commencer une nouvelle sélection",
+    "error": "Échec du chargement des données analytiques",
+    "noData": "Aucune donnée disponible pour la plage de dates sélectionnée",
+    "emptyState": {
+      "title": "Vue Analytique",
+      "description": "Cette zone sera bientôt remplie avec des informations analytiques."
+    }
   }
 } 

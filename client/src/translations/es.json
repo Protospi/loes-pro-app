@@ -54,5 +54,17 @@
     "placeholder": "Escribe tu mensaje...",
     "recording": "Grabando... Suelta para enviar",
     "transcribing": "Transcribiendo..."
+  },
+  "analytics": {
+    "title": "Vista de Análisis",
+    "selectDateRange": "Seleccionar Rango de Fechas",
+    "selectDates": "Seleccionar fechas",
+    "selectNewRange": "✨ Haz clic en una fecha para iniciar nueva selección",
+    "error": "Error al cargar los datos de análisis",
+    "noData": "No hay datos disponibles para el rango de fechas seleccionado",
+    "emptyState": {
+      "title": "Vista de Análisis",
+      "description": "Esta área se llenará con información de análisis pronto."
+    }
   }
 } 
