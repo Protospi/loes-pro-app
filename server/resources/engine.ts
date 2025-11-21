@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import OpenAI from 'openai';
 import { GoogleCalendarService } from '../google-calendar.js';
 import { ObjectId } from 'mongodb';
-import { createReasoning } from '../database.js';
+import { createReasoning, createMeeting } from '../database.js';
 dotenv.config({ path: '../../.env' });
 
 // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
@@ -286,6 +286,35 @@ export class engine  {
                             attendeeEmails: args.attendeeEmails,
                             location: args.location
                         })
+                        
+                        // Store meeting in database if userId is provided
+                        if (userId) {
+                            try {
+                                // Parse eventId from toolResult if available
+                                let eventId: string | undefined;
+                                try {
+                                    const resultJson = JSON.parse(toolResult);
+                                    eventId = resultJson.eventId || resultJson.id;
+                                } catch {
+                                    // If toolResult is not JSON, it's fine - we'll store without eventId
+                                }
+                                
+                                await createMeeting({
+                                    userId: userId,
+                                    title: args.title,
+                                    description: args.description,
+                                    startDateTime: args.startDateTime,
+                                    endDateTime: args.endDateTime,
+                                    attendeeEmails: args.attendeeEmails,
+                                    location: args.location,
+                                    eventId: eventId
+                                });
+                                console.log('✅ Meeting saved to database');
+                            } catch (error) {
+                                console.error('❌ Error saving meeting to database:', error);
+                            }
+                        }
+                        
                         // console.log('✅ Meeting scheduled result:', toolResult)
                         break
 

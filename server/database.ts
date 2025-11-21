@@ -41,6 +41,19 @@ export interface Reasoning {
     totalCost?: number;
 }
 
+export interface Meeting {
+    _id?: ObjectId;
+    createdAt: Date;
+    userId: ObjectId;
+    title: string;
+    description?: string;
+    startDateTime: string;
+    endDateTime: string;
+    attendeeEmails?: string[];
+    location?: string;
+    eventId?: string; // Google Calendar event ID
+}
+
 const uri = process.env.MONGODB_URI;
 if (!uri) {
     throw new Error("MONGODB_URI is not set");
@@ -55,9 +68,10 @@ const Users = db.collection<User>("users");
 const Messages = db.collection<Message>("messages");
 const Functions = db.collection<Function>("functions");
 const Reasonings = db.collection<Reasoning>("reasonings");
+const Meetings = db.collection<Meeting>("meetings");
 
 // Export collections for direct access
-export { Users, Messages, Functions, Reasonings, client };
+export { Users, Messages, Functions, Reasonings, Meetings, client };
 
 // Connect to MongoDB
 export async function connectToDatabase() {
@@ -190,6 +204,37 @@ export async function updateReasoning(reasoningId: string, updateData: Partial<R
 
 export async function deleteReasoning(reasoningId: string) {
     const result = await Reasonings.deleteOne({ _id: new ObjectId(reasoningId) });
+    return result;
+}
+
+// Meeting CRUD Operations
+export async function createMeeting(meetingData: Omit<Meeting, '_id' | 'createdAt'>) {
+    const meeting: Meeting = {
+        ...meetingData,
+        createdAt: new Date(),
+    };
+    const result = await Meetings.insertOne(meeting);
+    return result;
+}
+
+export async function getMeeting(meetingId: string) {
+    return await Meetings.findOne({ _id: new ObjectId(meetingId) });
+}
+
+export async function getUserMeetings(userId: string) {
+    return await Meetings.find({ userId: new ObjectId(userId) }).toArray();
+}
+
+export async function updateMeeting(meetingId: string, updateData: Partial<Meeting>) {
+    const result = await Meetings.updateOne(
+        { _id: new ObjectId(meetingId) },
+        { $set: updateData }
+    );
+    return result;
+}
+
+export async function deleteMeeting(meetingId: string) {
+    const result = await Meetings.deleteOne({ _id: new ObjectId(meetingId) });
     return result;
 }
 

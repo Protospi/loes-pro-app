@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Plus, Server, Play, Square } from "lucide-react";
+import { Server, Play, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SettingsDropdown } from "@/components/chat/settings-dropdown";
 import ReactFlowCanvas, { ReactFlowCanvasRef, ConversationFlowItem } from "@/components/server/reactFlow";
@@ -7,62 +7,18 @@ import ConversationLogs, { ConversationLogsRef } from "@/components/server/conve
 import { useRef, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { createNewSession } from "@/lib/sessionManager";
 import { apiRequest } from "@/lib/queryClient";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function ServerView() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const queryClient = useQueryClient();
   const reactFlowRef = useRef<ReactFlowCanvasRef>(null);
   const conversationLogsRef = useRef<ConversationLogsRef>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeLogIndex, setActiveLogIndex] = useState(-1);
-  const [refreshKey, setRefreshKey] = useState(0);
   const playbackTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
-
-  const handleNewConversation = async () => {
-    try {
-      // Stop any ongoing playback
-      if (isPlaying) {
-        reactFlowRef.current?.stopPlayback();
-        conversationLogsRef.current?.clearActiveLogs();
-        playbackTimeoutsRef.current.forEach(clearTimeout);
-        playbackTimeoutsRef.current = [];
-        setActiveLogIndex(-1);
-        setIsPlaying(false);
-      }
-
-      // Create a new session ID
-      const newSessionId = createNewSession();
-      console.log('🆕 Starting new conversation with session:', newSessionId);
-      
-      // Clear messages from backend
-      await apiRequest("DELETE", "/api/messages");
-      
-      // Invalidate queries to refresh both chat and server view data
-      queryClient.invalidateQueries({ queryKey: ["/api/messages"] });
-      
-      // Force refresh the ConversationLogs component by updating the key
-      setRefreshKey(prev => prev + 1);
-      
-      // Show success toast
-      toast({
-        title: t('server.newConversation', 'New Conversation'),
-        description: t('server.newConversationDesc', 'Started a fresh conversation'),
-      });
-    } catch (error) {
-      console.error("Failed to start new conversation:", error);
-      toast({
-        title: t('server.error', 'Error'),
-        description: t('server.errorStartingConversation', 'Failed to start new conversation'),
-        variant: "destructive",
-      });
-    }
-  };
 
   const handlePlayConversation = async () => {
     if (isPlaying) {
@@ -144,19 +100,25 @@ export default function ServerView() {
 
   return (
     <div className="h-screen flex flex-col bg-gradient-dark relative">
-      {/* Header Row with New Conversation Button, Title, and Settings Dropdown */}
+      {/* Header Row with Play Button, Title, and Settings Dropdown */}
       <header className="flex items-center justify-between p-4 z-10 flex-shrink-0">
-        {/* New Conversation Button - Left */}
+        {/* Play/Stop Button - Left */}
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleNewConversation}
-          className="glass-chip hover:bg-blue-500/20 transition-all duration-200 group border-0 bg-transparent"
-          data-testid="button-new-conversation"
-          title={t('tooltips.newConversation')}
+          onClick={handlePlayConversation}
+          disabled={isLoading}
+          className="glass-chip hover:bg-purple-500/20 transition-all duration-200 group border-0 bg-transparent"
+          title={isPlaying ? t('server.stopPlayback', 'Stop Playback') : t('server.playConversation', 'Play Conversation')}
         >
-          <Plus className="h-5 w-5 text-slate-600 dark:text-muted-foreground group-hover:text-blue-400 group-hover:scale-110 transition-all" />
-          <span className="sr-only">{t('tooltips.newConversation')}</span>
+          {isPlaying ? (
+            <Square className="h-5 w-5 text-purple-500 group-hover:text-purple-400 group-hover:scale-110 transition-all" />
+          ) : (
+            <Play className="h-5 w-5 text-purple-500 group-hover:text-purple-400 group-hover:scale-110 transition-all" />
+          )}
+          <span className="sr-only">
+            {isPlaying ? t('server.stopPlayback', 'Stop Playback') : t('server.playConversation', 'Play Conversation')}
+          </span>
         </Button>
 
         {/* Title - Center */}
@@ -175,30 +137,11 @@ export default function ServerView() {
       <main className="flex-1 flex flex-col gap-4 p-4 pt-0 overflow-hidden max-w-6xl mx-auto w-full">
         {/* React Flow Canvas Section - Top Row */}
         <section className="flex flex-col h-80">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center mb-3">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
               {t('server.flowCanvas.title', 'Agent Architecture')}
             </h2>
-            
-            {/* Play/Stop Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handlePlayConversation}
-              disabled={isLoading}
-              className="glass-chip hover:bg-purple-500/20 transition-all duration-200 group border-0 bg-transparent"
-              title={isPlaying ? t('server.stopPlayback', 'Stop Playback') : t('server.playConversation', 'Play Conversation')}
-            >
-              {isPlaying ? (
-                <Square className="h-5 w-5 text-purple-500 group-hover:text-purple-400 group-hover:scale-110 transition-all" />
-              ) : (
-                <Play className="h-5 w-5 text-purple-500 group-hover:text-purple-400 group-hover:scale-110 transition-all" />
-              )}
-              <span className="sr-only">
-                {isPlaying ? t('server.stopPlayback', 'Stop Playback') : t('server.playConversation', 'Play Conversation')}
-              </span>
-            </Button>
           </div>
           <div className="flex-1 min-h-0">
             <ReactFlowCanvas ref={reactFlowRef} onPlaybackComplete={handlePlaybackComplete} />
@@ -215,7 +158,7 @@ export default function ServerView() {
           </div>
           <div className="flex-1 min-h-0 glass-chip rounded-xl overflow-hidden">
             <div className="h-full overflow-y-auto scroll-smooth conversation-logs-scroll">
-              <ConversationLogs key={refreshKey} ref={conversationLogsRef} activeLogIndex={activeLogIndex} />
+              <ConversationLogs ref={conversationLogsRef} activeLogIndex={activeLogIndex} />
             </div>
           </div>
         </section>
