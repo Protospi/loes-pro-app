@@ -21,6 +21,7 @@ export interface Message {
     userId: ObjectId;
     text?: string;
     author?: string;
+    totalCost?: number;
 }
 
 export interface Function {
@@ -29,6 +30,7 @@ export interface Function {
     userId: ObjectId;
     args?: Record<string, any>;
     response?: Record<string, any>;
+    totalCost?: number;
 }
 
 export interface Reasoning {
@@ -36,6 +38,7 @@ export interface Reasoning {
     createdAt: Date;
     userId: ObjectId;
     text: string;
+    totalCost?: number;
 }
 
 const uri = process.env.MONGODB_URI;
@@ -205,7 +208,7 @@ export async function getAnalyticsSummary(startDate: Date, endDate: Date) {
             Messages.find(dateFilter).toArray(),
             Functions.find(dateFilter).toArray(),
             Reasonings.find(dateFilter).toArray(),
-            Users.find({ csat: { $exists: true, $ne: null } }).toArray()
+            Users.find({ csat: { $exists: true, $ne: undefined } }).toArray() as Promise<User[]>
         ]);
 
         // Calculate metrics in JavaScript

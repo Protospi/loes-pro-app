@@ -351,9 +351,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         engineResult = await aiEngine.run(content, engineInput, undefined, userId);
       }
       
+      // Extract the conversation and cost from engine result
+      const { conversation, totalCost } = engineResult;
+      console.log('💰 Total cost for this request:', `$${totalCost.toFixed(6)}`);
+      
       // Extract the AI response from engine result
       // The engine returns the conversation array, find the last assistant message
-      const lastAssistantMessage = engineResult
+      const lastAssistantMessage = conversation
         .filter((msg: any) => msg.role === "assistant")
         .pop();
       
@@ -376,16 +380,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         db.createMessage({
           userId,
           text: responseText,
-          author: 'assistant'
+          author: 'assistant',
+          totalCost: totalCost
         }).then(() => {
-          console.log('💾 AI response persisted to MongoDB');
+          console.log('💾 AI response persisted to MongoDB with cost:', `$${totalCost.toFixed(6)}`);
         }).catch(err => {
           console.error('Error persisting AI response to MongoDB:', err);
         });
         
         // Extract and persist function calls
-        const functionCalls = engineResult.filter((msg: any) => msg.type === 'function_call');
-        const functionOutputs = engineResult.filter((msg: any) => msg.type === 'function_call_output');
+        const functionCalls = conversation.filter((msg: any) => msg.type === 'function_call');
+        const functionOutputs = conversation.filter((msg: any) => msg.type === 'function_call_output');
         
         if (functionCalls.length > 0) {
           console.log('🔧 Persisting', functionCalls.length, 'function calls to MongoDB');
@@ -400,9 +405,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               },
               response: {
                 output: output?.output || null
-              }
+              },
+              totalCost: totalCost
             }).then(() => {
-              console.log(`💾 Function call ${funcCall.name} persisted to MongoDB`);
+              console.log(`💾 Function call ${funcCall.name} persisted to MongoDB with cost: $${totalCost.toFixed(6)}`);
             }).catch(err => {
               console.error(`Error persisting function call ${funcCall.name}:`, err);
             });

@@ -13,6 +13,10 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const MAX_AGENT_LOOP = 3
 
+// Pricing constants for gpt-5 model (per 1M tokens)
+const INPUT_PRICE_PER_MILLION = 1.250;  // $1.250 per 1M input tokens
+const OUTPUT_PRICE_PER_MILLION = 10;    // $10 per 1M output tokens
+
 export class engine  {
     private calendarService: GoogleCalendarService;
 
@@ -20,8 +24,16 @@ export class engine  {
         this.calendarService = new GoogleCalendarService();
     }
 
+    // Calculate cost based on token usage
+    private calculateCost(usage: { input_tokens: number; output_tokens: number }): number {
+        const inputCost = (usage.input_tokens / 1_000_000) * INPUT_PRICE_PER_MILLION;
+        const outputCost = (usage.output_tokens / 1_000_000) * OUTPUT_PRICE_PER_MILLION;
+        const totalCost = inputCost + outputCost;
+        return parseFloat(totalCost.toFixed(6)); // Round to 6 decimal places for precision
+    }
+
     // Define run function
-    async run(userInput: string, input: any[], fileId?: string, userId?: ObjectId) {
+    async run(userInput: string, input: any[], fileId?: string, userId?: ObjectId): Promise<{ conversation: any[], totalCost: number }> {
         // console.log('🚀 Starting AI Engine...')
         // console.log('📝 User Input:', userInput)
         // console.log('📦 Initial Input Array Length:', input.length)
@@ -36,6 +48,7 @@ export class engine  {
         
         let loopAgent = true
         let loopCounter = 0
+        let totalCostAccumulated = 0; // Accumulate costs across all loops
 
         // Run the agent
         // console.log('🔄 Starting agent loop...')
@@ -164,6 +177,23 @@ export class engine  {
               
             console.log('📤 Response', response)
     
+            // Calculate cost from usage data
+            let loopCost = 0;
+            if (response.usage) {
+                loopCost = this.calculateCost({
+                    input_tokens: response.usage.input_tokens,
+                    output_tokens: response.usage.output_tokens
+                });
+                totalCostAccumulated += loopCost;
+                console.log('💰 Cost calculation (this loop):', {
+                    input_tokens: response.usage.input_tokens,
+                    output_tokens: response.usage.output_tokens,
+                    total_tokens: response.usage.total_tokens,
+                    loopCost: `$${loopCost.toFixed(6)}`,
+                    totalAccumulated: `$${totalCostAccumulated.toFixed(6)}`
+                });
+            }
+    
             // Extract and save reasoning summary if present
             if (userId) {
                 const reasoningOutput = response.output.find((output: any) => output.type === 'reasoning') as any;
@@ -178,9 +208,10 @@ export class engine  {
                         try {
                             await createReasoning({
                                 userId: userId,
-                                text: summaryTexts
+                                text: summaryTexts,
+                                totalCost: loopCost
                             });
-                            console.log('💡 Reasoning summary saved to database');
+                            console.log('💡 Reasoning summary saved to database with cost:', `$${loopCost.toFixed(6)}`);
                         } catch (error) {
                             console.error('❌ Error saving reasoning summary:', error);
                         }
@@ -335,8 +366,13 @@ export class engine  {
         
         // console.log('📊 Final input array:', input)
         
-        // Return the input array
-        return input
+        console.log(`💰 Total cost for this conversation turn: $${totalCostAccumulated.toFixed(6)}`);
+        
+        // Return the input array and total cost
+        return {
+            conversation: input,
+            totalCost: totalCostAccumulated
+        }
             
     }
 
@@ -427,11 +463,12 @@ async function main() {
         // Run the engine
         const result = await engineInstance.run(testUserInput, testInputArray, testFileId)
         
-        // console.log('📋 Final result array length:', result?.length || 0)
+        // console.log('📋 Final result array length:', result?.conversation.length || 0)
+        // console.log('💰 Total cost:', result?.totalCost || 0)
         
-        if (result && result.length > 0) {
+        if (result && result.conversation && result.conversation.length > 0) {
             // console.log('📄 Final conversation:')
-            // result.forEach((msg, index) => {
+            // result.conversation.forEach((msg, index) => {
             //     // console.log(`  ${index + 1}. [${msg.role || msg.type}]:`, 
             //     //     typeof msg.content === 'string' ? msg.content.substring(0, 100) + '...' : 
             //     //     typeof msg.output === 'string' ? msg.output.substring(0, 100) + '...' : 
