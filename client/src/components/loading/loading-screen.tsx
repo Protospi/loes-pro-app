@@ -10,7 +10,8 @@ const loadingMessages = [
   '> Loading ...',
   '> Translating application ...',
   '> Translating prompt',
-  '> Translating knowledge base'
+  '> Translating knowledge base',
+  '> Reviewing everything ...'
 ]
 
 export default function LoadingScreen() {
@@ -139,16 +140,11 @@ export default function LoadingScreen() {
 
   useEffect(() => {
     if (currentMessageIndex >= loadingMessages.length) {
-      // All messages completed, wait for translations to complete before navigating
-      if (translationsCompleted) {
-        setTimeout(() => {
-          setLocation('/chat')
-        }, 1000)
-      }
       return
     }
 
     const currentMessage = loadingMessages[currentMessageIndex]
+    const isLastMessage = currentMessageIndex === loadingMessages.length - 1
     
     if (typedText.length < currentMessage.length) {
       // Continue typing current message
@@ -158,14 +154,25 @@ export default function LoadingScreen() {
 
       return () => clearTimeout(typingTimer)
     } else {
-      // Message completed, move to next after delay
-      const nextMessageTimer = setTimeout(() => {
-        setCompletedMessages(prev => [...prev, currentMessage])
-        setCurrentMessageIndex(prev => prev + 1)
-        setTypedText('')
-      }, 800) // Pause between messages
+      // Message completed
+      if (isLastMessage) {
+        // If it's the last message and translations are complete, navigate
+        if (translationsCompleted) {
+          setTimeout(() => {
+            setLocation('/chat')
+          }, 500)
+        }
+        // Otherwise, just stay on this message with cursor blinking
+      } else {
+        // Move to next message after delay
+        const nextMessageTimer = setTimeout(() => {
+          setCompletedMessages(prev => [...prev, currentMessage])
+          setCurrentMessageIndex(prev => prev + 1)
+          setTypedText('')
+        }, 800) // Pause between messages
 
-      return () => clearTimeout(nextMessageTimer)
+        return () => clearTimeout(nextMessageTimer)
+      }
     }
   }, [currentMessageIndex, typedText, translationsCompleted, setLocation])
 
