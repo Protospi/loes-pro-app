@@ -130,12 +130,13 @@ export function ChatInterface() {
   });
 
   const sendMessageMutation = useMutation({
-    mutationFn: async ({ content, fileId, fileName }: { content: string; fileId?: string; fileName?: string }) => {
+    mutationFn: async ({ content, fileId, fileName, audio }: { content: string; fileId?: string; fileName?: string; audio?: boolean }) => {
       const response = await apiRequest("POST", "/api/messages", {
         content,
         isUser: true,
         fileId,
         fileName,
+        audio,
       });
       return response.json();
     },
@@ -169,8 +170,8 @@ export function ChatInterface() {
     },
   });
 
-  const handleSendMessage = (content: string, fileId?: string, fileName?: string) => {
-    sendMessageMutation.mutate({ content, fileId, fileName });
+  const handleSendMessage = (content: string, fileId?: string, fileName?: string, audio?: boolean) => {
+    sendMessageMutation.mutate({ content, fileId, fileName, audio });
     // Focus the input after sending message
     if (chatInputRef.current) {
       chatInputRef.current.focus();

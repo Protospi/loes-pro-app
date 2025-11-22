@@ -17,6 +17,8 @@ export const messages = pgTable("messages", {
   userId: varchar("user_id").references(() => users.id),
   fileId: varchar("file_id"),
   fileName: text("file_name"),
+  file: text("file").notNull().default(""),
+  audio: boolean("audio").notNull().default(false),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -28,6 +30,8 @@ export const insertMessageSchema = createInsertSchema(messages).pick({
   content: true,
   isUser: true,
   userId: true,
+  file: true,
+  audio: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

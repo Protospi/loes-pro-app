@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 
 interface ChatInputProps {
-  onSendMessage: (message: string, fileId?: string, fileName?: string) => void;
+  onSendMessage: (message: string, fileId?: string, fileName?: string, audio?: boolean) => void;
   isLoading?: boolean;
 }
 
@@ -162,10 +162,10 @@ export const ChatInput = forwardRef<ChatInputRef, ChatInputProps>(({ onSendMessa
       const data = await response.json();
       console.log('✅ Transcription complete:', data.transcribedText);
       
-      // Send the transcribed text as a normal message
+      // Send the transcribed text as an audio message
       // This will trigger the typing indicator and normal message flow
       if (data.transcribedText && data.transcribedText.trim()) {
-        onSendMessage(data.transcribedText.trim());
+        onSendMessage(data.transcribedText.trim(), undefined, undefined, true);
       }
       
     } catch (error) {

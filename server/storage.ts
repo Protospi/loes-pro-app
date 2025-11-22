@@ -59,6 +59,8 @@ export class MemStorage implements IStorage {
       userId: insertMessage.userId ?? null,
       fileId: insertMessage.fileId ?? null,
       fileName: insertMessage.fileName ?? null,
+      file: insertMessage.file ?? "",
+      audio: insertMessage.audio ?? false,
     };
     this.messages.set(id, message);
     console.log('💾 Storage - Created message:', {
@@ -67,6 +69,8 @@ export class MemStorage implements IStorage {
       content: message.content.substring(0, 50) + '...',
       fileId: message.fileId,
       fileName: message.fileName,
+      file: message.file,
+      audio: message.audio,
       totalMessages: this.messages.size
     });
     return message;

@@ -23,6 +23,8 @@ export interface Message {
     text?: string;
     author?: string;
     totalCost?: number;
+    file?: string;
+    audio?: boolean;
 }
 
 export interface Function {
@@ -121,6 +123,8 @@ export async function createMessage(messageData: Omit<Message, '_id' | 'createdA
     const message: Message = {
         ...messageData,
         createdAt: new Date(),
+        file: messageData.file ?? "",
+        audio: messageData.audio ?? false,
     };
     const result = await Messages.insertOne(message);
     return result;

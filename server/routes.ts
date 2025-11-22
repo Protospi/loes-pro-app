@@ -289,9 +289,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new message
   app.post("/api/messages", async (req, res) => {
     try {
-      // Extract all fields including fileId and fileName
-      const { content, isUser, userId, fileId, fileName } = req.body;
-      const messageData = insertMessageSchema.parse({ content, isUser, userId });
+      // Extract all fields including fileId, fileName, and audio
+      const { content, isUser, userId, fileId, fileName, audio } = req.body;
+      const messageData = insertMessageSchema.parse({ content, isUser, userId, file: fileName || "", audio: audio || false });
       
       // Create message with file information
       const message = await storage.createMessage({
@@ -307,9 +307,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         db.createMessage({
           userId,
           text: messageData.content,
-          author: messageData.isUser ? 'user' : 'assistant'
+          author: messageData.isUser ? 'user' : 'assistant',
+          file: fileName || "",
+          audio: audio || false
         }).then(() => {
-          console.log('💾 Message persisted to MongoDB');
+          const fileInfo = fileName ? `with file: ${fileName}` : '';
+          const audioInfo = audio ? 'with audio' : '';
+          console.log('💾 Message persisted to MongoDB', fileInfo, audioInfo);
         }).catch(err => {
           console.error('Error persisting message to MongoDB:', err);
         });
