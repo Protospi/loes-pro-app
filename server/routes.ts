@@ -822,7 +822,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Combine and sort by createdAt
       const conversationFlow = [
-        ...messages.map(m => ({ ...m, type: 'message', createdAt: m.createdAt })),
+        ...messages.map(m => ({ 
+          ...m, 
+          type: 'message', 
+          createdAt: m.createdAt,
+          // Ensure audio and file fields are included
+          audio: m.audio || false,
+          file: m.file || ''
+        })),
         ...functions.map(f => ({ ...f, type: 'function', createdAt: f.createdAt })),
         ...reasonings.map(r => ({ ...r, type: 'reasoning', createdAt: r.createdAt }))
       ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
@@ -870,13 +877,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (event.eventType === 'message') {
           const msg: any = event;
           if (msg.author === 'user') {
+            // Build userContent with text, audio, and file information
+            const userContent: any = {
+              text: msg.text
+            };
+            
+            // Add file information if exists
+            if (msg.file && msg.file.trim() !== '') {
+              userContent.files = [{
+                name: msg.file,
+                type: 'application/octet-stream', // Default type, could be enhanced
+                size: 0, // Size not available from DB, could be added later
+                url: '#'
+              }];
+            }
+            
+            // Add audio flag if true (we don't have audio URL, but we can indicate it was audio)
+            if (msg.audio) {
+              userContent.audio = 'audio-transcription'; // Placeholder to indicate audio was used
+            }
+            
             logs.push({
               id: `msg-${msg._id}`,
               timestamp: msg.createdAt.toISOString(),
               type: 'user_message',
-              userContent: {
-                text: msg.text
-              }
+              userContent
             });
           } else if (msg.author === 'assistant') {
             logs.push({

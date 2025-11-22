@@ -25,6 +25,8 @@ export interface ConversationFlowItem {
   text?: string;
   args?: any;
   response?: any;
+  file?: string;
+  audio?: boolean;
 }
 
 // Custom Node Component
@@ -523,9 +525,26 @@ const FlowCanvas = forwardRef<ReactFlowCanvasRef, ReactFlowCanvasProps>(({ tools
           
           if (item.type === 'message') {
             if (item.author === 'user') {
-              // User message: user -> text-input -> agent
-              nodesToActivate = ['user', 'text-input', 'agent'];
-              edgesToActivate = ['user-text', 'text-agent'];
+              // User message: user -> input nodes -> agent
+              // Always include user and agent
+              nodesToActivate = ['user', 'agent'];
+              edgesToActivate = [];
+              
+              // Check for audio input
+              if (item.audio) {
+                nodesToActivate.push('audio-input');
+                edgesToActivate.push('user-audio', 'audio-agent');
+              }
+              
+              // Check for file/document input
+              if (item.file && item.file.trim() !== '') {
+                nodesToActivate.push('document-input');
+                edgesToActivate.push('user-document', 'document-agent');
+              }
+              
+              // Always include text input (user always types something)
+              nodesToActivate.push('text-input');
+              edgesToActivate.push('user-text', 'text-agent');
             } else if (item.author === 'assistant') {
               // Assistant message: First highlight agent, then animate backward
               // Stage 1: Just highlight the agent node (no edges yet)

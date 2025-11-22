@@ -254,10 +254,17 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
                 <span className="text-xs font-semibold text-muted-foreground">Audio Input</span>
               </div>
               <div className="pl-6">
-                <audio controls className="w-full max-w-xs">
-                  <source src={userContent.audio} type="audio/mpeg" />
-                  Your browser does not support the audio element.
-                </audio>
+                {userContent.audio.startsWith('http') || userContent.audio.startsWith('data:') ? (
+                  <audio controls className="w-full max-w-xs">
+                    <source src={userContent.audio} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                ) : (
+                  <div className="flex items-center gap-2 p-2 bg-blue-500/10 rounded-lg border-l-2 border-blue-500/30">
+                    <Volume2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                    <span className="text-xs text-blue-400">Message sent via audio transcription</span>
+                  </div>
+                )}
               </div>
             </div>
           )}
