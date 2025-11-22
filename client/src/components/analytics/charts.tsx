@@ -20,8 +20,8 @@ interface DataPoint {
   date: Date;
   users: number;
   messages: number;
-  functions: number;
-  reasonings: number;
+  meetings: number;
+  cost: number;
   csat: number;
 }
 
@@ -43,8 +43,8 @@ export function TimeSeriesChart({
   const [visibleLines, setVisibleLines] = useState({
     users: true,
     messages: false,
-    functions: false,
-    reasonings: false,
+    meetings: false,
+    cost: false,
     csat: false,
   });
   
@@ -53,8 +53,8 @@ export function TimeSeriesChart({
   const metrics = {
     users: { color: '#3b82f6', label: t('analytics.users', 'Users') },
     messages: { color: '#8b5cf6', label: t('analytics.messages', 'Messages') },
-    functions: { color: '#10b981', label: t('analytics.tools', 'Tools') },
-    reasonings: { color: '#f59e0b', label: t('analytics.reasonings', 'Reasonings') },
+    meetings: { color: '#f59e0b', label: t('analytics.meetings', 'Meetings') },
+    cost: { color: '#10b981', label: t('analytics.cost', 'Cost ($)') },
     csat: { color: '#ec4899', label: t('analytics.csat', 'CSAT') },
   };
 
@@ -89,8 +89,8 @@ export function TimeSeriesChart({
     const maxValue = d3.max(data, d => Math.max(
       visibleLines.users ? d.users : 0,
       visibleLines.messages ? d.messages : 0,
-      visibleLines.functions ? d.functions : 0,
-      visibleLines.reasonings ? d.reasonings : 0,
+      visibleLines.meetings ? d.meetings : 0,
+      visibleLines.cost ? d.cost : 0,
       visibleLines.csat ? d.csat : 0
     )) as number;
 
@@ -237,9 +237,14 @@ export function TimeSeriesChart({
             tooltipRef.current.style.display = 'block';
             tooltipRef.current.style.left = `${x(d.date) + margin.left + 10}px`;
             tooltipRef.current.style.top = `${y(d[key as keyof DataPoint] as number) + margin.top - 10}px`;
+            const value = d[key as keyof DataPoint];
+            const formattedValue = key === 'cost' 
+              ? `$${typeof value === 'number' ? value.toFixed(2) : value}`
+              : `${value}${key === 'csat' ? '%' : ''}`;
+            
             tooltipRef.current.innerHTML = `
               <div class="font-medium">${label}</div>
-              <div class="text-lg font-bold">${d[key as keyof DataPoint]}${key === 'csat' ? '%' : ''}</div>
+              <div class="text-lg font-bold">${formattedValue}</div>
               <div class="text-sm text-muted-foreground">
                 ${formatDateForTooltip(d.date)}
               </div>
@@ -272,7 +277,13 @@ export function TimeSeriesChart({
         .attr('font-weight', '600')
         .attr('fill', color)
         .style('pointer-events', 'none')
-        .text(d => `${d[key as keyof DataPoint]}${key === 'csat' ? '%' : ''}`);
+        .text(d => {
+          const value = d[key as keyof DataPoint];
+          if (key === 'cost') {
+            return `$${typeof value === 'number' ? value.toFixed(2) : value}`;
+          }
+          return `${value}${key === 'csat' ? '%' : ''}`;
+        });
     });
 
   }, [data, visibleLines, theme, timeGranularity, t]);

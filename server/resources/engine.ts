@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import OpenAI from 'openai';
 import { GoogleCalendarService } from '../google-calendar.js';
 import { ObjectId } from 'mongodb';
-import { createReasoning, createMeeting } from '../database.js';
+import { createReasoning, createMeeting, updateUser } from '../database.js';
 dotenv.config({ path: '../../.env' });
 
 // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
@@ -310,6 +310,9 @@ export class engine  {
                                     eventId: eventId
                                 });
                                 console.log('✅ Meeting saved to database');
+
+                                await updateUser(userId.toString(), { scheduled: true });
+                                console.log('✅ User marked as scheduled');
                             } catch (error) {
                                 console.error('❌ Error saving meeting to database:', error);
                             }
@@ -451,8 +454,6 @@ export class engine  {
     // Define private record CSAT function
     private async recordCSAT(params: { userId: ObjectId, csat: number, feedback: string }) {
         try {
-            const { updateUser } = await import('../database.js');
-            
             // Validate CSAT score (1-5 scale)
             if (params.csat < 1 || params.csat > 5) {
                 return 'ERROR: CSAT score must be between 1 and 5';

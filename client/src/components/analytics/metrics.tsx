@@ -1,9 +1,9 @@
-import { Users, MessagesSquare, Wrench, Brain, Smile } from "lucide-react";
+import { Users, MessagesSquare, Smile, CalendarCheck, DollarSign } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
 
 interface MetricCardProps {
-  title: string;
+  title: string | React.ReactNode;
   value: number;
   icon: React.ReactNode;
   suffix?: string;
@@ -19,7 +19,7 @@ const MetricCard = ({ title, value, icon, suffix, color }: MetricCardProps) => (
       <p className="hidden sm:block text-sm font-medium text-slate-600 dark:text-muted-foreground">
         {title}
       </p>
-      <h3 className="text-xl font-bold text-foreground">
+      <h3 className="text-lg font-bold text-foreground">
         {value.toLocaleString()}{suffix}
       </h3>
     </div>
@@ -29,12 +29,12 @@ const MetricCard = ({ title, value, icon, suffix, color }: MetricCardProps) => (
 interface MetricsProps {
   users: number;
   messages: number;
-  functions: number;
-  reasonings: number;
+  meetings: number;
+  cost: number;
   csat: number;
 }
 
-export function Metrics({ users, messages, functions, reasonings, csat }: MetricsProps) {
+export function Metrics({ users, messages, meetings, cost, csat }: MetricsProps) {
   const { t } = useTranslation();
 
   return (
@@ -52,23 +52,28 @@ export function Metrics({ users, messages, functions, reasonings, csat }: Metric
         icon={<MessagesSquare className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#8b5cf6' }} />}
       />
       <MetricCard
-        title={t('analytics.metrics.tools', 'Tools')}
-        value={functions}
-        color="#10b981"
-        icon={<Wrench className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#10b981' }} />}
-      />
-      <MetricCard
-        title={t('analytics.metrics.reasonings', 'Reasonings')}
-        value={reasonings}
+        title={t('analytics.metrics.meetings', 'Meetings')}
+        value={meetings}
         color="#f59e0b"
-        icon={<Brain className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#f59e0b' }} />}
+        icon={<CalendarCheck className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#f59e0b' }} />}
       />
       <MetricCard
-        title={t('analytics.metrics.csat', 'CSAT')}
+        title={
+          <>
+            {t('analytics.metrics.csat', 'CSAT')} <span className="text-xs">(%)</span>
+          </>
+        }
         value={csat}
-        suffix="%"
+        suffix=""
         color="#ec4899"
         icon={<Smile className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#ec4899' }} />}
+      />
+      <MetricCard
+        title={t('analytics.metrics.cost', 'Cost')}
+        value={parseFloat(cost.toFixed(2))}
+        suffix=""
+        color="#10b981"
+        icon={<DollarSign className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#10b981' }} />}
       />
     </div>
   );

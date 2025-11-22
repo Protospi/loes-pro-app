@@ -13,6 +13,7 @@ export interface User {
     requests?: any[];
     csat?: number;
     feedback?: string;
+    scheduled?: boolean;
 }
 
 export interface Message {
@@ -92,6 +93,7 @@ export async function createUser(userData: Omit<User, '_id' | 'createdAt'>) {
         createdAt: new Date(),
         csat: userData.csat ?? 5,
         feedback: userData.feedback ?? '',
+        scheduled: userData.scheduled ?? false,
     };
     const result = await Users.insertOne(user);
     return result;
@@ -249,11 +251,12 @@ export async function getAnalyticsSummary(startDate: Date, endDate: Date) {
         };
 
         // Fetch all data in parallel
-        const [messages, functions, reasonings, allUsersForCSAT] = await Promise.all([
+        const [messages, functions, reasonings, allUsersForCSAT, scheduledUsers] = await Promise.all([
             Messages.find(dateFilter).toArray(),
             Functions.find(dateFilter).toArray(),
             Reasonings.find(dateFilter).toArray(),
-            Users.find({ csat: { $exists: true, $ne: undefined } }).toArray() as Promise<User[]>
+            Users.find({ csat: { $exists: true, $ne: undefined } }).toArray() as Promise<User[]>,
+            Users.find({ scheduled: true, createdAt: { $gte: startDate, $lte: endDate } }).toArray() as Promise<User[]>
         ]);
 
         // Calculate metrics in JavaScript
@@ -291,11 +294,20 @@ export async function getAnalyticsSummary(startDate: Date, endDate: Date) {
         // Convert 1-5 scale to percentage: (average / 5) * 100
         const csatPercentage = Math.round((avgCSAT / 5) * 100);
 
+        // Count total meetings (users with scheduled: true)
+        const totalMeetings = scheduledUsers.length;
+
+        // Calculate total cost from messages, functions, and reasonings
+        const messageCost = messages.reduce((sum, m) => sum + (m.totalCost || 0), 0);
+        const functionCost = functions.reduce((sum, f) => sum + (f.totalCost || 0), 0);
+        const reasoningCost = reasonings.reduce((sum, r) => sum + (r.totalCost || 0), 0);
+        const totalCost = messageCost + functionCost + reasoningCost;
+
         return {
             users: userCount,
             messages: totalMessages,
-            functions: functionCount,
-            reasonings: reasoningCount,
+            meetings: totalMeetings,
+            cost: totalCost,
             conversations: totalConversations,
             csat: csatPercentage
         };
@@ -351,8 +363,8 @@ export async function getTimeSeriesData(
             date: Date;
             users: Set<string>;
             messages: number;
-            functions: number;
-            reasonings: number;
+            meetings: number;
+            cost: number;
             csatSum: number;
             csatCount: number;
         }>();
@@ -364,8 +376,8 @@ export async function getTimeSeriesData(
                     date: new Date(key),
                     users: new Set(),
                     messages: 0,
-                    functions: 0,
-                    reasonings: 0,
+                    meetings: 0,
+                    cost: 0,
                     csatSum: 0,
                     csatCount: 0
                 });
@@ -421,25 +433,35 @@ export async function getTimeSeriesData(
             const entry = getOrCreateEntry(key);
             entry.messages++;
             entry.users.add(message.userId.toString());
+            // Add cost from messages
+            if (message.totalCost) {
+                entry.cost += message.totalCost;
+            }
         });
 
         // Process functions
         functions.forEach(func => {
             const key = formatDate(func.createdAt);
             const entry = getOrCreateEntry(key);
-            entry.functions++;
             entry.users.add(func.userId.toString());
+            // Add cost from functions
+            if (func.totalCost) {
+                entry.cost += func.totalCost;
+            }
         });
 
         // Process reasonings
         reasonings.forEach(reasoning => {
             const key = formatDate(reasoning.createdAt);
             const entry = getOrCreateEntry(key);
-            entry.reasonings++;
             entry.users.add(reasoning.userId.toString());
+            // Add cost from reasonings
+            if (reasoning.totalCost) {
+                entry.cost += reasoning.totalCost;
+            }
         });
 
-        // Process users and CSAT
+        // Process users (CSAT and meetings)
         users.forEach(user => {
             const key = formatDate(user.createdAt);
             const entry = getOrCreateEntry(key);
@@ -447,6 +469,10 @@ export async function getTimeSeriesData(
             if (user.csat && user.csat >= 1 && user.csat <= 5) {
                 entry.csatSum += user.csat;
                 entry.csatCount++;
+            }
+            // Count meetings (users with scheduled: true)
+            if (user.scheduled === true) {
+                entry.meetings++;
             }
         });
 
@@ -461,8 +487,8 @@ export async function getTimeSeriesData(
                     date: value.date,
                     users: value.users.size,
                     messages: value.messages,
-                    functions: value.functions,
-                    reasonings: value.reasonings,
+                    meetings: value.meetings,
+                    cost: value.cost,
                     csat: csatPercentage
                 };
             })

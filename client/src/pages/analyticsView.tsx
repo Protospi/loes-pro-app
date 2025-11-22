@@ -14,16 +14,16 @@ import { useQuery } from "@tanstack/react-query";
 interface AnalyticsData {
   users: number;
   messages: number;
-  functions: number;
-  reasonings: number;
+  meetings: number;
+  cost: number;
   csat: number;
   conversations: number;
   timeSeries: Array<{
     date: Date;
     users: number;
     messages: number;
-    functions: number;
-    reasonings: number;
+    meetings: number;
+    cost: number;
     csat: number;
   }>;
 }
@@ -216,8 +216,8 @@ export default function AnalyticsView() {
                 <Metrics
                   users={analyticsData.users}
                   messages={analyticsData.messages}
-                  functions={analyticsData.functions}
-                  reasonings={analyticsData.reasonings}
+                  meetings={analyticsData.meetings}
+                  cost={analyticsData.cost}
                   csat={analyticsData.csat}
                 />
               </div>
