@@ -47,6 +47,19 @@ export default function AnalyticsView() {
   
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [timeGranularity, setTimeGranularity] = useState<'hour' | 'day' | 'month'>('day');
+  
+  // Track which metrics are visible in the chart
+  const [selectedMetrics, setSelectedMetrics] = useState({
+    users: true,
+    messages: false,
+    meetings: false,
+    cost: false,
+    csat: false,
+  });
+  
+  const toggleMetric = (metric: keyof typeof selectedMetrics) => {
+    setSelectedMetrics(prev => ({ ...prev, [metric]: !prev[metric] }));
+  };
 
   // Fetch analytics data
   const { data: analyticsData, isLoading, error } = useQuery<AnalyticsData>({
@@ -219,6 +232,8 @@ export default function AnalyticsView() {
                   meetings={analyticsData.meetings}
                   cost={analyticsData.cost}
                   csat={analyticsData.csat}
+                  selectedMetrics={selectedMetrics}
+                  onMetricToggle={toggleMetric}
                 />
               </div>
               
@@ -228,6 +243,7 @@ export default function AnalyticsView() {
                   data={analyticsData.timeSeries}
                   timeGranularity={timeGranularity}
                   onTimeGranularityChange={setTimeGranularity}
+                  visibleLines={selectedMetrics}
                 />
               </div>
             </>

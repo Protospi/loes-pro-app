@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,6 @@ import { useTheme } from '@/components/theme-provider';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -29,24 +28,31 @@ interface TimeSeriesChartProps {
   data?: DataPoint[];
   timeGranularity?: 'hour' | 'day' | 'month';
   onTimeGranularityChange?: (granularity: 'hour' | 'day' | 'month') => void;
+  visibleLines?: {
+    users: boolean;
+    messages: boolean;
+    meetings: boolean;
+    cost: boolean;
+    csat: boolean;
+  };
 }
 
 export function TimeSeriesChart({ 
   data: propData = [], 
   timeGranularity = 'day',
-  onTimeGranularityChange 
-}: TimeSeriesChartProps) {
-  const { theme } = useTheme();
-  const { t } = useTranslation();
-  const svgRef = useRef<SVGSVGElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [visibleLines, setVisibleLines] = useState({
+  onTimeGranularityChange,
+  visibleLines = {
     users: true,
     messages: false,
     meetings: false,
     cost: false,
     csat: false,
-  });
+  }
+}: TimeSeriesChartProps) {
+  const { theme } = useTheme();
+  const { t } = useTranslation();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   
   const data = propData;
   
@@ -239,11 +245,11 @@ export function TimeSeriesChart({
             tooltipRef.current.style.top = `${y(d[key as keyof DataPoint] as number) + margin.top - 10}px`;
             const value = d[key as keyof DataPoint];
             const formattedValue = key === 'cost' 
-              ? `$${typeof value === 'number' ? value.toFixed(2) : value}`
+              ? `${typeof value === 'number' ? value.toFixed(2) : value}`
               : `${value}${key === 'csat' ? '%' : ''}`;
             
             tooltipRef.current.innerHTML = `
-              <div class="font-medium">${label}</div>
+              <div class="font-medium whitespace-nowrap">${label}</div>
               <div class="text-lg font-bold">${formattedValue}</div>
               <div class="text-sm text-muted-foreground">
                 ${formatDateForTooltip(d.date)}
@@ -280,48 +286,35 @@ export function TimeSeriesChart({
         .text(d => {
           const value = d[key as keyof DataPoint];
           if (key === 'cost') {
-            return `$${typeof value === 'number' ? value.toFixed(2) : value}`;
+            const numValue = typeof value === 'number' ? value : parseFloat(value);
+            return numValue === 0 ? '0' : numValue.toFixed(2);
           }
-          return `${value}${key === 'csat' ? '%' : ''}`;
+          return value;
         });
     });
 
   }, [data, visibleLines, theme, timeGranularity, t]);
 
-  const getVisibleCount = () => {
-    return Object.values(visibleLines).filter(Boolean).length;
+  // Get selected metric names for display
+  const getSelectedMetricNames = () => {
+    const selectedNames: string[] = [];
+    Object.entries(visibleLines).forEach(([key, isVisible]) => {
+      if (isVisible) {
+        selectedNames.push(metrics[key as keyof typeof metrics].label);
+      }
+    });
+    return selectedNames;
   };
 
   return (
     <Card className="p-4 glass-chip hover:bg-blue-500/5 transition-all duration-200">
       <div className="flex justify-between items-center mb-4">
-        {/* Metrics Selector Dropdown - Left */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="glass-chip hover:bg-blue-500/20">
-              {t('analytics.selected', 'Selected')} ({getVisibleCount()})
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56 glass-chip">
-            <DropdownMenuLabel>{t('analytics.metrics', 'Metrics')}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {Object.entries(metrics).map(([key, { color, label }]) => (
-              <DropdownMenuCheckboxItem
-                key={key}
-                checked={visibleLines[key as keyof typeof visibleLines]}
-                onCheckedChange={(checked) => 
-                  setVisibleLines(prev => ({ ...prev, [key]: checked }))
-                }
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-                  {label}
-                </div>
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Selected Metrics Title - Left */}
+        <div className="flex items-center">
+          <h3 className="text-sm font-semibold text-foreground">
+            {getSelectedMetricNames().join(', ')}
+          </h3>
+        </div>
 
         {/* Time Granularity Dropdown - Right */}
         <DropdownMenu>
