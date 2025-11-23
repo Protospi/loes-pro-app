@@ -2,23 +2,30 @@
     {
       "type": "function",
       "name": "get_portfolio_info",
-      "description": "Busca informações sobre o portfolio de projetos de Pedro Loes.",
+      "description": "Busca informações sobre o portfolio de projetos de Pedro Loes. Utilizar quando o usuário solicitar mais informações sobre um projeto específico do portfolio.",
       "strict": true,
       "parameters": {
         "type": "object",
         "properties": {
-          "portfolio": {
+          "project": {
             "type": "string",
             "enum": [
-              "project 1",
-              "project 2",
-              "project 3"
+              "hotel_sales",
+              "school_support",
+              "clinic_scheduler",
+              "tech_support",
+              "hotel_concierge",
+              "real_estate",
+              "agents_builder",
+              "analytics_platform",
+              "rag_knowledge",
+              "portfolio_agent"
             ],
             "description": "Projeto do portfolio que o usuário deseja saber mais informações."
           }
         },
         "required": [
-          "portfolio"
+          "project"
         ],
         "additionalProperties": false
       }

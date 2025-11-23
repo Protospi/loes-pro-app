@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar as CalendarIcon, BarChart3, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SettingsDropdown } from "@/components/chat/settings-dropdown";
+import { SidebarMenu } from "@/components/chat/sidebar-menu";
 import { Metrics } from "@/components/analytics/metrics";
 import { TimeSeriesChart } from "@/components/analytics/charts";
 import { Calendar } from "@/components/ui/calendar";
@@ -93,10 +93,25 @@ export default function AnalyticsView() {
 
   return (
     <div className="h-screen flex flex-col bg-gradient-dark relative">
-      {/* Header Row with Date Range Picker, Title, and Settings Dropdown */}
+      {/* Header Row with Hamburger Menu, Title, and Date Range Picker */}
       <header className="relative grid grid-cols-3 items-center p-4 z-10">
-        {/* Date Range Picker - Left */}
+        {/* Hamburger Menu - Left */}
         <div className="flex justify-start">
+          <SidebarMenu />
+        </div>
+
+        {/* Title - Center (Always centered regardless of side element sizes) */}
+        <div className="flex justify-center">
+          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-blue-500" />
+            {!isMobile && (
+              <span>{t('analytics.title', 'Analytics View')}</span>
+            )}
+          </h1>
+        </div>
+
+        {/* Date Range Picker - Right */}
+        <div className="flex justify-end">
           <Popover 
             open={isCalendarOpen} 
             onOpenChange={(open) => {
@@ -192,21 +207,6 @@ export default function AnalyticsView() {
             />
           </PopoverContent>
           </Popover>
-        </div>
-
-        {/* Title - Center (Always centered regardless of side element sizes) */}
-        <div className="flex justify-center">
-          <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-500" />
-            {!isMobile && (
-              <span>{t('analytics.title', 'Analytics View')}</span>
-            )}
-          </h1>
-        </div>
-
-        {/* Settings Dropdown - Right */}
-        <div className="flex justify-end">
-          <SettingsDropdown />
         </div>
       </header>
 

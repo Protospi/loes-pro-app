@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Server, Play, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SettingsDropdown } from "@/components/chat/settings-dropdown";
+import { SidebarMenu } from "@/components/chat/sidebar-menu";
 import ReactFlowCanvas, { ReactFlowCanvasRef, ConversationFlowItem } from "@/components/server/reactFlow";
 import ConversationLogs, { ConversationLogsRef } from "@/components/server/conversationLogs";
 import { useRef, useState, useCallback } from "react";
@@ -100,9 +100,20 @@ export default function ServerView() {
 
   return (
     <div className="h-screen flex flex-col bg-gradient-dark relative">
-      {/* Header Row with Play Button, Title, and Settings Dropdown */}
+      {/* Header Row with Hamburger Menu, Title, and Play Button */}
       <header className="flex items-center justify-between p-4 z-10 flex-shrink-0">
-        {/* Play/Stop Button - Left */}
+        {/* Hamburger Menu - Left */}
+        <SidebarMenu />
+
+        {/* Title - Center */}
+        <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Server className="h-5 w-5 text-blue-500" />
+          {!isMobile && (
+            <span>{t('server.title', 'Server View')}</span>
+          )}
+        </h1>
+
+        {/* Play/Stop Button - Right */}
         <Button
           variant="ghost"
           size="icon"
@@ -120,17 +131,6 @@ export default function ServerView() {
             {isPlaying ? t('server.stopPlayback', 'Stop Playback') : t('server.playConversation', 'Play Conversation')}
           </span>
         </Button>
-
-        {/* Title - Center */}
-        <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
-          <Server className="h-5 w-5 text-blue-500" />
-          {!isMobile && (
-            <span>{t('server.title', 'Server View')}</span>
-          )}
-        </h1>
-
-        {/* Settings Dropdown - Right */}
-        <SettingsDropdown />
       </header>
 
       {/* Main Content Area - Vertical Layout */}

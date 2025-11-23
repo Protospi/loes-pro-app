@@ -54,16 +54,56 @@
   "error": {
     "api": "Sorry, there was an error connecting to the service. Please try again later."
   },
+  "chat": {
+    "title": "Professional Assistant",
+    "subtitle": "How can I help you with Pedro's work?",
+    "sampleQuestions": [
+      "Tell me about Pedro's professional experience.",
+      "Show me Pedro's latest projects.",
+      "What qualifications does Pedro have?",
+      "Is this competence related to work or text?",
+      "I want to schedule a meeting with Pedro."
+    ],
+    "suggestionChips": [
+      {
+        "text": "Work",
+        "query": "Tell me about Pedro's professional experience."
+      },
+      {
+        "text": "Projects",
+        "query": "I want to know more about Pedro's latest projects."
+      },
+      {
+        "text": "Qualifications",
+        "query": "What qualifications does Pedro have?"
+      },
+      {
+        "text": "Competencies",
+        "query": "Is this competence related to work?"
+      },
+      {
+        "text": "Meeting",
+        "query": "Would you like to schedule a meeting with Pedro?"
+      }
+    ],
+    "newConversation": "New Conversation",
+    "newConversationDesc": "Started a fresh conversation",
+    "error": "Error",
+    "errorStartingConversation": "Failed to start new conversation"
+  },
   "tooltips": {
     "settings": "Settings",
     "newConversation": "New Conversation",
     "themeToggle": "Toggle Theme"
   },
   "settings": {
+    "menu": "Menu",
     "chat": "Chat",
     "server": "Server",
     "analytics": "Analytics", 
-    "theme": "Theme"
+    "translation": "Language",
+    "theme": "Theme",
+    "version": "Version"
   },
   "input": {
     "placeholder": "Type your message...",

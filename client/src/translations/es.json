@@ -54,10 +54,86 @@
   "error": {
     "api": "Lo siento, hubo un error al conectar con el servicio. Por favor, inténtalo de nuevo más tarde."
   },
+  "chat": {
+    "title": "Asistente Profesional",
+    "subtitle": "¿Cómo puedo ayudarte con el trabajo de Pedro?",
+    "sampleQuestions": [
+      "Cuéntame sobre la experiencia profesional de Pedro.",
+      "Muéstrame los últimos proyectos de Pedro.",
+      "¿Qué cualificaciones tiene Pedro?",
+      "¿Esta competencia está relacionada con el trabajo o el texto?",
+      "Quiero programar una reunión con Pedro."
+    ],
+    "suggestionChips": [
+      {
+        "text": "Trabajo",
+        "query": "Cuéntame sobre la experiencia profesional de Pedro."
+      },
+      {
+        "text": "Proyectos",
+        "query": "Quiero saber más sobre los últimos proyectos de Pedro."
+      },
+      {
+        "text": "Cualificaciones",
+        "query": "¿Qué cualificaciones tiene Pedro?"
+      },
+      {
+        "text": "Competencias",
+        "query": "¿Esta competencia está relacionada con el trabajo?"
+      },
+      {
+        "text": "Reunión",
+        "query": "¿Te gustaría programar una reunión con Pedro?"
+      }
+    ],
+    "newConversation": "Nueva Conversación",
+    "newConversationDesc": "Inició una conversación nueva",
+    "error": "Error",
+    "errorStartingConversation": "Error al iniciar nueva conversación"
+  },
+  "tooltips": {
+    "settings": "Configuración",
+    "newConversation": "Nueva Conversación",
+    "themeToggle": "Cambiar Tema"
+  },
+  "settings": {
+    "menu": "Menú",
+    "chat": "Chat",
+    "server": "Servidor",
+    "analytics": "Análisis",
+    "translation": "Idioma",
+    "theme": "Tema",
+    "version": "Versión"
+  },
   "input": {
     "placeholder": "Escribe tu mensaje...",
     "recording": "Grabando... Suelta para enviar",
     "transcribing": "Transcribiendo..."
+  },
+  "server": {
+    "title": "Vista del Servidor",
+    "emptyState": {
+      "title": "Vista del Servidor",
+      "description": "Esta área se llenará con información del servidor pronto."
+    },
+    "flowCanvas": {
+      "title": "Arquitectura del Agente"
+    },
+    "logs": {
+      "title": "Registros de Conversación",
+      "empty": "Aún no hay registros de conversación",
+      "loading": "Cargando registros de conversación..."
+    },
+    "playConversation": "Reproducir Conversación",
+    "stopPlayback": "Detener Reproducción",
+    "noConversation": "No se Encontró Conversación",
+    "noConversationDesc": "No hay conversaciones grabadas para reproducir.",
+    "playbackStarted": "Reproducción Iniciada",
+    "playbackStartedDesc": "Reproduciendo eventos de conversación",
+    "playbackComplete": "Reproducción Completa",
+    "playbackCompleteDesc": "La reproducción de la conversación ha finalizado",
+    "error": "Error",
+    "errorDesc": "Error al cargar el flujo de conversación"
   },
   "analytics": {
     "title": "Vista de Análisis",

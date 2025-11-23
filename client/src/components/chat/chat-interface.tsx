@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { MessageBubble } from "./message-bubble";
 import { ChatInput, ChatInputRef } from "./chat-input";
-import { SettingsDropdown } from "./settings-dropdown";
+import { SidebarMenu } from "./sidebar-menu";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import { Message } from "@shared/schema";
@@ -229,20 +229,10 @@ export function ChatInterface() {
 
   return (
     <div className="h-screen flex flex-col bg-gradient-dark relative">
-      {/* Header Row with New Conversation Button, Title, and Theme Toggle */}
+      {/* Header Row with Hamburger Menu, Title, and New Conversation Button */}
       <header className="flex items-center justify-between p-4 z-10">
-        {/* New Conversation Button - Left */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleNewConversation}
-          className="glass-chip hover:bg-blue-500/20 transition-all duration-200 group border-0 bg-transparent"
-          data-testid="button-new-conversation"
-          title={t('tooltips.newConversation')}
-        >
-          <Plus className="h-5 w-5 text-slate-600 dark:text-muted-foreground group-hover:text-blue-400 group-hover:scale-110 transition-all" />
-          <span className="sr-only">{t('tooltips.newConversation')}</span>
-        </Button>
+        {/* Hamburger Menu - Left */}
+        <SidebarMenu />
 
         {/* Title - Center */}
         <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
@@ -254,8 +244,18 @@ export function ChatInterface() {
           )}
         </h1>
 
-        {/* Settings Dropdown - Right */}
-        <SettingsDropdown />
+        {/* New Conversation Button - Right */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleNewConversation}
+          className="glass-chip hover:bg-blue-500/20 transition-all duration-200 group border-0 bg-transparent"
+          data-testid="button-new-conversation"
+          title={t('tooltips.newConversation')}
+        >
+          <Plus className="h-5 w-5 text-slate-600 dark:text-muted-foreground group-hover:text-blue-400 group-hover:scale-110 transition-all" />
+          <span className="sr-only">{t('tooltips.newConversation')}</span>
+        </Button>
       </header>
 
       {/* Main Content Area */}
