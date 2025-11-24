@@ -271,8 +271,16 @@ export class engine  {
                     case 'get_portfolio_info':
                         // console.log('📊 Getting portfolio info for:', args.portfolio)
                         // Run the script
-                        toolResult = await this.getPortfolioInfo(args.portfolio)
+                        toolResult = await this.getPortfolioInfo(args.project)
                         // console.log('✅ Portfolio info result:', toolResult)
+                        break
+
+                    // Handle the get_certificates tool
+                    case 'get_certificates':
+                        // console.log('📊 Getting certificates info for:', args.certificates)
+                        // Run the script
+                        toolResult = await this.getCertificates(args.certificates)
+                        // console.log('✅ Certificates info result:', toolResult)
                         break
 
                     // Handle the schedule_meeting tool
@@ -443,12 +451,49 @@ export class engine  {
 
     // Define private get portfolio info function
     private async getPortfolioInfo(portfolio: string) {
+        try {
+            // Get the directory path for projects
+            const __filename = fileURLToPath(import.meta.url)
+            const __dirname = dirname(__filename)
+            const projectsPath = join(__dirname, '../knowledge/projects')
+            
+            // Construct the file path
+            const filePath = join(projectsPath, `${portfolio}.txt`)
+            
+            // Read the file content
+            const fileContent = readFileSync(filePath, 'utf-8')
+            
+            console.log(`✅ Successfully loaded project info for: ${portfolio}`)
+            
+            // Return the file content
+            return fileContent
+        } catch (error) {
+            console.error(`❌ Error reading project file for "${portfolio}":`, error)
+            
+            // Return error message if file doesn't exist or can't be read
+            return `ERROR: Could not find project information for "${portfolio}". Available projects include: hotel_sales, school_support, clinic_scheduler, tech_support, hotel_concierge, real_estate, agents_builder, analytics_platform, rag_knowledge, portfolio_agent`
+        }
+    }
 
-        // Define result string
-        const result = `Portfolio: ${portfolio}`
+    // Define private get certificates function
+    private async getCertificates(certificates: boolean) {
+        try {
+            // Get the directory path for certifications
+            const __filename = fileURLToPath(import.meta.url)
+            const __dirname = dirname(__filename)
+            const certificationsPath = join(__dirname, '../knowledge/certifications')
 
-        // Return result
-        return result
+            // Read the file content
+            const fileContent = readFileSync(join(certificationsPath, 'complete_courses.csv'), 'utf-8')
+
+            // Return the file content
+            return `✅ Successfully loaded certifications info: ${fileContent}`
+        }
+        catch (error) {
+            console.error('❌ Error reading certifications file:', error)
+            return 'ERROR: Could not find certifications information'
+        }
+        return 'ERROR: Could not find certifications information'
     }
 
     // Define private record CSAT function

@@ -1,0 +1,80 @@
+**Advanced RAG (Retrieval-Augmented Generation) System** *Built at SmartTalks.ai*
+
+Developed a comprehensive knowledge management and retrieval system enabling users to create, manage, and optimize AI-powered knowledge bases with hybrid search capabilities and automated quality assurance.
+
+**Knowledge Base Management:**
+
+* **Collection-based architecture** allowing users to organize multiple knowledge bases  
+* **Multi-format content ingestion:**  
+  * Document processing (PDFs, CSVs, TXT files)  
+  * Web scraping and URL content extraction  
+  * Image processing and analysis  
+  * Video content extraction (current and planned)  
+  * Manual content creation interface  
+* Individual content activation/deactivation controls  
+* Content editing and deletion capabilities  
+* Source attachment system for attribution and file reference
+
+**Hybrid Retrieval Engine:**
+
+* **Dual-method search architecture:**  
+  * Vector embedding similarity (cosine similarity)  
+  * BM25 keyword matching  
+  * Combined ranking algorithm for optimal results  
+* Configurable retrieval count (user-defined number of most relevant contents)  
+* Real-time similarity scoring and ranking
+
+**AI-Powered Response Generation:**
+
+* **Response Prompt Layer:** Secondary LLM that transforms retrieved content into contextual answers based on user questions  
+* Customizable response generation prompts  
+* Source citation capabilities (with or without full text)  
+* Context-aware answer synthesis
+
+**Quality Assurance & Validation:**
+
+* **Validation Prompt System:** AI agent that automatically flags problematic responses:  
+  * Content absence (no relevant information found)  
+  * Incomplete answers  
+  * Inadequate or irrelevant responses  
+  * Incorrect information  
+* Configurable validation frequency (all queries or sampling)  
+* **Quality Metrics Dashboard:**  
+  * Accuracy rate tracking  
+  * Response time monitoring  
+  * Flagged response table for manual review  
+  * Improvement opportunity identification
+
+**Testing & Optimization Tools:**
+
+* **Built-in testing interface** for knowledge base validation  
+* Query simulation with example user questions  
+* **Detailed inspection capabilities:**  
+  * Content similarity scores (vector embedding \+ BM25)  
+  * Ranking algorithm results  
+  * Retrieved content preview  
+  * Generated response review  
+* Real-time optimization feedback loop
+
+**Knowledge Base Enrichment:**
+
+* Gap analysis based on validation flags  
+* Content quality recommendations  
+* Continuous improvement workflow  
+* Version tracking for content updates
+
+**Integration Features:**
+
+* Seamless integration with SmartTalks.ai Agent Engine as a tool node  
+* Multi-agent support (multiple agents accessing same or different knowledge bases)  
+* Dynamic content updates without agent redeployment
+
+**Technology Stack:**
+
+* Frontend: Vue.js  
+* Backend: Node.js, JavaScript  
+* Database: MongoDB  
+* Vector Search: Embedding models with cosine similarity  
+* Keyword Search: BM25 algorithm
+
+**Impact:** Enterprise-grade knowledge management system combining hybrid search technology, automated quality assurance, and continuous optimization capabilities, enabling conversational agents to deliver accurate, contextual responses while maintaining quality control within the SmartTalks.ai ecosystem.

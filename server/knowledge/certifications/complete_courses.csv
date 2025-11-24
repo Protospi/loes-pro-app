@@ -1,0 +1,641 @@
+title,duration,company
+Introduction to Python,4,DATACAMP
+Introduction to SQL,4,DATACAMP
+Introduction to R,4,DATACAMP
+Intermediate Python,4,DATACAMP
+Data Science for Everyone,2,DATACAMP
+Introduction to Data Science in Python,4,DATACAMP
+Data Manipulation with pandas,4,DATACAMP
+Joining Data in SQL,5,DATACAMP
+Intermediate R,6,DATACAMP
+Introduction to Power BI,6,DATACAMP
+Supervised Learning with scikit-learn,4,DATACAMP
+Introduction to the Tidyverse,4,DATACAMP
+Python Data Science Toolbox (Part 1),3,DATACAMP
+Introduction to Tableau,6,DATACAMP
+Introduction to Data Visualization with ggplot2,4,DATACAMP
+Data Engineering for Everyone,2,DATACAMP
+Intermediate SQL,4,DATACAMP
+Data Manipulation with dplyr,4,DATACAMP
+Python Data Science Toolbox (Part 2),4,DATACAMP
+Introduction to Data Visualization with Matplotlib,4,DATACAMP
+Joining Data with pandas,4,DATACAMP
+Introduction to SQL Server,4,DATACAMP
+Machine Learning for Everyone,2,DATACAMP
+Introduction to Importing Data in Python,3,DATACAMP
+Introduction to Relational Databases in SQL,4,DATACAMP
+Cleaning Data in Python,4,DATACAMP
+Writing Efficient Python Code,4,DATACAMP
+Statistical Thinking in Python (Part 1),3,DATACAMP
+Data Analysis in Excel,4,DATACAMP
+Introduction to Importing Data in R,3,DATACAMP
+Exploratory Data Analysis in Python,4,DATACAMP
+Data Analysis in Spreadsheets,3,DATACAMP
+Introduction to Data Visualization with Seaborn,4,DATACAMP
+Introduction to Statistics in R,4,DATACAMP
+Data Manipulation in R with dplyr,4,DATACAMP
+Introduction to PySpark,4,DATACAMP
+Unsupervised Learning in Python,4,DATACAMP
+Object-Oriented Programming in Python,4,DATACAMP
+pandas Foundations,4,DATACAMP
+Writing Functions in Python,4,DATACAMP
+Reporting with R Markdown,4,DATACAMP
+Introduction to Shell,4,DATACAMP
+Introduction to Data Engineering,4,DATACAMP
+Machine Learning with Tree-Based Models in Python,5,DATACAMP
+Intermediate Importing Data in Python,2,DATACAMP
+Data Types for Data Science in Python,4,DATACAMP
+Joining Data with dplyr,4,DATACAMP
+Introduction to Regression in R,4,DATACAMP
+Introduction to Git,4,DATACAMP
+Data Visualization for Everyone,2,DATACAMP
+Writing Functions in R,4,DATACAMP
+Working with Data in the Tidyverse,4,DATACAMP
+Introduction to Deep Learning in Python,4,DATACAMP
+Statistical Thinking in Python (Part 2),4,DATACAMP
+Exploratory Data Analysis in SQL,4,DATACAMP
+Data Science for Business,2,DATACAMP
+Analyzing Police Activity with pandas,4,DATACAMP
+Intermediate Data Visualization with ggplot2,4,DATACAMP
+Web Scraping in Python,4,DATACAMP
+Introduction to Natural Language Processing in Python,4,DATACAMP
+Cluster Analysis in Python,4,DATACAMP
+Data Visualization with ggplot2 (Part 1),5,DATACAMP
+Intermediate Data Visualization with Seaborn,4,DATACAMP
+Reporting with R Markdown,3,DATACAMP
+Pivot Tables in Spreadsheets,4,DATACAMP
+Cloud Computing for Everyone,2,DATACAMP
+Cleaning Data in R,4,DATACAMP
+PostgreSQL Summary Stats and Window Functions,4,DATACAMP
+Intermediate Spreadsheets,4,DATACAMP
+Introduction to Python for Finance,4,DATACAMP
+Cleaning Data in R,4,DATACAMP
+Database Design,4,DATACAMP
+Streamlined Data Ingestion with pandas,4,DATACAMP
+Working with Dates and Times in Python,4,DATACAMP
+Cleaning Data in Python,4,DATACAMP
+Linear Classifiers in Python,4,DATACAMP
+Introduction to Spreadsheets,2,DATACAMP
+Introduction to R for Finance,4,DATACAMP
+Introduction to Machine Learning,6,DATACAMP
+Joining Data in R with dplyr,4,DATACAMP
+Exploratory Data Analysis in R,4,DATACAMP
+Functions for Manipulating Data in PostgreSQL,4,DATACAMP
+Case Study: School Budgeting with Machine Learning in Python,4,DATACAMP
+Introduction to TensorFlow in Python,4,DATACAMP
+Supervised Learning in R: Classification,4,DATACAMP
+Introduction to Statistics in Spreadsheets,4,DATACAMP
+Manipulating Time Series Data in Python,4,DATACAMP
+Building Web Applications in R with Shiny,4,DATACAMP
+Feature Engineering for Machine Learning in Python,4,DATACAMP
+Analyzing Data in Tableau,8,DATACAMP
+Foundations of Probability in R,4,DATACAMP
+Introduction to Airflow in Python,4,DATACAMP
+Intermediate SQL Server,4,DATACAMP
+Introduction to Writing Functions in R,4,DATACAMP
+Data Visualization in R,4,DATACAMP
+Regular Expressions in Python,4,DATACAMP
+Machine Learning for Time Series Data in Python,4,DATACAMP
+Big Data Fundamentals with PySpark,4,DATACAMP
+Preprocessing for Machine Learning in Python,4,DATACAMP
+Manipulating DataFrames with pandas,4,DATACAMP
+Modeling with Data in the Tidyverse,4,DATACAMP
+Introduction to Data Visualization in Python,4,DATACAMP
+Writing Efficient R Code,4,DATACAMP
+Introduction to Databases in Python,4,DATACAMP
+Intermediate R: Practice,4,DATACAMP
+Data Visualization in Spreadsheets,4,DATACAMP
+Image Processing in Python,4,DATACAMP
+Intermediate Importing Data in R,3,DATACAMP
+Data Manipulation with data.table in R,4,DATACAMP
+Introduction to Bash Scripting,4,DATACAMP
+Time Series Analysis in Python,4,DATACAMP
+Data Analysis in R,4,DATACAMP
+Model Validation in Python,4,DATACAMP
+Time Series Analysis in SQL Server,5,DATACAMP
+Hyperparameter Tuning in Python,4,DATACAMP
+Intermediate Python for Finance,4,DATACAMP
+AI Fundamentals,4,DATACAMP
+Extreme Gradient Boosting with XGBoost,4,DATACAMP
+Introduction to Deep Learning with PyTorch,4,DATACAMP
+Software Engineering for Data Scientists in Python,4,DATACAMP
+Introduction to Statistics in Python,4,DATACAMP
+Cluster Analysis in R,4,DATACAMP
+Building Data Engineering Pipelines in Python,4,DATACAMP
+Creating Dashboards in Tableau,4,DATACAMP
+Case Study: Exploratory Data Analysis in R,4,DATACAMP
+Analyzing Business Data in SQL,4,DATACAMP
+Building Web Applications with Shiny in R,4,DATACAMP
+Data Visualization with ggplot2 (Part 2),5,DATACAMP
+Manipulating Time Series Data with xts and zoo in R,4,DATACAMP
+Dealing with Missing Data in Python,4,DATACAMP
+Introduction to Data in R,4,DATACAMP
+Cleaning Data with PySpark,4,DATACAMP
+Correlation and Regression in R,4,DATACAMP
+Introduction to Scala,3,DATACAMP
+Improving Query Performance in SQL Server,4,DATACAMP
+Time Series Analysis in R,4,DATACAMP
+Conda Essentials,3,DATACAMP
+Working with Dates and Times in R,4,DATACAMP
+Analyzing Marketing Campaigns with pandas,4,DATACAMP
+Introduction to Deep Learning with Keras,4,DATACAMP
+Merging DataFrames with pandas,4,DATACAMP
+Unsupervised Learning in R,4,DATACAMP
+Introduction to Network Analysis in Python,4,DATACAMP
+Forecasting in R,5,DATACAMP
+Functions for Manipulating Data in SQL Server,4,DATACAMP
+Dimensionality Reduction in Python,4,DATACAMP
+Importing and Managing Financial Data in Python,5,DATACAMP
+Supervised Learning in R: Regression,4,DATACAMP
+Joining Data with data.table in R,4,DATACAMP
+Communicating with Data in the Tidyverse,4,DATACAMP
+Customer Analytics and A/B Testing in Python,4,DATACAMP
+Building Chatbots in Python,4,DATACAMP
+Advanced Deep Learning with Keras,4,DATACAMP
+Connecting Data in Tableau,4,DATACAMP
+Machine Learning for Business,2,DATACAMP
+Image Processing with Keras in Python,4,DATACAMP
+Introduction to Regression with statsmodels in Python,4,DATACAMP
+Credit Risk Modeling in Python,4,DATACAMP
+Interactive Data Visualization with plotly in R,4,DATACAMP
+Data-Driven Decision Making in SQL,4,DATACAMP
+Winning a Kaggle Competition in Python,4,DATACAMP
+Machine Learning with caret in R,4,DATACAMP
+Intermediate R for Finance,5,DATACAMP
+Introduction to Linear Modeling in Python,4,DATACAMP
+Financial Modeling in Spreadsheets,4,DATACAMP
+Sentiment Analysis in Python,4,DATACAMP
+Introduction to Financial Concepts in Python,4,DATACAMP
+Data Processing in Shell,4,DATACAMP
+Writing Functions and Stored Procedures in SQL Server,4,DATACAMP
+Introduction to Spark SQL in Python,4,DATACAMP
+Parallel Programming with Dask in Python,4,DATACAMP
+Statistical Simulation in Python,4,DATACAMP
+Advanced NLP with spaCy,5,DATACAMP
+Reporting in SQL,4,DATACAMP
+Feature Engineering for NLP in Python,4,DATACAMP
+Transactions and Error Handling in SQL Server,4,DATACAMP
+Analyzing Social Media Data in Python,4,DATACAMP
+Multiple and Logistic Regression in R,4,DATACAMP
+Reshaping Data with tidyr,4,DATACAMP
+Building and Optimizing Triggers in SQL Server,4,DATACAMP
+Introduction to Portfolio Analysis in Python,4,DATACAMP
+Applying SQL to Real-World Problems,4,DATACAMP
+Introduction to MongoDB in Python,4,DATACAMP
+Categorical Data in the Tidyverse,4,DATACAMP
+Machine Learning with PySpark,4,DATACAMP
+Foundations of Inference,4,DATACAMP
+Marketing Analytics in Spreadsheets,4,DATACAMP
+Visualizing Geospatial Data in R,4,DATACAMP
+Machine Learning for Finance in Python,4,DATACAMP
+A/B Testing in R,4,DATACAMP
+Introduction to AWS Boto in Python,4,DATACAMP
+Introduction to Portfolio Risk Management in Python,4,DATACAMP
+Hierarchical and Mixed Effects Models in R,4,DATACAMP
+Writing Efficient Code with pandas,4,DATACAMP
+Interactive Data Visualization with Bokeh,4,DATACAMP
+Introduction to Bioconductor in R,4,DATACAMP
+Building Recommendation Engines in Python,4,DATACAMP
+Working with the Class System in Python,4,DATACAMP
+Market Basket Analysis in Python,4,DATACAMP
+Introduction to Predictive Analytics in Python,4,DATACAMP
+Customer Segmentation in Python,4,DATACAMP
+Credit Risk Modeling in R,4,DATACAMP
+Data Visualization with ggplot2 (Part 3),6,DATACAMP
+Web Scraping in R,4,DATACAMP
+Data Visualization in R with ggvis,4,DATACAMP
+Working with Geospatial Data in Python,4,DATACAMP
+Fundamentals of Bayesian Data Analysis in R,4,DATACAMP
+Marketing Analytics: Predicting Customer Churn in Python,4,DATACAMP
+Biomedical Image Analysis in Python,4,DATACAMP
+Object-Oriented Programming with S3 and R6 in R,4,DATACAMP
+Visualizing Time Series Data in Python,4,DATACAMP
+Building Dashboards with shinydashboard,4,DATACAMP
+Creating PostgreSQL Databases,4,DATACAMP
+String Manipulation with stringr in R,5,DATACAMP
+Improving Your Data Visualizations in Python,4,DATACAMP
+Network Analysis in R,4,DATACAMP
+Interactive Maps with leaflet in R,4,DATACAMP
+Machine Learning in the Tidyverse,5,DATACAMP
+ARIMA Models in R,4,DATACAMP
+Introduction to Oracle SQL,4,DATACAMP
+Importing & Cleaning Data in R: Case Studies,4,DATACAMP
+Cleaning Data in SQL Server Databases,4,DATACAMP
+Reshaping Data with pandas,4,DATACAMP
+Linear Algebra for Data Science in R,4,DATACAMP
+Supply Chain Analytics in Python,4,DATACAMP
+Fraud Detection in Python,4,DATACAMP
+Machine Learning for Marketing in Python,4,DATACAMP
+Visualizing Geospatial Data in Python,4,DATACAMP
+Case Studies in Statistical Thinking,4,DATACAMP
+Sentiment Analysis in R: The Tidy Way,4,DATACAMP
+Dealing With Missing Data in R,4,DATACAMP
+Tree-Based Models in R,4,DATACAMP
+Foundations of Probability in Python,5,DATACAMP
+Feature Engineering with PySpark,4,DATACAMP
+Experimental Design in R,4,DATACAMP
+Single-Cell RNA-Seq with Bioconductor in R,4,DATACAMP
+Python for Spreadsheet Users,4,DATACAMP
+Experimental Design in Python,4,DATACAMP
+Financial Forecasting in Python,4,DATACAMP
+Introduction to Portfolio Analysis in R,5,DATACAMP
+Introduction to Spark with sparklyr in R,4,DATACAMP
+Introduction to Statistical Modeling in R,4,DATACAMP
+Quantitative Risk Management in R,5,DATACAMP
+Inference for Categorical Data in R,4,DATACAMP
+Survival Analysis in R,4,DATACAMP
+Inference for Numerical Data in R,4,DATACAMP
+ChIP-seq with Bioconductor in R,4,DATACAMP
+Visualization Best Practices in R,4,DATACAMP
+Spatial Analysis with sf and raster in R,4,DATACAMP
+Interactive Data Visualization with rbokeh,4,DATACAMP
+Machine Learning for Marketing Analytics in R,4,DATACAMP
+Analyzing Survey Data in R,4,DATACAMP
+Longitudinal Analysis in R,4,DATACAMP
+Importing and Managing Financial Data in R,4,DATACAMP
+Bond Valuation and Analysis in R,4,DATACAMP
+Highcharter for Finance in R,4,DATACAMP
+Python for R Users,5,DATACAMP
+Factor Analysis in R,4,DATACAMP
+Case Studies: Building Web Applications with Shiny in R,4,DATACAMP
+Introduction to Natural Language Processing in R,4,DATACAMP
+Dimensionality Reduction in R,4,DATACAMP
+Text Mining with Bag-of-Words in R,4,DATACAMP
+Inference for Linear Regression in R,4,DATACAMP
+Financial Trading in R,5,DATACAMP
+Building Dashboards with flexdashboard,4,DATACAMP
+Support Vector Machines in R,4,DATACAMP
+Designing Machine Learning Workflows in Python,4,DATACAMP
+Visualizing Time Series Data in R,4,DATACAMP
+Life Insurance Products Valuation in R,4,DATACAMP
+Intermediate Network Analysis in Python,4,DATACAMP
+Python for MATLAB Users,4,DATACAMP
+Developing R Packages,4,DATACAMP
+Command Line Automation in Python,4,DATACAMP
+Building Recommendation Engines with PySpark,4,DATACAMP
+Case Study: Exploring Baseball Pitching Data in R,4,DATACAMP
+Sentiment Analysis in R,4,DATACAMP
+Pandas Joins for Spreadsheet Users,4,DATACAMP
+Analyzing Social Media Data in R,4,DATACAMP
+Intermediate Portfolio Analysis in R,5,DATACAMP
+Forecasting Product Demand in R,4,DATACAMP
+Fraud Detection in R,4,DATACAMP
+Analyzing US Census Data in Python,5,DATACAMP
+Case Studies: Manipulating Time Series Data in R,4,DATACAMP
+Spatial Statistics in R,4,DATACAMP
+Topic Modeling in R,4,DATACAMP
+Defensive R Programming,4,DATACAMP
+Building and Distributing Packages with Conda,3,DATACAMP
+Foundations of Functional Programming with purrr,4,DATACAMP
+Multivariate Probability Distributions in R,4,DATACAMP
+R For SAS Users,4,DATACAMP
+Working with Web Data in R,4,DATACAMP
+Hyperparameter Tuning in R,4,DATACAMP
+Hierarchical and Recursive Queries in SQL Server,4,DATACAMP
+Choice Modeling for Marketing in R,4,DATACAMP
+Bayesian Regression Modeling with rstanarm,4,DATACAMP
+Creating Robust Workflows in Python,4,DATACAMP
+Nonlinear Modeling in R with GAMs,4,DATACAMP
+Financial Analytics in R,4,DATACAMP
+Analyzing IoT Data in Python,4,DATACAMP
+Human Resources Analytics: Predicting Employee Churn in Python,4,DATACAMP
+Intermediate Statistical Modeling in R,4,DATACAMP
+Equity Valuation in R,4,DATACAMP
+Intermediate Functional Programming with purrr,4,DATACAMP
+Network Analysis in the Tidyverse,4,DATACAMP
+Designing and Analyzing Clinical Trials in R,4,DATACAMP
+Scalable Data Processing in R,4,DATACAMP
+Optimizing R Code with Rcpp,4,DATACAMP
+Bayesian Modeling with RJAGS,4,DATACAMP
+Survey and Measurement Development in R,4,DATACAMP
+Human Resources Analytics: Exploring Employee Data in R,5,DATACAMP
+Visualizing Big Data with Trelliscope in R,4,DATACAMP
+Business Process Analytics in R,4,DATACAMP
+Parallel Programming in R,4,DATACAMP
+Analyzing Election and Polling Data in R,4,DATACAMP
+Probability Puzzles in R,4,DATACAMP
+Data Privacy and Anonymization in R,4,DATACAMP
+Intermediate Interactive Data Visualization with plotly in R,4,DATACAMP
+Predictive Analytics using Networked Data in R,4,DATACAMP
+Intermediate Predictive Analytics in Python,4,DATACAMP
+Human Resources Analytics: Predicting Employee Churn in R,4,DATACAMP
+Case Studies: Network Analysis in R,4,DATACAMP
+Feature Engineering in R,4,DATACAMP
+Time Series with data.table in R,4,DATACAMP
+Course Creation at DataCamp,3,DATACAMP
+Data Visualization with lattice in R,4,DATACAMP
+Advanced Dimensionality Reduction in R,4,DATACAMP
+Visualizing COVID-19,0.75,DATACAMP
+The Impact of Climate Change on Birds,0.75,DATACAMP
+Real-time Insights from Social Media Data,0.75,DATACAMP
+Trends in Maryland Crime Rates,0.75,DATACAMP
+Clustering Bustabit Gambling Behavior,0.75,DATACAMP
+Going Down to South Park: A Text Analysis,0.75,DATACAMP
+Planning Public Policy in Argentina,0.75,DATACAMP
+What and Where Are the World's Oldest Businesses?,0.75,DATACAMP
+Give Life: Predict Blood Donations,0.75,DATACAMP
+Clustering Heart Disease Patient Data,0.75,DATACAMP
+Where Are the Fishes?,0.75,DATACAMP
+Analyze Your Runkeeper Fitness Data,0.75,DATACAMP
+Comparing Cosmetics by Ingredients,0.75,DATACAMP
+A Text Analysis of Trump's Tweets,0.75,DATACAMP
+Predict Taxi Fares with Random Forests,0.75,DATACAMP
+Book Recommendations from Charles Darwin,0.75,DATACAMP
+Naïve Bees: Deep Learning with Images,0.75,DATACAMP
+Drunken Datetimes in Ames,0.75,DATACAMP
+Explore 538's Halloween Candy Rankings,1,DATACAMP
+Degrees That Pay You Back,0.75,DATACAMP
+Extract Stock Sentiment from News Headlines,0.75,DATACAMP
+Gender Bias in Graduate Admissions,0.75,DATACAMP
+Data Science for Social Good: Crime Study,0.75,DATACAMP
+Comparing Search Interest with Google Trends,0.75,DATACAMP
+ASL Recognition with Deep Learning,0.75,DATACAMP
+Where Would You Open a Chipotle?,0.75,DATACAMP
+Do Left-handed People Really Die Young?,0.75,DATACAMP
+What Your Heart Rate Is Telling You,1,DATACAMP
+Who's Tweeting? Trump or Trudeau?,1,DATACAMP
+Partnering to Protect You from Peril,1,DATACAMP
+Naïve Bees: Predict Species from Images,1,DATACAMP
+Naïve Bees: Image Loading and Processing,1,DATACAMP
+Mobile Games A/B Testing with Cookie Cats,0.75,DATACAMP
+Scout your Athletics Fantasy Team,0.75,DATACAMP
+Visualizing Inequalities in Life Expectancy,0.75,DATACAMP
+Name Game: Gender Prediction using Sound,0.75,DATACAMP
+Wrangling and Visualizing Musical Data,0.75,DATACAMP
+Which Debts Are Worth the Bank's Effort?,0.75,DATACAMP
+Rise and Fall of Programming Languages,1,DATACAMP
+Classify Song Genres from Audio Data,1,DATACAMP
+Level Difficulty in Candy Crush Saga,0.75,DATACAMP
+A Visual History of Nobel Prize Winners,1,DATACAMP
+Analyze International Debt Statistics,0.75,DATACAMP
+Generating Keywords for Google Ads,1,DATACAMP
+A New Era of Data Analysis in Baseball,0.75,DATACAMP
+Exploring the Kaggle Data Science Survey,0.75,DATACAMP
+The Hottest Topics in Machine Learning,0.75,DATACAMP
+Risk and Returns: The Sharpe Ratio,0.75,DATACAMP
+The GitHub History of the Scala Language,0.75,DATACAMP
+Exploring the Evolution of Linux,0.75,DATACAMP
+A Network Analysis of Game of Thrones,0.75,DATACAMP
+Predicting Credit Card Approvals,0.75,DATACAMP
+Recreating John Snow's Ghost Map,1,DATACAMP
+Dr. Semmelweis and the Discovery of Handwashing,1,DATACAMP
+The Android App Market on Google Play,0.75,DATACAMP
+Introduction to DataCamp Projects,0.5,DATACAMP
+Exploring the Bitcoin Cryptocurrency Market,0.75,DATACAMP
+Phyllotaxis: Draw Flowers Using Mathematics,0.75,DATACAMP
+Analyzing TV Data,0.75,DATACAMP
+Exploring the History of Lego,0.75,DATACAMP
+Introduction to DataCamp Projects,0.5,DATACAMP
+Dr. Semmelweis and the Discovery of Handwashing,1,DATACAMP
+Analyze Data with Python,20,CODECADEMY
+Learn Statistics with Python,30,CODECADEMY
+Learn SQL,25,CODECADEMY
+Learn the Command Line,20,CODECADEMY
+Learn C++,50,CODECADEMY
+Basic HTML and HTML5,30,FREECODECAMP
+Basic CSS,30,FREECODECAMP
+Applied Visual Web Design,20,FREECODECAMP
+Applied Accessibility Web Design,15,FREECODECAMP
+Responsive Web Design Principles,15,FREECODECAMP
+CSS Flexbox,25,FREECODECAMP
+CSS Grid,20,FREECODECAMP
+Responsive Web Design Projects,20,FREECODECAMP
+Basic JavaScript,20,FREECODECAMP
+ES6,20,FREECODECAMP
+Regular Expressions,20,FREECODECAMP
+Debugging,15,FREECODECAMP
+Basic Data Structures,20,FREECODECAMP
+Basic Algorithm Scripting,15,FREECODECAMP
+Object Oriented Programming,20,FREECODECAMP
+Functional Programming,15,FREECODECAMP
+Intermediate Algorithm Scripting,20,FREECODECAMP
+JavaScript Algorithms and Data Structures Projects,20,FREECODECAMP
+Data Visualization with D3,30,FREECODECAMP
+JSON APIs and AJAX,25,FREECODECAMP
+Data Visualization Projects,30,FREECODECAMP
+Python for Everybody,40,FREECODECAMP
+Scientific Computing with Python Projects,45,FREECODECAMP
+Data Analysis with Python,40,FREECODECAMP
+Numpy,55,FREECODECAMP
+Data Analysis with Python Projects,40,FREECODECAMP
+Tensorflow,30,FREECODECAMP
+How Neural Networks Work,40,FREECODECAMP
+Machine Learning with Python Projects,45,FREECODECAMP
+Python,5,KAGGLE
+Intro to Machine Learning,3,KAGGLE
+Intermediate Machine Learning,4,KAGGLE
+Pandas,5,KAGGLE
+Data Visualization,4,KAGGLE
+Feature Engineering,5,KAGGLE
+Data Cleaning,4,KAGGLE
+Intro to SQL,3,KAGGLE
+Advanced SQL,5,KAGGLE
+Intro to Deep Learning,4,KAGGLE
+Computer Vision,4,KAGGLE
+Geospatial Analysis,6,KAGGLE
+Machine Learning Explainability,4,KAGGLE
+Natural Language Processing,4,KAGGLE
+Intro to Game AI and Reinforcement Learning,4,KAGGLE
+Databases and SQL for Data Science with Python,16,COURSERA
+Data Visualization with Python,15,COURSERA
+Introduction to Data Analytics,20,COURSERA
+Data Analysis with Python,12,COURSERA
+IBM Data Analyst Capstone Project,10,COURSERA
+Python for Data Science AI & Development,15,COURSERA
+Excel Basics for Data Analysis,15,COURSERA
+Data Visualization and Dashboards with Excel and Cognos,12,COURSERA
+Python Project for Data Science,20,COURSERA
+AWS Cloud Technical Essentials,16,COURSERA
+AWS Fundamentals: Addressing Security Risk,20,COURSERA
+AWS Fundamentals: Migrating to the Cloud,20,COURSERA
+AWS Fundamentals: Building Serverless Applications,20,COURSERA
+Google Data Analytics Capstone: Complete a Case Study,15,COURSERA
+Analyze Data to Answer Questions,16,COURSERA
+Foundations: Data Data Everywhere,16,COURSERA
+Ask Questions to Make Data-Driven Decisions,16,COURSERA
+Data Analysis with R Programming,12,COURSERA
+Share Data Through the Art of Visualization,16,COURSERA
+Process Data from Dirty to Clean,16,COURSERA
+Prepare Data for Exploration,12,COURSERA
+Introduction to Big Data with Spark and Hadoop,14,COURSERA
+Databases and SQL for Data Science with Python,16,COURSERA
+Data Engineering and Machine Learning using Spark,9,COURSERA
+Introduction to Relational Databases (RDBMS),16,COURSERA
+Introduction to NoSQL Databases,16,COURSERA
+Introduction to Data Engineering,10,COURSERA
+Hands-on Introduction to Linux Commands and Shell Scripting,6,COURSERA
+Tools for Data Science,18,COURSERA
+Machine Learning with Python,21,COURSERA
+Data Science Methodology,10,COURSERA
+Applied Data Science Capstone,10,COURSERA
+What is Data Science?,8,COURSERA
+Python Project for Data Engineering,5,COURSERA
+ETL and Data Pipelines with Shell Airflow and Kafka,20,COURSERA
+Google Cloud Big Data and Machine Learning Fundamentals,15,COURSERA
+Modernizing Data Lakes and Data Warehouses with GCP,10,COURSERA
+Building Batch Data Pipelines on GCP,18,COURSERA
+Building Resilient Streaming Analytics Systems on GCP,15,COURSERA
+Smart Analytics Machine Learning and AI on GCP,12,COURSERA
+How Google does Machine Learning,10,COURSERA
+Introduction to Tensor Flow,15,COURSERA
+Feature Engineering,12,COURSERA
+Art and Science of Machine Learning,13,COURSERA
+Creating a Data Transformation Pipeline with Cloud Dataprep	Lab,1.5,QWIKLABS
+Evaluating a Data Model	Lab,2,QWIKLABS
+Exploratory Data Analysis Using AI Platform	Lab,3,QWIKLABS
+Loading Data into BigQuery for Exploratory Data Analysis	Lab,1,QWIKLABS
+Visualize Real Time Geospatial Data with Google Data Studio	Lab,2,QWIKLABS
+Processing Data with Google Cloud Dataflow	Lab,2,QWIKLABS
+Visualizing Data with Google Data Studio	Lab,3,QWIKLABS
+Ingesting Data Into The Cloud Using Google Cloud Functions	Lab,2,QWIKLABS
+Ingesting Data Into The Cloud	Lab,1.5,QWIKLABS
+Connect to Cloud SQL from an Application in Kubernetes Engine	Lab,2,QWIKLABS
+APIs Explorer: Cloud SQL	Lab,3,QWIKLABS
+Using Ruby on Rails with Cloud SQL for PostgreSQL	Lab,2,QWIKLABS
+Cloud SQL with Terraform	Lab,1.5,QWIKLABS
+Loading Data into Google Cloud SQL	Lab,1,QWIKLABS
+Cloud SQL for MySQL: Qwik Start	Lab,2,QWIKLABS
+Exploring Dataset Metadata Between Projects with Data Catalog	Lab,3,QWIKLABS
+Data Catalog: Qwik Start	Lab,1.5,QWIKLABS
+Using BigQuery in the Google Cloud Console	Lab,2,QWIKLABS
+Build and Optimize Data Warehouses with BigQuery Lab,1.5,QWIKLABS
+Build and Execute MySQL; PostgreSQL; and SQLServer to Data Catalog Connectors	Lab,2,QWIKLABS
+Working with JSON; Arrays; and Structs in BigQuery	Lab,3,QWIKLABS
+Troubleshooting and Solving Data Join Pitfalls,1.5,QWIKLABS
+Data Engineering	Quest,10,QWIKLABS
+Data Science on Google Cloud	Quest,15,QWIKLABS
+Cloud SQL	Quest,12,QWIKLABS
+Data Catalog Fundamentals	Quest,5,QWIKLABS
+BigQuery for Data Warehousing	Quest,10,QWIKLABS
+Build and Optimize Data Warehouses with BigQuery	Quest,7,QWIKLABS
+Create and Manage Cloud Resources	Quest,6,QWIKLABS
+Baseline: Data; ML; AI	Quest,20,QWIKLABS
+Insights from Data with BigQuery	Quest,12,QWIKLABS
+Google Cloud Essentials	Quest,7,QWIKLABS
+BigQuery Basics for Data Analysts	Quest,20,QWIKLABS
+Baseline: Infrastructure	Quest,8,QWIKLABS
+Perform Foundational Data; ML; and AI Tasks in Google Cloud,12,QWIKLABS
+Publish Streaming Data into PubSub,2,QWIKLABS
+Streaming Data Pipelines,2.5,QWIKLABS
+Streaming Analytics and Dashboards,2,QWIKLABS
+Streaming Data Pipelines into Bigtable,2,QWIKLABS
+BigQuery Queries for Performance,2,QWIKLABS
+Partitioned Tables in Google BigQuery,2,QWIKLABS
+Exploring a BigQuery Public Dataset,1,QWIKLABS
+Recommending Products Using Cloud SQL and Spark,2,QWIKLABS
+Classification Model with BigQuery ML,2,QWIKLABS
+Streaming Data Pipeline with Dataflow,1.5,QWIKLABS
+Classifying Images of Clouds with AutoML Vision,2,QWIKLABS
+Using BigQuery to do Analysis,1.5,QWIKLABS
+Loading Taxi Data into Cloud SQL,1,QWIKLABS
+Loading Data into BigQuery,1.5,QWIKLABS
+Working with JSON and Array Data in BigQuery,1.5,QWIKLABS
+Running Apache Spark jobs on Cloud Dataproc,2,QWIKLABS
+Building a pipeline graph in Cloud Data Fusion,2,QWIKLABS
+An Introduction to Cloud Composer,2,QWIKLABS
+Building a Simple Dataflow Pipeline (Python),1.5,QWIKLABS
+MapReduce in Cloud Dataflow (Python),2,QWIKLABS
+Practicing Pipeline Side Inputs (Python),1.5,QWIKLABS
+Natural Language API to classify unstructured text,1,QWIKLABS
+BigQuery in Jupyter Labs on AI Platform,1.25,QWIKLABS
+Running ML Pipelines on Kubeflow,2,QWIKLABS
+Predict with Regression Model in BQML,2,QWIKLABS
+Movie Recommendations in BigQuery ML,1.5,QWIKLABS
+Invoking Machine Learning APIs,1.5,QWIKLABS
+Improving Data Quality,1,QWIKLABS
+Exploratory Data Analysis Using Python and BigQuery,2,QWIKLABS
+Introduction to Linear Regression in Python,2,QWIKLABS
+Introduction to Logistic Regression in Python,2,QWIKLABS
+Decision Trees and Random Forests in Python,2,QWIKLABS
+Maintaining Consistency in Training with Repeatable Splitting,1,QWIKLABS
+Explore and create ML datasets,1,QWIKLABS
+Intro Introduction to Tensors and Variables,2,QWIKLABS
+Write Low Level Code with Tensor Flow,2,QWIKLABS
+Load CSV Numpy and Text data in TensorFlow,2,QWIKLABS
+Loading Images Using tf.data.Dataset,2,QWIKLABS
+Introduction to Feature Columns,2,QWIKLABS
+Introducing the Keras Sequential API,2,QWIKLABS
+Introducing the Keras Functional API,2,QWIKLABS
+Performing Basic Feature Engineering in BQML,1.5,QWIKLABS
+A simple Dataflow pipeline in Python,2,QWIKLABS
+MapReduce in Dataflow Python,2,QWIKLABS
+Time-Windowed Features in Cloud Dataprep,2,QWIKLABS
+Improve Machine Learning model with Feature Engineering,2,QWIKLABS
+Explore Tf.transform on TesorFlow,2,QWIKLABS
+Reviewing Learning Curve on Keras,2,QWIKLABS
+Exporting data from BigQuery to Cloud Storage,2,QWIKLABS
+Performing the Hyperparameter Tuning,2,QWIKLABS
+The Nuts and Bolts of Machine Learning, 27,COURSERA
+Google Advanced Data Analytics Capstone, 30,COURSERA
+Introduction to Generative AI, 2,COURSERA
+Database Engineer Capstone, 27,COURSERA
+Go Beyond the Numbers: Translate Data into Insights, 25,COURSERA
+Infrastructure and Application Modernization with Google Cloud, 3,COURSERA
+The Power of Statistics, 24,COURSERA
+Introduction to Large Language Models, 2,COURSERA
+Introduction to Generative AI Studio, 5,COURSERA
+Database Design and Basic SQL in PostgreSQL, 27,COURSERA
+Intermediate PostgreSQL, 27,COURSERA
+JSON and Natural Language Processing in PostgreSQL, 27,COURSERA
+Database Architecture Scale and NoSQL with Elasticsearch, 27,COURSERA
+Understanding and Visualizing Data with Python, 27,COURSERA
+Inferential Statistical Analysis with Python, 27,COURSERA
+Fitting Statistical Models to Data with Python, 27,COURSERA
+Advanced React, 27,COURSERA
+Principles of UX/UI Design, 27,COURSERA
+React Basics, 27,COURSERA
+Version Control, 27,COURSERA
+Programming with JavaScript, 27,COURSERA
+Front-End Developer Capstone, 27,COURSERA
+Coding Interview Preparation, 27,COURSERA
+HTML and CSS in depth, 27,COURSERA
+Introduction to Front-End Development, 27,COURSERA
+Web Application Technologies and Django, 27,COURSERA
+Building Web Applications in Django, 27,COURSERA
+Django Features and Libraries, 27,COURSERA
+Using JavaScript and JSON in Django, 27,COURSERA
+Database Structures and Management with MySQL, 27,COURSERA
+Database Engineer Capstone, 27,COURSERA
+Programming in Python, 27,COURSERA
+Advanced MySQL Topics, 27,COURSERA
+Database Clients, 27,COURSERA
+Advanced Data Modeling, 27,COURSERA
+Coding Interview Preparation, 27,COURSERA
+Introduction to Databases, 27,COURSERA
+Start the UX Design Process: Empathize Define and Ideate, 27,COURSERA
+Design a User Experience for Social Good & Prepare for Jobs, 27,COURSERA
+Create High-Fidelity Designs and Prototypes in Figma, 27,COURSERA
+Build Wireframes and Low-Fidelity Prototypes, 27,COURSERA
+Foundations of User Experience (UX) Design, 27,COURSERA
+Build Dynamic User Interfaces (UI) for Websites, 27,COURSERA
+Conduct UX Research and Test Early Concepts, 27,COURSERA
+Back-End Developer Capstone, 27,COURSERA
+Django Web Framework, 27,COURSERA
+The Full Stack, 27,COURSERA
+Introduction to Databases for Back-End Development, 27,COURSERA
+Introduction to Back-End Development, 27,COURSERA
+APIs, 27,COURSERA
+Responsive Website Basics: Code with HTML CSS and JavaScript, 27,COURSERA
+Data Visualization with Python, 27,COURSERA
+IBM Data Analyst Capstone Project, 27,COURSERA
+Getting and Cleaning Data, 27,COURSERA
+R Programming, 27,COURSERA
+Introduction to Git and GitHub, 27,COURSERA
+Attract and Engage Customers with Digital Marketing, 27,COURSERA
+Foundations of Project Management, 27,COURSERA
+Launching into Machine Learning, 27,COURSERA
+Project Planning: Putting It All Together, 27,COURSERA
+Build with Claude,20,ANTHROPIC
+Agent to Agent,20,GOOGLE
+MCP: Build Rich-Context AI Apps with Anthropic,4,DEEPLEARNING.AI
+Building AI Voice Agents for Production,4,DEEPLEARNING.AI
+Building AI Browser Agents,4,DEEPLEARNING.AI
+Vibe Coding 101 with Replit,4,DEEPLEARNING.AI
+Getting Structured LLM Output,4,DEEPLEARNING.AI
+Evaluating AI Agents,4,DEEPLEARNING.AI
+Building Your Own Database Agent,4,DEEPLEARNING.AI
+AI Agents in LangGraph,4,DEEPLEARNING.AI
+Function-calling and data extraction with LLMs,4,DEEPLEARNING.AI
+Prompt Compression and Query Optimization,4,DEEPLEARNING.AI
+Embedding Models: from Architecture to Implementation,4,DEEPLEARNING.AI
+Multi AI Agent Systems with crewAI,4,DEEPLEARNING.AI

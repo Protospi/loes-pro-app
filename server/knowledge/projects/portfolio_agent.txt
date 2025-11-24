@@ -1,0 +1,96 @@
+**Professional Portfolio Assistant – Full-Stack AI Web Application** *Personal Project (Independent Development)*
+
+Developed a comprehensive full-stack conversational AI application showcasing technical expertise through an interactive portfolio assistant with multilingual support, calendar integration, and advanced analytics.
+
+**Full-Stack Architecture (Built from Scratch):**
+
+* **Frontend:** React  
+* **Backend:** Node.js  
+* **Database:** MongoDB  
+* **AI Integration:** OpenAI API (text, image, and audio processing with tool calling)  
+* **DevOps:** Complete deployment and infrastructure management  
+* **UI/UX Design:** Custom interface design and user experience
+
+**Core Agent Capabilities:**
+
+* **Portfolio Intelligence:**  
+  * Custom-built mini RAG system for retrieving professional information  
+  * Knowledge base containing work experience, certifications, and project portfolio (current compilation)  
+  * Semantic search for relevant skills and experience matching  
+* **Calendar Integration:**  
+  * Google Calendar API integration for availability retrieval  
+  * Meeting scheduling with automated time slot discovery  
+  * Email confirmation system  
+* **Job Matching:**  
+  * PDF job description upload and processing  
+  * Automated skills matching and relevance analysis  
+  * Qualification assessment and fit evaluation  
+* Situational date and time context awareness
+
+**Multilingual Accessibility:**
+
+* **Landing page language selection** (text or voice input)  
+* One-click full application translation (UI and agent engine)  
+* Dynamic language switching across entire platform  
+* Natural language interaction in user's preferred language
+
+**Conversational Interface:**
+
+* **Multi-modal input:**  
+  * Text messaging  
+  * Audio recording with speech-to-text  
+  * File upload (PDFs, documents)  
+* **Multi-modal output:**  
+  * Text responses  
+  * Text-to-speech playback (per-message audio button)  
+  * Visual content delivery
+
+**Tool Ecosystem:**
+
+* **Information Retrieval Tool:** RAG-powered portfolio and expertise lookup  
+* **Scheduling Tool:** Calendar availability search and meeting booking  
+* **Email Tool:** Automated confirmation and follow-up messaging  
+* **CSAT Tool:** User satisfaction recording  
+* **Record Tool:** Conversation data capture (name, intention, email, scheduled meetings, etc.)
+
+**Server View (Workflow Visualization):**
+
+* **React Flow diagram** displaying real-time agent orchestration:  
+  * User message nodes  
+  * Tool execution nodes  
+  * Agent thinking/reasoning nodes  
+  * Response generation nodes  
+* Interactive workflow playback for conversation replay  
+* **Conversation logs panel** above workflow visualization  
+* Complete transparency into agent decision-making process
+
+**Analytics Dashboard:**
+
+* **Key Performance Indicators:**  
+  * Total users  
+  * Total messages  
+  * Meetings scheduled  
+  * CSAT scores  
+  * Cost tracking (in dollars)  
+* **Interactive visualizations:**  
+  * Multi-select metric boxes for comparison  
+  * Time series charts with multiple granularity options (hourly, daily, monthly)  
+  * Date range filtering  
+  * Dynamic metric combination and correlation analysis
+
+**Navigation Structure:**
+
+1. **Chat Page:** Primary conversational interface  
+2. **Server View Page:** Workflow visualization and conversation logs  
+3. **Analytics Page:** Performance metrics and insights dashboard
+
+**Technology Stack:**
+
+* Frontend: React  
+* Backend: Node.js, JavaScript  
+* Database: MongoDB  
+* AI Models: OpenAI API (GPT for text, Whisper for audio, DALL-E capability)  
+* Integrations: Google Calendar API, Email services  
+* Visualization: React Flow
+
+**Impact:** Showcase portfolio demonstrating end-to-end product development capabilities including AI agent architecture, full-stack engineering, multilingual accessibility, advanced analytics, and professional UX design—all built independently from conception to deployment.

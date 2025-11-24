@@ -1,84 +1,84 @@
 {
   "chat": {
-    "title": "Профессиональный ассистент",
-    "subtitle": "Как я могу помочь вам с работой Педро?",
+    "title": "Professional Assistant",
+    "subtitle": "How can I assist you with Pedro's work?",
     "sampleQuestions": [
-      "Расскажите о профессиональном опыте Педро.",
-      "Покажите последние проекты Педро.",
-      "Какие квалификации есть у Педро?",
-      "Связана ли эта компетенция с работой или текстом?",
-      "Я хочу запланировать встречу с Педро."
+      "Tell me about Pedro's professional experience.",
+      "Show me Pedro's latest projects.",
+      "What qualifications does Pedro have?",
+      "Is this competency related to work or text?",
+      "I want to schedule a meeting with Pedro."
     ],
     "suggestionChips": [
       {
-        "text": "Работа",
-        "query": "Расскажите о профессиональном опыте Педро."
+        "text": "Work",
+        "query": "Tell me about Pedro's professional experience."
       },
       {
-        "text": "Проекты",
-        "query": "Я хочу узнать больше о последних проектах Педро."
+        "text": "Projects",
+        "query": "I want to learn more about Pedro's latest projects."
       },
       {
-        "text": "Квалификации",
-        "query": "Какие квалификации есть у Педро?"
+        "text": "Qualifications",
+        "query": "What qualifications does Pedro have?"
       },
       {
-        "text": "Компетенции",
-        "query": "Связана ли эта компетенция с работой?"
+        "text": "Competencies",
+        "query": "Is this competency related to work?"
       },
       {
-        "text": "Встреча",
-        "query": "Вы хотите запланировать встречу с Педро?"
+        "text": "Meeting",
+        "query": "Do you want to schedule a meeting with Pedro?"
       }
     ]
   },
   "language": {
-    "select": "Выберите язык",
-    "detected": "Обнаруженный язык: {{language}}"
+    "select": "Select Language",
+    "detected": "Detected language: {{language}}"
   },
   "error": {
-    "api": "Извините, произошла ошибка при подключении к сервису. Пожалуйста, попробуйте еще раз позже."
+    "api": "Sorry, there was an error connecting to the service. Please try again later."
   },
   "input": {
-    "placeholder": "Введите сообщение здесь...",
-    "recording": "Запись... Отпустите, чтобы отправить",
-    "transcribing": "Идет транскрибирование..."
+    "placeholder": "Enter your message here...",
+    "recording": "Recording... Release to send",
+    "transcribing": "Transcribing..."
   },
   "tooltips": {
-    "themeToggle": "Сменить тему",
-    "newConversation": "Новый разговор",
-    "sendMessage": "Отправить сообщение"
+    "themeToggle": "Toggle theme",
+    "newConversation": "New conversation",
+    "sendMessage": "Send message"
   },
   "server": {
-    "title": "Просмотр сервера",
+    "title": "Server View",
     "flowCanvas": {
-      "title": "Поток агента"
+      "title": "Agent Flow"
     },
     "logs": {
-      "title": "Журнал разговоров",
-      "loading": "Загрузка журнала разговоров..."
+      "title": "Conversation Log",
+      "loading": "Loading conversation log..."
     },
-    "playConversation": "Воспроизвести разговор",
-    "stopPlayback": "Остановить воспроизведение",
-    "noConversation": "Разговор не найден",
-    "noConversationDesc": "Нет записанных разговоров для воспроизведения.",
-    "playbackStarted": "Воспроизведение начато",
-    "playbackStartedDesc": "Воспроизведение событий разговора",
-    "playbackComplete": "Воспроизведение завершено",
-    "playbackCompleteDesc": "Воспроизведение разговора завершено",
-    "error": "Ошибка",
-    "errorDesc": "Не удалось загрузить поток разговора"
+    "playConversation": "Play conversation",
+    "stopPlayback": "Stop playback",
+    "noConversation": "Conversation not found",
+    "noConversationDesc": "No recorded conversations available for playback.",
+    "playbackStarted": "Playback started",
+    "playbackStartedDesc": "Playing back conversation events",
+    "playbackComplete": "Playback completed",
+    "playbackCompleteDesc": "Conversation playback finished",
+    "error": "Error",
+    "errorDesc": "Failed to load conversation stream"
   },
   "analytics": {
-    "title": "Просмотр аналитики",
-    "selectDateRange": "Выберите период",
-    "selectDates": "Выберите даты",
-    "selectNewRange": "✨ Нажмите дату, чтобы начать новый выбор",
-    "error": "Не удалось загрузить данные аналитики",
-    "noData": "Нет доступных данных за выбранный период",
+    "title": "Analytics View",
+    "selectDateRange": "Select date range",
+    "selectDates": "Select dates",
+    "selectNewRange": "✨ Click on a date to start a new selection",
+    "error": "Failed to load analytics data",
+    "noData": "No available data for the selected period",
     "emptyState": {
-      "title": "Просмотр аналитики",
-      "description": "В этой области вскоре появится аналитическая информация."
+      "title": "Analytics View",
+      "description": "Analytics information will appear here soon."
     }
   }
 }

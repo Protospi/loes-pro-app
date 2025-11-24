@@ -1,0 +1,41 @@
+**AI Customer Support Agent for Educational Materials Distribution** *Built at SmartTalks.ai*
+
+Developed an intelligent support agent for a school book distribution company, handling order tracking, product inquiries, and school-specific book list retrieval.
+
+**Core Capabilities:**
+
+* Specialized conversational AI for customer support with FAQ handling  
+* Multi-parameter order lookup system (CPF, email, or order ID) integrated with sales platform  
+* Package-level delivery tracking with real-time status updates and estimated delivery dates via third-party logistics API integration  
+* Context-aware responses using current date/time and customer information  
+* Automated conversation summarization dynamically injected into system prompts, enabling seamless context retention across multiple sessions  
+* Multilanguage support for international client engagement
+
+**Product Intelligence:**
+
+* School supply catalog integration (pencils, pens, scissors, rulers, erasers, etc.) with brand information, availability, and pricing  
+* Visual product presentation with image delivery capabilities  
+* RAG system for retrieving contextual information and FAQs
+
+**School Integration:**
+
+* Direct integration with school systems to retrieve mandatory book lists filtered by city and school name  
+* Comprehensive order and delivery package tracking across multiple shipments
+
+**Support & Escalation:**
+
+* Escalation protocol to human support agents when needed  
+* Comprehensive data storage (conversation logs, summarized history, tool calls, system errors, CSAT scores, support resolution states)
+
+**Business Intelligence:**
+
+* Analytics dashboard tracking usage metrics, costs, customer satisfaction, geographic distribution, and support resolution rates  
+* Error logging and learning flags to identify opportunities for improving agent prompts, tools, and integrations
+
+**Technology Stack:**
+
+* Frontend: Vue.js  
+* Backend: Node.js, JavaScript  
+* Database: MongoDB
+
+**Impact:** Comprehensive support automation combining order tracking, product catalog management, and school-specific integrations to streamline customer service operations within the SmartTalks.ai ecosystem.

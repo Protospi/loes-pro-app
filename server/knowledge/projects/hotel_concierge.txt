@@ -1,0 +1,63 @@
+**AI Hotel Concierge with Multi-Agent Orchestration** *Built at SmartTalks.ai*
+
+Developed an intelligent hotel concierge system with multi-agent architecture, managing guest services from pre-arrival to post-departure including room service, check-in, loyalty programs, and local tourism guidance.
+
+**Core Capabilities:**
+
+* Multi-agent orchestration system with intelligent routing to specialized sub-agents:  
+  * **FAQ & Hotel Information Agent**: Hotel rules, services, and general inquiries  
+  * **Room Service Agent**: Food and drink ordering with menu presentation (text and images)  
+  * **Fidelity Program Agent**: Points management, redemption, and rewards  
+  * **Tourism Guide Agent**: Local recommendations and city information  
+* Guest recognition and personalization by name or CPF  
+* Context-aware responses using current date/time and guest preferences  
+* Automated conversation summarization dynamically injected into system prompts, enabling seamless context retention across multiple sessions  
+* Multilanguage support for international client engagement
+
+**Guest Services:**
+
+* Digital check-in process integrated with hotel management system  
+* Room service ordering with visual menu presentation, itemized checkout summary with pricing, and direct kitchen integration  
+* Guest reservation lookup and modification capabilities  
+* Loyalty program management: point registration, balance tracking, and redemption for perks (late checkout, discounts, bar items, etc.)
+
+**Intelligence Layer:**
+
+* RAG system for hotel information, services, policies, and FAQs  
+* Comprehensive menu database with pricing and visual assets  
+* Guest history and preference tracking
+
+**Tourism & Local Information:**
+
+* **External API Integration:**  
+  * Google Places API for points of interest (tourist attractions, business centers, restaurants)  
+  * Google Maps Routes API for directions and travel time estimates  
+  * Weather API for current conditions and forecasts  
+* Personalized recommendations based on guest interests (tourism, business, dining)  
+* Operating hours and real-time information for local establishments
+
+**Proactive Engagement:**
+
+* Pre-arrival communication and welcome messaging  
+* Post-stay follow-up for feedback and future booking opportunities  
+* Active campaign integration for guest retention and upselling
+
+**Support & Escalation:**
+
+* Escalation protocol to hotel staff when needed  
+* Comprehensive data storage (conversation logs, guest history, order records, summarized conversations, tool calls, system errors, CSAT scores)
+
+**Business Intelligence:**
+
+* Analytics dashboard tracking usage metrics, costs, guest satisfaction, service utilization, and conversion rates  
+* Error logging and learning flags to identify opportunities for improving agent prompts, tools, and integrations  
+* Guest behavior insights and revenue optimization tracking
+
+**Technology Stack:**
+
+* Frontend: Vue.js  
+* Backend: Node.js, JavaScript  
+* Database: MongoDB  
+* External APIs: Google Places, Google Maps Routes, Weather API
+
+**Impact:** Comprehensive guest experience platform combining multi-agent orchestration, hotel operations integration, loyalty management, and local intelligence to deliver personalized concierge services and drive revenue within the SmartTalks.ai ecosystem.

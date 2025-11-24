@@ -1,0 +1,37 @@
+**AI Sales Agent for Resort Hotel Booking** *Built at SmartTalks.ai*
+
+Developed an end-to-end autonomous sales agent that handles the complete customer journey from initial inquiry to purchase for a resort hotel.
+
+**Core Capabilities:**
+
+* Conversational AI with specialized prompting for consultative room sales  
+* Intelligent routing system with agent orchestration that dynamically directs conversations to specialized agents (room sales or aqua park ticket sales) based on customer intent  
+* Real-time integration with hotel inventory systems (availability, pricing, room details, amenities, package inclusions)  
+* Context-aware responses using current date/time and customer preferences  
+* Automated conversation summarization dynamically injected into system prompts, enabling seamless context retention across multiple sessions with the same user  
+* Multilanguage support for international client engagement
+
+**Intelligence Layer:**
+
+* RAG system retrieving hotel FAQs, local attractions, events, and activities  
+* Personalized itinerary planning for hotel and regional experiences
+
+**Transaction & Support:**
+
+* Integrated payment processing for seamless checkout (rooms and aqua park tickets)  
+* Escalation protocol to human support agents when needed  
+* Comprehensive data storage (conversation logs, summarized history, tool calls, system errors, CSAT scores, conversion states)
+
+**Business Intelligence:**
+
+* Analytics dashboard tracking usage metrics, costs, customer satisfaction, lead geography, and funnel progression  
+* Error logging and learning flags to identify opportunities for improving agent prompts, tools, and integrations  
+* Campaign integration for proactive lead nurturing and follow-up with interested prospects
+
+**Technology Stack:**
+
+* Frontend: Vue.js  
+* Backend: Node.js, JavaScript  
+* Database: MongoDB
+
+**Impact:** Full-stack solution combining conversational AI, multi-agent orchestration, systems integration, and business analytics to automate and optimize the complete resort booking experience within the SmartTalks.ai ecosystem.

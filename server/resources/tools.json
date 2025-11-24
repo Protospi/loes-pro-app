@@ -32,6 +32,25 @@
     },
     {
       "type": "function",
+      "name": "get_certificates",
+      "description": "Busca informações sobre os certificados de Pedro Loes. Utilizar quando o usuário solicitar mais informações sobre seus certificados.",
+      "strict": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "certificates": {
+            "type": "boolean",
+            "description": "Se deve buscar informações sobre os certificados de Pedro Loes."
+          }
+        },
+        "required": [
+          "certificates"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
       "name": "schedule_meeting",
       "description": "Agenda uma reunião no Google Calendar com título, horário, participantes e link do Google Meet. Ativar após o usuário fornecer os detalhes da reunião, dia e hora desejada.",
       "parameters": {

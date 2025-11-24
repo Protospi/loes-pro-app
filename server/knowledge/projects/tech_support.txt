@@ -1,0 +1,47 @@
+**AI Technical Support Agent for Elevator Engineering** *Built at SmartTalks.ai*
+
+Developed an intelligent technical support agent for elevator electrical engineers and technicians, providing instant access to complex technical documentation across 1000+ multimedia files including PDFs, videos, images, and CSVs.
+
+**Core Capabilities:**
+
+* Specialized conversational AI for technical troubleshooting and procedural guidance  
+* Multi-format document processing and retrieval (PDFs, videos, images, CSVs, technical manuals)  
+* Technical instruction generation for electrical board manipulation and elevator component maintenance  
+* Context-aware responses using current date/time and technician work context  
+* Automated conversation summarization dynamically injected into system prompts, enabling seamless context retention across multiple sessions  
+* Multilanguage support for international client engagement
+
+**Advanced RAG Architecture:**
+
+* **Two-tier intelligent retrieval system:**  
+  * Automatic file processing pipeline with cloud folder synchronization (detects additions, modifications, deletions)  
+  * Automated document summarization and indexing upon file updates  
+  * Similarity search engine retrieving top 3 most relevant documents  
+  * AI decision agent evaluating and selecting optimal documents for context  
+  * Source attribution with direct quotes and file references in responses  
+* Standard RAG system for FAQs and general elevator system knowledge
+
+**Technical Intelligence:**
+
+* Multi-agent orchestration: routing agent → thinking agent → response generation  
+* File attachment capabilities delivering source documents alongside instructions  
+* Complex technical query handling with step-by-step procedural guidance
+
+**Support & Escalation:**
+
+* Escalation protocol to senior technical staff or human support when needed  
+* Comprehensive data storage (conversation logs, summarized history, document queries, tool calls, system errors, CSAT scores, resolution states)
+
+**Business Intelligence:**
+
+* Analytics dashboard tracking usage metrics, costs, technician satisfaction, query types, and resolution rates  
+* Error logging and learning flags to identify opportunities for improving agent prompts, document indexing, and retrieval accuracy  
+* Document usage analytics identifying gaps in technical documentation
+
+**Technology Stack:**
+
+* Frontend: Vue.js  
+* Backend: Node.js, JavaScript  
+* Database: MongoDB
+
+**Impact:** Sophisticated technical knowledge management system combining multi-modal document processing, intelligent retrieval orchestration, and multi-agent architecture to provide instant, accurate technical support for field engineers within the SmartTalks.ai ecosystem.

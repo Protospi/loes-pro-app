@@ -1,0 +1,102 @@
+**AI-Powered Analytics & Monitoring Dashboard** *Built at SmartTalks.ai*
+
+Developed a comprehensive analytics platform combining AI-driven conversation analysis with real-time performance monitoring, providing actionable insights for conversational agent optimization and human support team management across multiple specialized dashboards.
+
+**AI Conversation Analytics with Copilot:**
+
+* **Semantic conversation analysis agent** evaluating dialogue quality and effectiveness  
+* **AI Copilot assistant** helping users navigate data and discover insights through natural language queries  
+* Dynamic prompt generation allowing users to specify custom analysis dimensions and metrics  
+* **On-the-fly dashboard creation** tailored to specific business questions  
+* Quality assurance monitoring for agent behavior and error detection  
+* Performance improvement recommendations based on conversation patterns
+
+**Dashboard Suite:**
+
+**1\. General Metrics Dashboard:**
+
+* **Core KPI Tracking:**  
+  * Total users, messages, and conversations  
+  * Channel performance breakdown  
+  * Client and business unit segmentation  
+* **Advanced Visualizations:**  
+  * Time series charts with multiple granularity options (hourly, daily, weekly, monthly)  
+  * Metric combination capabilities for comparative analysis  
+  * Geographic heat maps tracking user distribution by location  
+  * Word clouds highlighting frequent topics and keywords  
+* Flexible date range filtering and period comparison
+
+**2\. Human Attendance Dashboard:**
+
+* **Support Team Performance Monitoring:**  
+  * Ticket status tracking (open, in-progress, resolved, closed)  
+  * Response time metrics (first response, average resolution time)  
+  * Success and failure rate analysis  
+  * Multi-dimensional filtering by department, unit, date, and individual attendant  
+* **Workload Optimization:**  
+  * Heat map visualization showing peak hours and days of the week  
+  * Request concentration patterns for team capacity planning  
+  * Resource allocation insights
+
+**3\. AI Agent Analytics Dashboard:**
+
+* Powered by semantic analysis AI  
+* Agent behavior monitoring and quality metrics  
+* Error detection and improvement opportunities  
+* Conversation flow analysis  
+* Custom dimension exploration via AI Copilot
+
+**4\. Sales Dashboard:**
+
+* **Revenue Metrics:**  
+  * Total sales value (in dollars)  
+  * User journey and sales funnel visualization  
+  * Conversion rates at each funnel stage  
+  * Lead qualification and progression tracking  
+* CSAT and NPS scores  
+* Sales performance trends
+
+**5\. Scheduling Dashboard:**
+
+* Total appointments scheduled  
+* Appointment status tracking  
+* Booking patterns and trends  
+* Scheduling conversion metrics  
+* Calendar utilization analysis
+
+**6\. Admin Dashboard:**
+
+* **Multi-tenant management** for platform oversight  
+* Customer account tracking and health metrics  
+* Cross-client performance comparison  
+* Platform usage statistics  
+* Tenant activity monitoring
+
+**7\. Cost Dashboard:**
+
+* **LLM Usage & Cost Tracking:**  
+  * Token consumption by model  
+  * Cost breakdown per agent, client, and conversation  
+  * Budget monitoring and forecasting  
+  * Model performance vs. cost analysis  
+  * Usage optimization recommendations
+
+**Comprehensive Business Intelligence:**
+
+* **360-degree view** addressing all business angles:  
+  * Operational efficiency (general metrics)  
+  * Customer experience (CSAT, NPS, conversation quality)  
+  * Revenue generation (sales funnel, conversion rates)  
+  * Resource optimization (human attendance, scheduling)  
+  * Cost management (LLM usage)  
+  * Platform health (admin overview)  
+* Real-time data updates across all dashboards  
+* Export capabilities for reporting and further analysis
+
+**Technology Stack:**
+
+* Frontend: Vue.js  
+* Backend: Node.js, JavaScript  
+* Database: MongoDB
+
+**Impact:** Enterprise-grade analytics ecosystem combining AI-powered semantic analysis, natural language copilot, and specialized dashboards delivering comprehensive insights across operations, sales, support, and cost management within the SmartTalks.ai platform.
