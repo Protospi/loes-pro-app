@@ -59,14 +59,14 @@ export default function LoadingScreen() {
         }
         
         const data = await response.json()
-        console.log('Language detection result:', data)
+        // console.log('Language detection result:', data)
         
         if (data.language) {
           // Update the application's language based on the detection
           setDetectedLanguage(data.language)
           
-          console.log('Language detected and interface translated:', data.language)
-          console.log('Translated content received:', data.translatedContent)
+          // console.log('Language detected and interface translated:', data.language)
+          // console.log('Translated content received:', data.translatedContent)
           
           // Update translations dynamically without page reload
           if (data.translatedContent) {

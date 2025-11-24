@@ -8,19 +8,23 @@ import { ObjectId } from 'mongodb';
 import { createReasoning, createMeeting, updateUser } from '../database.js';
 dotenv.config({ path: '../../.env' });
 
-// the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+// Define openai api client
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const MAX_AGENT_LOOP = 3
+// Deifne max agent loop
+const MAX_AGENT_LOOP = 4
 
 // Pricing constants for gpt-5 model (per 1M tokens)
 const INPUT_PRICE_PER_MILLION = 1.250;  // $1.250 per 1M input tokens
 const OUTPUT_PRICE_PER_MILLION = 10;    // $10 per 1M output tokens
 
 export class engine  {
+
+    // Define calendar service
     private calendarService: GoogleCalendarService;
 
     constructor() {
+        // Initialize calendar service
         this.calendarService = new GoogleCalendarService();
     }
 
@@ -53,10 +57,6 @@ export class engine  {
         // Run the agent
         // console.log('🔄 Starting agent loop...')
         while (loopAgent && loopCounter < MAX_AGENT_LOOP) {
-
-            // Increment the loop counter
-            loopCounter++
-            // console.log(`\n🔄 Agent Loop Iteration: ${loopCounter}/${MAX_AGENT_LOOP}`)
     
             // Replace variables in the prompt
             const dateTimeInfo = this.getSaoPauloTodayInfo()
@@ -64,11 +64,14 @@ export class engine  {
             // Replace variables in the prompt
             const finalPrompt = this.replaceVariable(
             rawPrompt,
-            '$dateTime',
+            'dateTime',
             dateTimeInfo
             )
             
-            // console.log('🎯 System prompt preview:', finalPrompt.substring(0, 50) + '...')
+            console.log('🎯 System prompt preview:', finalPrompt)
+
+            // Increment the loop counter
+            loopCounter++
 
             // Only rebuild conversation on first iteration
             if (loopCounter === 1) {
@@ -93,9 +96,9 @@ export class engine  {
                         { role: "system", content: finalPrompt },
                         userMessage
                     ]
-                    console.log('🆕 New conversation - system prompt added')
+                    // console.log('🆕 New conversation - system prompt added')
                     if (fileId) {
-                        console.log('📎 File included in message - OpenAI File ID:', fileId);
+                        //console.log('📎 File included in message - OpenAI File ID:', fileId);
                     }
                 } else {
                     // Continuing conversation
@@ -122,8 +125,8 @@ export class engine  {
                             userMessageWithFile
                         ];
                         
-                        console.log('🔄 Continuing conversation with file attachment');
-                        console.log('📎 File included in new message - OpenAI File ID:', fileId);
+                        // console.log('🔄 Continuing conversation with file attachment');
+                        // console.log('📎 File included in new message - OpenAI File ID:', fileId);
                     } else {
                         // No file - use history as-is (includes the current user message)
                         input = [
@@ -131,14 +134,14 @@ export class engine  {
                             ...input.filter(msg => msg.role !== "system")
                         ];
                         
-                        console.log('🔄 Continuing conversation without file');
+                        // console.log('🔄 Continuing conversation without file');
                     }
                     
-                    console.log('📝 Total messages:', input.length);
-                    console.log('📝 Last 3 messages:');
+                    // console.log('📝 Total messages:', input.length);
+                    // console.log('📝 Last 3 messages:');
                     input.slice(-3).forEach((msg: any, idx: number) => {
                         const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content).substring(0, 100);
-                        console.log(`  ${idx + 1}. [${msg.role}]: ${content.substring(0, 80)}...`);
+                        // console.log(`  ${idx + 1}. [${msg.role}]: ${content.substring(0, 80)}...`);
                     });
                 }
             } else {
@@ -147,24 +150,26 @@ export class engine  {
             }
     
             // Debug conversation state before API call
-            console.log(`\n🤖 AI API Call (Loop ${loopCounter}/${MAX_AGENT_LOOP})`);
-            console.log('📋 Conversation before API:');
+            // console.log(`\n🤖 AI API Call (Loop ${loopCounter}/${MAX_AGENT_LOOP})`);
+            // console.log('📋 Conversation before API:');
             input.forEach((msg: any, i: number) => {
                 if (msg.role === 'system') {
-                    console.log(`  ${i + 1}. [SYSTEM]: ${typeof msg.content === 'string' ? msg.content.substring(0, 60) : 'complex'}...`);
+                    // console.log(`  ${i + 1}. [SYSTEM]: ${typeof msg.content === 'string' ? msg.content.substring(0, 60) : 'complex'}...`);
                 } else if (msg.role === 'user' || msg.role === 'assistant') {
                     const content = typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content).substring(0, 100);
-                    console.log(`  ${i + 1}. [${msg.role.toUpperCase()}]: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''}`);
+                    // console.log(`  ${i + 1}. [${msg.role.toUpperCase()}]: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''}`);
                 } else if (msg.type === 'function_call') {
-                    console.log(`  ${i + 1}. [FUNCTION_CALL]: ${msg.name}`);
+                    // console.log(`  ${i + 1}. [FUNCTION_CALL]: ${msg.name}`);
                 } else if (msg.type === 'function_call_output') {
-                    console.log(`  ${i + 1}. [FUNCTION_OUTPUT]`);
+                    // console.log(`  ${i + 1}. [FUNCTION_OUTPUT]`);
                 } else {
-                    console.log(`  ${i + 1}. [${msg.role || msg.type}]`);
+                    // console.log(`  ${i + 1}. [${msg.role || msg.type}]`);
                 }
             });
 
             // Generate AI response
+            // The newest OpenAI model is "gpt-5" which was released August 7, 2025. 
+            // Do not change this unless explicitly requested by the user.
             let response = await openai.responses.create({
                 model: "gpt-5",
                 tools,
@@ -175,7 +180,7 @@ export class engine  {
                 }
               });
               
-            console.log('📤 Response', response)
+            // console.log('📤 Response', response)
     
             // Calculate cost from usage data
             let loopCost = 0;
@@ -185,13 +190,13 @@ export class engine  {
                     output_tokens: response.usage.output_tokens
                 });
                 totalCostAccumulated += loopCost;
-                console.log('💰 Cost calculation (this loop):', {
-                    input_tokens: response.usage.input_tokens,
-                    output_tokens: response.usage.output_tokens,
-                    total_tokens: response.usage.total_tokens,
-                    loopCost: `$${loopCost.toFixed(6)}`,
-                    totalAccumulated: `$${totalCostAccumulated.toFixed(6)}`
-                });
+                // console.log('💰 Cost calculation (this loop):', {
+                //     input_tokens: response.usage.input_tokens,
+                //     output_tokens: response.usage.output_tokens,
+                //     total_tokens: response.usage.total_tokens,
+                //     loopCost: `$${loopCost.toFixed(6)}`,
+                //     totalAccumulated: `$${totalCostAccumulated.toFixed(6)}`
+                // });
             }
     
             // Extract and save reasoning summary if present
@@ -211,7 +216,7 @@ export class engine  {
                                 text: summaryTexts,
                                 totalCost: loopCost
                             });
-                            console.log('💡 Reasoning summary saved to database with cost:', `$${loopCost.toFixed(6)}`);
+                            // console.log('💡 Reasoning summary saved to database with cost:', `$${loopCost.toFixed(6)}`);
                         } catch (error) {
                             console.error('❌ Error saving reasoning summary:', error);
                         }
@@ -223,7 +228,7 @@ export class engine  {
             const functionCalls = response.output.filter(output => output.type === 'function_call')
             
             if (functionCalls.length > 0) {
-                console.log(`🔧 Found ${functionCalls.length} function call(s) - will continue loop`);
+                // console.log(`🔧 Found ${functionCalls.length} function call(s) - will continue loop`);
                 // Add function calls to input array using the format expected by responses.create
                 for (const fc of functionCalls) {
                     input.push({
@@ -244,11 +249,11 @@ export class engine  {
 
                     // Handle the message content
                     for (const content of output.content) {
-                        console.log('📝 Processing content type:', content.type)
+                        // console.log('📝 Processing content type:', content.type)
 
                         // Handle the output text
                         if (content.type === 'output_text') {
-                            console.log('✅ Got text response:', content.text.substring(0, 100) + (content.text.length > 100 ? '...' : ''))
+                            // console.log('✅ Got text response:', content.text.substring(0, 100) + (content.text.length > 100 ? '...' : ''))
                             hasTextResponse = true;
                             loopAgent = false
                             input.push({ role: "assistant", content: content.text })
@@ -317,10 +322,10 @@ export class engine  {
                                     location: args.location,
                                     eventId: eventId
                                 });
-                                console.log('✅ Meeting saved to database');
+                                // console.log('✅ Meeting saved to database');
 
                                 await updateUser(userId.toString(), { scheduled: true });
-                                console.log('✅ User marked as scheduled');
+                                // console.log('✅ User marked as scheduled');
                             } catch (error) {
                                 console.error('❌ Error saving meeting to database:', error);
                             }
@@ -364,16 +369,15 @@ export class engine  {
 
                     // Handle the record_csat tool
                     case 'record_csat':
-                        console.log('📊 Recording CSAT:', args.csat, 'Feedback:', args.feedback)
+                        // console.log('📊 Recording CSAT:', args.csat, 'Feedback:', args.feedback)
                         toolResult = await this.recordCSAT({
                             userId: userId!,
                             csat: args.csat,
                             feedback: args.feedback
                         })
-                        console.log('✅ CSAT recorded:', toolResult)
+                        // console.log('✅ CSAT recorded:', toolResult)
                         break
-        
-        
+                
                     // Handle the default case
                     default:
                         // console.log('❌ UNHANDLED TOOL:', output.name)
@@ -389,24 +393,24 @@ export class engine  {
                     })
                 } else if (output.type === 'reasoning') {
                     // Reasoning output - just skip it, don't stop the loop
-                    console.log('💭 Reasoning output - skipping')
+                    //console.log('💭 Reasoning output - skipping')
                 } else {
-                    console.log('❓ Unhandled openAI output type:', output.type, output)
+                    //console.log('❓ Unhandled openAI output type:', output.type, output)
                     // Don't stop the loop for unknown types either - let it continue
                 }
             }
             
             // Log loop status
-            console.log(`\n🔄 End of loop ${loopCounter}:`);
-            console.log(`  - loopAgent: ${loopAgent}`);
-            console.log(`  - hasTextResponse: ${hasTextResponse}`);
-            console.log(`  - functionCalls: ${functionCalls.length}`);
-            console.log(`  - Will continue? ${loopAgent && loopCounter < MAX_AGENT_LOOP}\n`);
+            // console.log(`\n🔄 End of loop ${loopCounter}:`);
+            // console.log(`  - loopAgent: ${loopAgent}`);
+            // console.log(`  - hasTextResponse: ${hasTextResponse}`);
+            // console.log(`  - functionCalls: ${functionCalls.length}`);
+            // console.log(`  - Will continue? ${loopAgent && loopCounter < MAX_AGENT_LOOP}\n`);
         }
         
         // console.log('📊 Final input array:', input)
         
-        console.log(`💰 Total cost for this conversation turn: $${totalCostAccumulated.toFixed(6)}`);
+        // console.log(`💰 Total cost for this conversation turn: $${totalCostAccumulated.toFixed(6)}`);
         
         // Return the input array and total cost
         return {
@@ -517,7 +521,6 @@ export class engine  {
         }
     }
 
-  
 }
 
 // Main function to make the engine executable

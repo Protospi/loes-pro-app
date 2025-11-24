@@ -1,84 +1,84 @@
 {
   "chat": {
-    "title": "Professional Assistant",
-    "subtitle": "How can I assist you with Pedro's work?",
+    "title": "Asistente Profesional",
+    "subtitle": "¿Cómo puedo asistirte con el trabajo de Pedro?",
     "sampleQuestions": [
-      "Tell me about Pedro's professional experience.",
-      "Show me Pedro's latest projects.",
-      "What qualifications does Pedro have?",
-      "Is this competency related to work or text?",
-      "I want to schedule a meeting with Pedro."
+      "Cuéntame sobre la experiencia profesional de Pedro.",
+      "Muéstrame los últimos proyectos de Pedro.",
+      "¿Qué calificaciones tiene Pedro?",
+      "¿Esta competencia está relacionada con el trabajo o el texto?",
+      "Quiero programar una reunión con Pedro."
     ],
     "suggestionChips": [
       {
-        "text": "Work",
-        "query": "Tell me about Pedro's professional experience."
+        "text": "Trabajo",
+        "query": "Cuéntame sobre la experiencia profesional de Pedro."
       },
       {
-        "text": "Projects",
-        "query": "I want to learn more about Pedro's latest projects."
+        "text": "Proyectos",
+        "query": "Quiero aprender más sobre los últimos proyectos de Pedro."
       },
       {
-        "text": "Qualifications",
-        "query": "What qualifications does Pedro have?"
+        "text": "Calificaciones",
+        "query": "¿Qué calificaciones tiene Pedro?"
       },
       {
-        "text": "Competencies",
-        "query": "Is this competency related to work?"
+        "text": "Competencias",
+        "query": "¿Esta competencia está relacionada con el trabajo?"
       },
       {
-        "text": "Meeting",
-        "query": "Do you want to schedule a meeting with Pedro?"
+        "text": "Reunión",
+        "query": "¿Quieres programar una reunión con Pedro?"
       }
     ]
   },
   "language": {
-    "select": "Select Language",
-    "detected": "Detected language: {{language}}"
+    "select": "Seleccionar idioma",
+    "detected": "Idioma detectado: {{language}}"
   },
   "error": {
-    "api": "Sorry, there was an error connecting to the service. Please try again later."
+    "api": "Lo siento, hubo un error al conectar con el servicio. Por favor, inténtalo de nuevo más tarde."
   },
   "input": {
-    "placeholder": "Enter your message here...",
-    "recording": "Recording... Release to send",
-    "transcribing": "Transcribing..."
+    "placeholder": "Introduce tu mensaje aquí...",
+    "recording": "Grabando... Suelta para enviar",
+    "transcribing": "Transcribiendo..."
   },
   "tooltips": {
-    "themeToggle": "Toggle theme",
-    "newConversation": "New conversation",
-    "sendMessage": "Send message"
+    "themeToggle": "Cambiar tema",
+    "newConversation": "Nueva conversación",
+    "sendMessage": "Enviar mensaje"
   },
   "server": {
-    "title": "Server View",
+    "title": "Vista del Servidor",
     "flowCanvas": {
-      "title": "Agent Flow"
+      "title": "Flujo del Agente"
     },
     "logs": {
-      "title": "Conversation Log",
-      "loading": "Loading conversation log..."
+      "title": "Registro de Conversaciones",
+      "loading": "Cargando registro de conversaciones..."
     },
-    "playConversation": "Play conversation",
-    "stopPlayback": "Stop playback",
-    "noConversation": "Conversation not found",
-    "noConversationDesc": "No recorded conversations available for playback.",
-    "playbackStarted": "Playback started",
-    "playbackStartedDesc": "Playing back conversation events",
-    "playbackComplete": "Playback completed",
-    "playbackCompleteDesc": "Conversation playback finished",
+    "playConversation": "Reproducir conversación",
+    "stopPlayback": "Detener reproducción",
+    "noConversation": "Conversación no encontrada",
+    "noConversationDesc": "No hay conversaciones grabadas disponibles para reproducción.",
+    "playbackStarted": "Reproducción iniciada",
+    "playbackStartedDesc": "Reproduciendo eventos de conversación",
+    "playbackComplete": "Reproducción completada",
+    "playbackCompleteDesc": "Reproducción de conversación finalizada",
     "error": "Error",
-    "errorDesc": "Failed to load conversation stream"
+    "errorDesc": "No se pudo cargar la transmisión de la conversación"
   },
   "analytics": {
-    "title": "Analytics View",
-    "selectDateRange": "Select date range",
-    "selectDates": "Select dates",
-    "selectNewRange": "✨ Click on a date to start a new selection",
-    "error": "Failed to load analytics data",
-    "noData": "No available data for the selected period",
+    "title": "Vista de Analíticas",
+    "selectDateRange": "Seleccionar rango de fechas",
+    "selectDates": "Seleccionar fechas",
+    "selectNewRange": "✨ Haz clic en una fecha para comenzar una nueva selección",
+    "error": "No se pudo cargar los datos analíticos",
+    "noData": "No hay datos disponibles para el período seleccionado",
     "emptyState": {
-      "title": "Analytics View",
-      "description": "Analytics information will appear here soon."
+      "title": "Vista de Analíticas",
+      "description": "La información analítica aparecerá aquí pronto."
     }
   }
 }
