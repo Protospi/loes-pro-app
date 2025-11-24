@@ -281,6 +281,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Clear cached translation for session
+  app.delete("/api/translations/cache", async (req, res) => {
+    try {
+      const sessionId = getSessionId(req);
+      const { clearCachedTranslation } = await import('./openai.js');
+      const wasCleared = clearCachedTranslation(sessionId);
+      
+      if (wasCleared) {
+        res.json({ message: "Translation cache cleared successfully" });
+      } else {
+        res.json({ message: "No cached translation found to clear" });
+      }
+    } catch (error) {
+      console.error("Error clearing cached translation:", error);
+      res.status(500).json({ error: "Failed to clear cached translation" });
+    }
+  });
+
   // Detect language and translate interface
   app.post("/api/language-detection", async (req, res) => {
     try {

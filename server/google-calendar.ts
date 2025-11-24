@@ -356,25 +356,27 @@ Your Google OAuth refresh token is no longer valid. This happens when:
         const eventStartMin = eventStart.getHours() * 60 + eventStart.getMinutes();
         const eventEndMin = eventEnd.getHours() * 60 + eventEnd.getMinutes();
 
-        // Check if there's a gap before this event
-        if (currentTime + duration <= eventStartMin) {
+        // Add all possible slots in the gap before this event
+        while (currentTime + duration <= eventStartMin) {
           const slotStart = Math.floor(currentTime / 60).toString().padStart(2, '0') + ':' + 
                            (currentTime % 60).toString().padStart(2, '0');
           const slotEnd = Math.floor((currentTime + duration) / 60).toString().padStart(2, '0') + ':' + 
                          ((currentTime + duration) % 60).toString().padStart(2, '0');
           availableSlots.push(`${slotStart} - ${slotEnd}`);
+          currentTime += duration; // Move to the next slot
         }
 
         currentTime = Math.max(currentTime, eventEndMin);
       });
 
-      // Check for availability after the last event
-      if (currentTime + duration <= workEnd) {
+      // Add all possible slots after the last event
+      while (currentTime + duration <= workEnd) {
         const slotStart = Math.floor(currentTime / 60).toString().padStart(2, '0') + ':' + 
                          (currentTime % 60).toString().padStart(2, '0');
         const slotEnd = Math.floor((currentTime + duration) / 60).toString().padStart(2, '0') + ':' + 
                        ((currentTime + duration) % 60).toString().padStart(2, '0');
         availableSlots.push(`${slotStart} - ${slotEnd}`);
+        currentTime += duration; // Move to the next slot
       }
 
       if (availableSlots.length === 0) {

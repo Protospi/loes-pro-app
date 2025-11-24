@@ -24,11 +24,11 @@
       },
       {
         "text": "Competencies",
-        "query": "Is this competence related to work?"
+        "query": "Fit for job by description or file upload"
       },
       {
         "text": "Meeting",
-        "query": "Would you like to schedule a meeting with Pedro?"
+        "query": "Would you like to schedule a meeting with Pedro"
       }
     ],
     "newConversation": "New Conversation",

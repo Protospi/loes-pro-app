@@ -23,6 +23,15 @@ export function DynamicTranslationsProvider({ children }: DynamicTranslationsPro
   useEffect(() => {
     const loadCachedTranslations = async () => {
       try {
+        // Skip cache loading if there's a pending language input
+        // This prevents cached translations from overriding new language selections
+        const pendingLanguageInput = localStorage.getItem('pendingLanguageInput');
+        if (pendingLanguageInput) {
+          console.log('⏭️ Skipping cache load - pending language selection detected');
+          setIsLoadingCache(false);
+          return;
+        }
+        
         const sessionId = getSessionId();
         console.log('🔍 Checking translation cache for session:', sessionId);
         

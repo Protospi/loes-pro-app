@@ -51,6 +51,47 @@ export default function IntroAnimation() {
   const audioChunksRef = useRef<Blob[]>([])
   const recordingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  // Clear translation cache when intro page loads
+  // This ensures users can always select a new language without cached translations interfering
+  useEffect(() => {
+    const clearCacheAndResetTranslations = async () => {
+      try {
+        // Clear server-side cache
+        const { getSessionId } = await import('../../lib/sessionManager')
+        const sessionId = getSessionId()
+        
+        const response = await fetch('/api/translations/cache', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-ID': sessionId,
+          },
+        })
+        
+        if (response.ok) {
+          console.log('🗑️ Translation cache cleared for fresh language selection')
+        }
+
+        // Reset client-side translations to default
+        // This prevents cached translations from showing in the UI
+        const customTranslations = await import('../../translations/custom.json')
+        const { default: i18n } = await import('../../lib/i18n')
+        
+        if (i18n.hasResourceBundle('custom', 'translation')) {
+          i18n.removeResourceBundle('custom', 'translation')
+        }
+        i18n.addResourceBundle('custom', 'translation', customTranslations.default, true, true)
+        await i18n.changeLanguage('custom')
+        
+        console.log('🔄 Client translations reset to default')
+      } catch (error) {
+        console.error('Failed to clear cache and reset translations:', error)
+      }
+    }
+    
+    clearCacheAndResetTranslations()
+  }, [])
+
   useEffect(() => {
     let typingTimer: NodeJS.Timeout
     

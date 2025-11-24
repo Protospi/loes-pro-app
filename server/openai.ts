@@ -47,6 +47,16 @@ function cacheTranslation(sessionId: string, language: string, translatedContent
   console.log('💾 Cached translation for session:', sessionId, '- Language:', language);
 }
 
+// Clear cached translation for a session
+export function clearCachedTranslation(sessionId: string): boolean {
+  const existed = translationCache.has(sessionId);
+  if (existed) {
+    translationCache.delete(sessionId);
+    console.log('🗑️ Cleared translation cache for session:', sessionId);
+  }
+  return existed;
+}
+
 const PEDRO_BASE_PROMPT = `
 
 ## **Persona 🧑‍💻**
