@@ -259,6 +259,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get cached translation for session
+  app.get("/api/translations/cache", async (req, res) => {
+    try {
+      const sessionId = getSessionId(req);
+      const { getCachedTranslation } = await import('./openai.js');
+      const cached = getCachedTranslation(sessionId);
+      
+      if (cached) {
+        res.json({
+          language: cached.language,
+          translatedContent: cached.translatedContent,
+          fromCache: true
+        });
+      } else {
+        res.status(404).json({ error: "No cached translation found" });
+      }
+    } catch (error) {
+      console.error("Error retrieving cached translation:", error);
+      res.status(500).json({ error: "Failed to retrieve cached translation" });
+    }
+  });
+
   // Detect language and translate interface
   app.post("/api/language-detection", async (req, res) => {
     try {
@@ -267,7 +289,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Text is required" });
       }
       
-      const result = await detectLanguageAndTranslate(text);
+      const sessionId = getSessionId(req);
+      const result = await detectLanguageAndTranslate(text, sessionId);
       res.json(result);
     } catch (error) {
       console.error("Language detection error:", error);

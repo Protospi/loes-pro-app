@@ -37,19 +37,21 @@ export default function LoadingScreen() {
   useEffect(() => {
     const processTranslations = async () => {
       const pendingLanguageInput = localStorage.getItem('pendingLanguageInput')
-      if (!pendingLanguageInput) {
-        // If no pending input, use fallback
-        setDetectedLanguage('English')
-        setTranslationsCompleted(true)
-        return
-      }
-
-      try {
-        // Step 1: Detect the language
+      
+      // PRIORITY 1: If user just selected a new language, use that (ignore cache)
+      if (pendingLanguageInput) {
+        console.log('🆕 New language selection detected, will update cache with new language')
+        
+        try {
+          // Detect and translate the new language
+          const { getSessionId } = await import('../../lib/sessionManager')
+          const sessionId = getSessionId()
+        
         const response = await fetch('/api/language-detection', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'X-Session-ID': sessionId,
           },
           body: JSON.stringify({ text: pendingLanguageInput }),
         })
@@ -101,37 +103,73 @@ export default function LoadingScreen() {
             // Continue even if user creation fails
           }
         }
-      } catch (apiError) {
-        console.error('Language detection API error:', apiError)
-        // Use a fallback language (English) if detection fails
-        setDetectedLanguage('English')
-        
-        // Try to create a user with default language
-        try {
-          const createUserResponse = await fetch('/api/users', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-              language: 'English',
-              name: 'website-visitor'
-            }),
-          })
+        } catch (apiError) {
+          console.error('Language detection API error:', apiError)
+          // Use a fallback language (English) if detection fails
+          setDetectedLanguage('English')
           
-          if (createUserResponse.ok) {
-            const userData = await createUserResponse.json()
-            if (userData._id) {
-              localStorage.setItem('userId', userData._id)
+          // Try to create a user with default language
+          try {
+            const createUserResponse = await fetch('/api/users', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ 
+                language: 'English',
+                name: 'website-visitor'
+              }),
+            })
+            
+            if (createUserResponse.ok) {
+              const userData = await createUserResponse.json()
+              if (userData._id) {
+                localStorage.setItem('userId', userData._id)
+              }
             }
+          } catch (fallbackError) {
+            console.error('Error creating fallback user:', fallbackError)
           }
-        } catch (fallbackError) {
-          console.error('Error creating fallback user:', fallbackError)
         }
+        
+        // Clean up the pending input after processing
+        localStorage.removeItem('pendingLanguageInput')
+        setTranslationsCompleted(true)
+        return
       }
       
-      // Clean up the pending input
-      localStorage.removeItem('pendingLanguageInput')
+      // PRIORITY 2: No new language selection, try to use cached translation
+      try {
+        const { getSessionId } = await import('../../lib/sessionManager')
+        const sessionId = getSessionId()
+        
+        const cacheResponse = await fetch('/api/translations/cache', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Session-ID': sessionId,
+          },
+        })
+        
+        if (cacheResponse.ok) {
+          const cachedData = await cacheResponse.json()
+          console.log('✅ Using cached translation from loading screen:', cachedData.language)
+          
+          // Update language and translations from cache
+          setDetectedLanguage(cachedData.language)
+          if (cachedData.translatedContent) {
+            await updateTranslations(cachedData.translatedContent)
+          }
+          setTranslationsCompleted(true)
+          return
+        }
+      } catch (cacheError) {
+        console.log('No cached translation found, using default')
+      }
+      
+      // PRIORITY 3: No pending input and no cache, use English default
+      console.log('Using default English language')
+      setDetectedLanguage('English')
       setTranslationsCompleted(true)
     }
 

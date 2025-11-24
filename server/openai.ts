@@ -6,6 +6,47 @@ dotenv.config();
 // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// In-memory translation cache indexed by sessionId
+interface TranslationCache {
+  language: string;
+  translatedContent: any;
+  timestamp: number;
+}
+
+const translationCache = new Map<string, TranslationCache>();
+
+// Cache expiration time (24 hours)
+const CACHE_EXPIRATION_MS = 24 * 60 * 60 * 1000;
+
+// Get cached translation for a session
+export function getCachedTranslation(sessionId: string): TranslationCache | null {
+  const cached = translationCache.get(sessionId);
+  
+  if (!cached) {
+    return null;
+  }
+  
+  // Check if cache has expired
+  if (Date.now() - cached.timestamp > CACHE_EXPIRATION_MS) {
+    translationCache.delete(sessionId);
+    console.log('🗑️ Expired translation cache for session:', sessionId);
+    return null;
+  }
+  
+  console.log('✅ Retrieved cached translation for session:', sessionId, '- Language:', cached.language);
+  return cached;
+}
+
+// Cache translation for a session
+function cacheTranslation(sessionId: string, language: string, translatedContent: any): void {
+  translationCache.set(sessionId, {
+    language,
+    translatedContent,
+    timestamp: Date.now()
+  });
+  console.log('💾 Cached translation for session:', sessionId, '- Language:', language);
+}
+
 const PEDRO_BASE_PROMPT = `
 
 ## **Persona 🧑‍💻**
@@ -183,8 +224,22 @@ export async function generateAIResponse(userMessage: string, conversationHistor
 }
 
 // Function that uses OpenAI to detect language and translate custom.json
-export async function detectLanguageAndTranslate(userInput: string) {
+export async function detectLanguageAndTranslate(userInput: string, sessionId?: string) {
   try {
+    // Check cache first if sessionId is provided
+    if (sessionId) {
+      const cached = getCachedTranslation(sessionId);
+      if (cached) {
+        console.log('🚀 Returning cached translation for session:', sessionId);
+        return {
+          language: cached.language,
+          translatedContent: cached.translatedContent,
+          rawResponse: null,
+          fromCache: true
+        };
+      }
+    }
+
     // Step 1: Detect the language
     const languageDetection = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -289,7 +344,7 @@ export async function detectLanguageAndTranslate(userInput: string) {
       throw new Error('No translation received from OpenAI');
     }
 
-    // Step 4: Parse the translated JSON and update the custom.json file
+    // Step 4: Parse the translated JSON
     let translatedJson;
     try {
       translatedJson = JSON.parse(translatedContent);
@@ -299,15 +354,20 @@ export async function detectLanguageAndTranslate(userInput: string) {
       throw new Error('Invalid JSON received from translation');
     }
 
-    // Step 5: Write the translated content back to custom.json
-    await fs.writeFile(customJsonPath, JSON.stringify(translatedJson, null, 2), 'utf8');
-    console.log('Successfully updated custom.json with translations for:', detectedLanguage);
+    // Cache translation if sessionId is provided
+    if (sessionId) {
+      cacheTranslation(sessionId, detectedLanguage, translatedJson);
+    }
+
+    // Return translations to client (no file write - each user gets their own in-memory translation)
+    console.log('Successfully generated translations for:', detectedLanguage);
     console.log('Sample translated content:', JSON.stringify(translatedJson.chat?.title || 'N/A'));
 
     return {
       language: detectedLanguage,
       translatedContent: translatedJson,
       rawResponse: languageDetection.choices[0].message,
+      fromCache: false
     };
   } catch (error) {
     console.error('Language detection and translation error:', error);

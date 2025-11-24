@@ -30,6 +30,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const [isLanguageDetected, setIsLanguageDetected] = useState(false);
 
   // Force custom as the default language on initialization
+  // Note: DynamicTranslationsProvider will load cached translations if they exist
   useEffect(() => {
     i18n.changeLanguage('custom');
   }, [i18n]);
