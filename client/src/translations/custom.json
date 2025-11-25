@@ -91,9 +91,100 @@
     "selectNewRange": "✨ Click a date to start new selection",
     "error": "Failed to load analytics data",
     "noData": "No data available for the selected date range",
+    "noTimeSeriesData": "No data available for the selected period",
     "emptyState": {
       "title": "Analytics View",
       "description": "Analytics information will be displayed here soon."
+    },
+    "metrics": {
+      "users": "Users",
+      "messages": "Messages",
+      "meetings": "Meetings",
+      "csat": "CSAT",
+      "cost": "Cost"
+    },
+    "users": "Users",
+    "messages": "Messages",
+    "meetings": "Meetings",
+    "cost": "Cost ($)",
+    "csat": "CSAT",
+    "hours": "Hours (0-23)",
+    "granularity": "Granularity",
+    "timeGranularity": {
+      "hour": "Hour",
+      "day": "Day",
+      "month": "Month"
+    }
+  },
+  "conversationLogs": {
+    "user": "User",
+    "assistant": "Assistant",
+    "thinking": "Thinking",
+    "thinkingSteps": "{{count}} steps",
+    "functionCall": "Function Call",
+    "functionResponse": "Function Response",
+    "content": "Content",
+    "messageText": "Message Text",
+    "audioInput": "Audio Input",
+    "audioTranscription": "Message sent via audio transcription",
+    "fileAttachments": "File Attachments",
+    "arguments": "Arguments:",
+    "output": "Output:",
+    "error": "Error:",
+    "response": "Response",
+    "audioResponse": "Audio Response"
+  },
+  "months": {
+    "full": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "short": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    }
+  },
+  "date": {
+    "hour": "Hour {{hour}}:00"
+  },
+  "weekdays": {
+    "short": {
+      "sunday": "Su",
+      "monday": "Mo",
+      "tuesday": "Tu",
+      "wednesday": "We",
+      "thursday": "Th",
+      "friday": "Fr",
+      "saturday": "Sa"
+    },
+    "full": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
     }
   }
 }

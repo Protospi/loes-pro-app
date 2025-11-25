@@ -187,6 +187,7 @@ function JsonDisplay({ data }: { data: any }) {
 }
 
 function UserMessage({ userContent, timestamp, isActive }: { userContent: UserContent; timestamp: string; isActive?: boolean }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -220,7 +221,7 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold text-foreground">User</span>
+            <span className="text-sm font-semibold text-foreground">{t('conversationLogs.user')}</span>
             <span className="text-xs text-muted-foreground">{time}</span>
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto" />
@@ -228,7 +229,7 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
               <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
             )}
           </div>
-          <div className="text-xs text-muted-foreground">Content</div>
+          <div className="text-xs text-muted-foreground">{t('conversationLogs.content')}</div>
           {!isExpanded && (
             <div className="text-xs text-muted-foreground mt-1">{getContentPreview()}</div>
           )}
@@ -241,7 +242,7 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="w-4 h-4 text-blue-400" />
-                <span className="text-xs font-semibold text-muted-foreground">Message Text</span>
+                <span className="text-xs font-semibold text-muted-foreground">{t('conversationLogs.messageText')}</span>
               </div>
               <p className="text-sm text-foreground leading-relaxed pl-6">{userContent.text}</p>
             </div>
@@ -251,7 +252,7 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Volume2 className="w-4 h-4 text-blue-400" />
-                <span className="text-xs font-semibold text-muted-foreground">Audio Input</span>
+                <span className="text-xs font-semibold text-muted-foreground">{t('conversationLogs.audioInput')}</span>
               </div>
               <div className="pl-6">
                 {userContent.audio.startsWith('http') || userContent.audio.startsWith('data:') ? (
@@ -262,7 +263,7 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
                 ) : (
                   <div className="flex items-center gap-2 p-2 bg-blue-500/10 rounded-lg border-l-2 border-blue-500/30">
                     <Volume2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                    <span className="text-xs text-blue-400">Message sent via audio transcription</span>
+                    <span className="text-xs text-blue-400">{t('conversationLogs.audioTranscription')}</span>
                   </div>
                 )}
               </div>
@@ -273,7 +274,7 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Paperclip className="w-4 h-4 text-blue-400" />
-                <span className="text-xs font-semibold text-muted-foreground">File Attachments</span>
+                <span className="text-xs font-semibold text-muted-foreground">{t('conversationLogs.fileAttachments')}</span>
               </div>
               <div className="pl-6 space-y-2">
                 {userContent.files.map((file, index) => (
@@ -297,6 +298,7 @@ function UserMessage({ userContent, timestamp, isActive }: { userContent: UserCo
 }
 
 function ThinkingSection({ steps, timestamp, isActive }: { steps: string[]; timestamp: string; isActive?: boolean }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -310,8 +312,8 @@ function ThinkingSection({ steps, timestamp, isActive }: { steps: string[]; time
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold text-foreground">Thinking</span>
-            <span className="text-xs text-muted-foreground">{steps.length} steps</span>
+            <span className="text-sm font-semibold text-foreground">{t('conversationLogs.thinking')}</span>
+            <span className="text-xs text-muted-foreground">{t('conversationLogs.thinkingSteps', { count: steps.length })}</span>
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto" />
             ) : (
@@ -336,6 +338,7 @@ function ThinkingSection({ steps, timestamp, isActive }: { steps: string[]; time
 }
 
 function FunctionCallSection({ functionCall, timestamp, isActive }: { functionCall: FunctionCall; timestamp: string; isActive?: boolean }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -353,7 +356,7 @@ function FunctionCallSection({ functionCall, timestamp, isActive }: { functionCa
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold text-foreground">Function Call</span>
+            <span className="text-sm font-semibold text-foreground">{t('conversationLogs.functionCall')}</span>
             <span className="text-xs text-muted-foreground">{time}</span>
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto" />
@@ -369,7 +372,7 @@ function FunctionCallSection({ functionCall, timestamp, isActive }: { functionCa
       
       {isExpanded && (
         <div className="mt-3 ml-11">
-          <div className="text-xs font-semibold text-muted-foreground mb-2">Arguments:</div>
+          <div className="text-xs font-semibold text-muted-foreground mb-2">{t('conversationLogs.arguments')}</div>
           <JsonDisplay data={functionCall.arguments} />
         </div>
       )}
@@ -378,6 +381,7 @@ function FunctionCallSection({ functionCall, timestamp, isActive }: { functionCa
 }
 
 function FunctionResponseSection({ functionResponse, timestamp, isActive }: { functionResponse: FunctionResponse; timestamp: string; isActive?: boolean }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -399,7 +403,7 @@ function FunctionResponseSection({ functionResponse, timestamp, isActive }: { fu
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold text-foreground">Function Response</span>
+            <span className="text-sm font-semibold text-foreground">{t('conversationLogs.functionResponse')}</span>
             <span className="text-xs text-muted-foreground">{time}</span>
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto" />
@@ -416,7 +420,7 @@ function FunctionResponseSection({ functionResponse, timestamp, isActive }: { fu
       {isExpanded && (
         <div className="mt-3 ml-11">
           <div className="text-xs font-semibold text-muted-foreground mb-2">
-            {functionResponse.success ? 'Output:' : 'Error:'}
+            {functionResponse.success ? t('conversationLogs.output') : t('conversationLogs.error')}
           </div>
           <JsonDisplay data={functionResponse.success ? functionResponse.output : functionResponse.error} />
         </div>
@@ -426,6 +430,7 @@ function FunctionResponseSection({ functionResponse, timestamp, isActive }: { fu
 }
 
 function AssistantMessage({ assistantContent, timestamp, isActive }: { assistantContent: AssistantContent; timestamp: string; isActive?: boolean }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const time = new Date(timestamp).toLocaleTimeString([], { 
     hour: '2-digit', 
@@ -434,9 +439,9 @@ function AssistantMessage({ assistantContent, timestamp, isActive }: { assistant
 
   const getContentPreview = () => {
     const items = [];
-    if (assistantContent.thinking) items.push('Thinking');
-    if (assistantContent.text) items.push('Response');
-    if (assistantContent.audio) items.push('Audio');
+    if (assistantContent.thinking) items.push(t('conversationLogs.thinking'));
+    if (assistantContent.text) items.push(t('conversationLogs.response'));
+    if (assistantContent.audio) items.push(t('conversationLogs.audioResponse'));
     return items.join(', ');
   };
 
@@ -451,7 +456,7 @@ function AssistantMessage({ assistantContent, timestamp, isActive }: { assistant
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold text-foreground">Assistant</span>
+            <span className="text-sm font-semibold text-foreground">{t('conversationLogs.assistant')}</span>
             <span className="text-xs text-muted-foreground">{time}</span>
             {isExpanded ? (
               <ChevronDown className="w-4 h-4 text-muted-foreground ml-auto" />
@@ -459,7 +464,7 @@ function AssistantMessage({ assistantContent, timestamp, isActive }: { assistant
               <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
             )}
           </div>
-          <div className="text-xs text-muted-foreground">Content</div>
+          <div className="text-xs text-muted-foreground">{t('conversationLogs.content')}</div>
           {!isExpanded && (
             <div className="text-xs text-muted-foreground mt-1">{getContentPreview()}</div>
           )}
@@ -472,7 +477,7 @@ function AssistantMessage({ assistantContent, timestamp, isActive }: { assistant
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Brain className="w-4 h-4 text-purple-400" />
-                <span className="text-xs font-semibold text-muted-foreground">Thinking</span>
+                <span className="text-xs font-semibold text-muted-foreground">{t('conversationLogs.thinking')}</span>
               </div>
               <div className="pl-6 p-3 bg-purple-500/10 rounded-lg border-l-2 border-purple-500/30">
                 <p className="text-sm text-muted-foreground leading-relaxed italic">{assistantContent.thinking}</p>
@@ -484,7 +489,7 @@ function AssistantMessage({ assistantContent, timestamp, isActive }: { assistant
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="w-4 h-4 text-purple-400" />
-                <span className="text-xs font-semibold text-muted-foreground">Response</span>
+                <span className="text-xs font-semibold text-muted-foreground">{t('conversationLogs.response')}</span>
               </div>
               <p className="text-sm text-foreground leading-relaxed pl-6">{assistantContent.text}</p>
             </div>
@@ -494,7 +499,7 @@ function AssistantMessage({ assistantContent, timestamp, isActive }: { assistant
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Volume2 className="w-4 h-4 text-purple-400" />
-                <span className="text-xs font-semibold text-muted-foreground">Audio Response</span>
+                <span className="text-xs font-semibold text-muted-foreground">{t('conversationLogs.audioResponse')}</span>
               </div>
               <div className="pl-6">
                 <audio controls className="w-full max-w-xs">

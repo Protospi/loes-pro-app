@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { formatMonthShort, formatMonthFull, formatDateShort, formatDateMediumWithYear, formatDateLongWithYear } from "@/lib/dateFormatting";
 import * as d3 from 'd3';
 
 interface DataPoint {
@@ -155,12 +156,12 @@ export function TimeSeriesChart({
     } else if (timeGranularity === 'month') {
       xAxis.tickFormat((d) => {
         const date = d as Date;
-        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        return `${formatMonthShort(date, t)} ${date.getFullYear()}`;
       });
     } else {
       xAxis.tickFormat((d) => {
         const date = d as Date;
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return formatDateShort(date, t);
       });
     }
     
@@ -198,11 +199,11 @@ export function TimeSeriesChart({
     // Helper function to format date for tooltip
     const formatDateForTooltip = (date: Date) => {
       if (timeGranularity === 'hour') {
-        return `Hour ${date.getUTCHours()}:00`;
+        return t('date.hour', { hour: date.getUTCHours() });
       } else if (timeGranularity === 'month') {
-        return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        return formatDateLongWithYear(date, t);
       } else {
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return formatDateMediumWithYear(date, t);
       }
     };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar as CalendarIcon, BarChart3, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,10 @@ import { Metrics } from "@/components/analytics/metrics";
 import { TimeSeriesChart } from "@/components/analytics/charts";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
+import { formatDateShort, formatDateShortWithYear, formatMonthFull, formatWeekdayShort } from "@/lib/dateFormatting";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery } from "@tanstack/react-query";
+import type { Formatters } from "react-day-picker";
 
 interface AnalyticsData {
   users: number;
@@ -60,6 +61,16 @@ export default function AnalyticsView() {
   const toggleMetric = (metric: keyof typeof selectedMetrics) => {
     setSelectedMetrics(prev => ({ ...prev, [metric]: !prev[metric] }));
   };
+
+  // Create custom formatters for the calendar to use translated month names and weekday names
+  const calendarFormatters: Partial<Formatters> = useMemo(() => ({
+    formatCaption: (date: Date) => {
+      return `${formatMonthFull(date, t)} ${date.getFullYear()}`;
+    },
+    formatWeekdayName: (date: Date) => {
+      return formatWeekdayShort(date, t);
+    }
+  }), [t]);
 
   // Fetch analytics data
   const { data: analyticsData, isLoading, error } = useQuery<AnalyticsData>({
@@ -135,7 +146,7 @@ export default function AnalyticsView() {
                   <span className="text-sm text-slate-600 dark:text-muted-foreground group-hover:text-blue-400 transition-all">
                     {dateRange.from && dateRange.to ? (
                       <>
-                        {format(dateRange.from, "MMM d")} - {format(dateRange.to, "MMM d, yyyy")}
+                        {formatDateShort(dateRange.from, t)} - {formatDateShortWithYear(dateRange.to, t)}
                       </>
                     ) : (
                       t('analytics.selectDates', 'Select dates')
@@ -151,6 +162,7 @@ export default function AnalyticsView() {
             <Calendar
               mode="range"
               selected={firstSelectedDate ? { from: firstSelectedDate, to: undefined } : dateRange}
+              formatters={calendarFormatters}
               onSelect={(_, selectedDay) => {
                 if (!selectedDay) return;
                 
